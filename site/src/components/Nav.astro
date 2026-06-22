@@ -1,0 +1,214 @@
+---
+const links = [
+  { href: "#tjanster", label: "Tjänster" },
+  { href: "#faq", label: "FAQ" },
+  { href: "#kontakt", label: "Kontakt" },
+];
+---
+
+<header id="main-nav" class="nav-default">
+  <div class="container nav-container">
+    <a href="#top" class="logo">
+      AI<span>·</span>PARTNER
+    </a>
+
+    <nav class="nav-desktop">
+      {
+        links.map((l) => (
+          <a href={l.href} class="nav-link">
+            {l.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <button
+      id="mobile-toggle"
+      aria-label="Meny"
+      aria-expanded="false"
+      class="nav-toggle"
+    >
+      <span class="line"></span>
+      <span class="line"></span>
+      <span class="line"></span>
+    </button>
+  </div>
+
+  <div id="mobile-drawer" class="nav-mobile">
+    <div class="container drawer-container">
+      {
+        links.map((l) => (
+          <a href={l.href} class="drawer-link">
+            {l.label}
+          </a>
+        ))
+      }
+      <a class="btn btn-primary btn-drawer" href="#kontakt"
+        >Kontakt <span class="arrow">→</span></a
+      >
+    </div>
+  </div>
+</header>
+
+<style>
+  /* Dina stilar flyttas hit från style={{...}} för mycket renare kod */
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    border-bottom: 1px solid transparent;
+    background: transparent;
+    transition:
+      background 0.3s var(--ease),
+      border-color 0.3s var(--ease);
+  }
+
+  /* Klassen som JavaScriptet lägger till vid scroll */
+  header.is-scrolled {
+    border-bottom: 1px solid var(--border);
+    background: rgba(10, 10, 10, 0.72);
+    backdrop-filter: blur(10px);
+  }
+
+  .nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: var(--text-size-xl);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #fff;
+    text-decoration: none;
+  }
+  .logo span {
+    color: var(--accent);
+  }
+
+  .nav-desktop {
+    display: flex;
+    align-items: center;
+    gap: 48px;
+  }
+  .nav-link {
+    font-family: var(--font-mono);
+    font-size: var(--text-size-base);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+    transition: color 0.18s var(--ease);
+    text-decoration: none;
+  }
+
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    flex-direction: column;
+    gap: 5px;
+    padding: 8px;
+    cursor: pointer;
+  }
+  .line {
+    width: 22px;
+    height: 1.5px;
+    background: #fff;
+    transition:
+      transform 0.25s,
+      opacity 0.2s;
+  }
+
+  .nav-mobile {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.35s var(--ease);
+    background: rgba(10, 10, 10, 0.96);
+  }
+  /* Klassen som JavaScriptet lägger till vid klick */
+  .nav-mobile.is-open {
+    max-height: 320px;
+    border-top: 1px solid var(--border);
+  }
+
+  .drawer-container {
+    padding-block: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .drawer-link {
+    padding: 12px 0;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fg-2);
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+  }
+
+  @media (max-width: 768px) {
+    .nav-desktop {
+      display: none;
+    }
+    .nav-toggle {
+      display: flex;
+    }
+  }
+</style>
+
+<script>
+  // Vi lägger till "as HTMLElement" för att lova TypeScript att elementen är just HTML-element
+  const header = document.getElementById("main-nav") as HTMLElement;
+  const toggleBtn = document.getElementById("mobile-toggle") as HTMLElement;
+  const drawer = document.getElementById("mobile-drawer") as HTMLElement;
+
+  // Vi kör bara koden om vi är säkra på att elementen faktiskt laddades
+  if (header && toggleBtn && drawer) {
+    // Scroll-logik
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (window.scrollY > 24) {
+          header.classList.add("is-scrolled");
+        } else {
+          header.classList.remove("is-scrolled");
+        }
+      },
+      { passive: true },
+    );
+
+    // Hamburgermeny-logik
+    toggleBtn.addEventListener("click", () => {
+      drawer.classList.toggle("is-open");
+      const isOpen = drawer.classList.contains("is-open");
+
+      // Vi gör om boolean (true/false) till en sträng för att TypeScript ska bli nöjd
+      toggleBtn.setAttribute("aria-expanded", String(isOpen));
+
+      // Vi lägger till <HTMLElement> för att berätta att noderna har en .style-egenskap
+      const lines = toggleBtn.querySelectorAll<HTMLElement>(".line");
+
+      if (isOpen) {
+        lines[0].style.transform = "translateY(6.5px) rotate(45deg)";
+        lines[1].style.opacity = "0";
+        lines[2].style.transform = "translateY(-6.5px) rotate(-45deg)";
+      } else {
+        lines[0].style.transform = "none";
+        lines[1].style.opacity = "1";
+        lines[2].style.transform = "none";
+      }
+    });
+  }
+</script>

@@ -1,0 +1,729 @@
+---
+// Robot.astro – "AI-verktygen vi använder"
+// Logotyper kretsar runt en Spline-karaktär (Raycast-inspirerat, eget uttryck).
+// Spline-scenen följer muspekaren nativt via sin inbyggda canvas.
+---
+
+<section id="verktyg" class="orbit" aria-labelledby="orbit-heading">
+  <!-- Sektionsrubrik (övre del) -->
+  <div class="container orbit-head">
+    <p class="eyebrow">
+      <span class="num">(01)</span>
+      <span class="sep"> — </span>
+      AI-VERKTYG
+    </p>
+    <h2 id="orbit-heading" class="orbit-title">
+      Några av verktygen<br />vi bygger med
+    </h2>
+    <p class="orbit-sub">
+      Hovra för att se vilket verktyg — klicka för att läsa mer i ordlistan.
+    </p>
+  </div>
+
+  <!-- Orbit-scen: ringar + gubbe + logotyper + CTA -->
+  <div class="orbit-stage" id="orbit-stage">
+    <!-- Koncentriska ringar (dekorativa, pekarinteraktion blockerad) -->
+    <div class="orbit-rings" aria-hidden="true">
+      <span class="orbit-ring" style="--d: 62%"></span>
+      <span class="orbit-ring" style="--d: 84%"></span>
+      <span class="orbit-ring" style="--d: 100%"></span>
+    </div>
+
+    <!-- Spline-gubbe som följer muspekaren. Fyller hela scenen så att kameran
+    centreras och muspåverkan täcker hela sektionen. -->
+    <div class="orbit-core orbit-core--spline">
+      <span class="orbit-core__halo" aria-hidden="true"></span>
+      <spline-viewer
+        url="https://prod.spline.design/fP0LH65i8bXQDQjZ/scene.splinecode"
+        loading-anim-type="none"></spline-viewer>
+    </div>
+
+    <!-- Orbiterande chips — JS sätter transform varje frame.
+         data-r = radieandel av scenens bredd (0–1)
+         data-a = startvinkel i grader
+         data-g = grupp: 0 = medsols, 1 = motsols -->
+    <div class="orbit-chips" role="list" aria-label="Verktyg">
+      <a
+        class="orbit-chip"
+        href="/ordlista#openai"
+        data-r="0.31"
+        data-a="-58"
+        data-g="0"
+        role="listitem"
+        aria-label="OpenAI – läs mer i ordlistan"
+      >
+        <span class="orbit-chip__badge">
+          <img
+            src="/logos/openai.svg"
+            alt="OpenAI"
+            loading="lazy"
+            width="30"
+            height="30"
+          />
+        </span>
+        <span class="orbit-chip__name">OpenAI</span>
+      </a>
+
+      <a
+        class="orbit-chip"
+        href="/ordlista#claude"
+        data-r="0.49"
+        data-a="16"
+        data-g="0"
+        role="listitem"
+        aria-label="Claude – läs mer i ordlistan"
+      >
+        <span class="orbit-chip__badge">
+          <img
+            src="/logos/claude.svg"
+            alt="Claude"
+            loading="lazy"
+            width="30"
+            height="30"
+          />
+        </span>
+        <span class="orbit-chip__name">Claude</span>
+      </a>
+
+      <a
+        class="orbit-chip"
+        href="/ordlista#gemini"
+        data-r="0.42"
+        data-a="128"
+        data-g="0"
+        role="listitem"
+        aria-label="Gemini – läs mer i ordlistan"
+      >
+        <span class="orbit-chip__badge">
+          <img
+            src="/logos/gemini.svg"
+            alt="Gemini"
+            loading="lazy"
+            width="30"
+            height="30"
+          />
+        </span>
+        <span class="orbit-chip__name">Gemini</span>
+      </a>
+
+      <a
+        class="orbit-chip"
+        href="/ordlista#deepseek"
+        data-r="0.49"
+        data-a="230"
+        data-g="0"
+        role="listitem"
+        aria-label="DeepSeek – läs mer i ordlistan"
+      >
+        <span class="orbit-chip__badge">
+          <img
+            src="/logos/deepseek.svg"
+            alt="DeepSeek"
+            loading="lazy"
+            width="30"
+            height="30"
+          />
+        </span>
+        <span class="orbit-chip__name">DeepSeek</span>
+      </a>
+
+      <a
+        class="orbit-chip"
+        href="/ordlista#grok"
+        data-r="0.31"
+        data-a="150"
+        data-g="1"
+        role="listitem"
+        aria-label="Grok – läs mer i ordlistan"
+      >
+        <span class="orbit-chip__badge">
+          <img
+            src="/logos/grok.svg"
+            alt="Grok"
+            loading="lazy"
+            width="30"
+            height="30"
+          />
+        </span>
+        <span class="orbit-chip__name">Grok</span>
+      </a>
+
+      <a
+        class="orbit-chip"
+        href="/ordlista#deepl"
+        data-r="0.49"
+        data-a="80"
+        data-g="1"
+        role="listitem"
+        aria-label="DeepL – läs mer i ordlistan"
+      >
+        <span class="orbit-chip__badge">
+          <img
+            src="/logos/deepl.svg"
+            alt="DeepL"
+            loading="lazy"
+            width="30"
+            height="30"
+          />
+        </span>
+        <span class="orbit-chip__name">DeepL</span>
+      </a>
+
+      <a
+        class="orbit-chip"
+        href="/ordlista#adobe-firefly"
+        data-r="0.42"
+        data-a="-36"
+        data-g="1"
+        role="listitem"
+        aria-label="Adobe Firefly – läs mer i ordlistan"
+      >
+        <span class="orbit-chip__badge">
+          <img
+            src="/logos/adobefirefly.svg"
+            alt="Adobe Firefly"
+            loading="lazy"
+            width="30"
+            height="30"
+          />
+        </span>
+        <span class="orbit-chip__name">Adobe Firefly</span>
+      </a>
+
+      <!-- Leonardo.Ai: ingen öppen SVG tillgänglig – visas som lettermark -->
+      <a
+        class="orbit-chip"
+        href="/ordlista#leonardo-ai"
+        data-r="0.49"
+        data-a="300"
+        data-g="1"
+        role="listitem"
+        aria-label="Leonardo.Ai – läs mer i ordlistan"
+      >
+        <span class="orbit-chip__badge">
+          <span class="orbit-chip__word">Le</span>
+        </span>
+        <span class="orbit-chip__name">Leonardo.Ai</span>
+      </a>
+    </div>
+
+    <!-- Floating text + knapp i mitten av scenen -->
+    <div class="orbit-cta">
+      <p class="orbit-cta__txt">Vi väljer rätt verktyg för varje uppgift.</p>
+      <a class="btn btn-primary orbit-cta__btn" href="#tjanster">
+        Så jobbar vi <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ---- Sektionslayout ---- */
+  .orbit {
+    position: relative;
+    overflow: hidden;
+    padding: 96px 0 110px;
+    background: var(--bg);
+  }
+
+  .container {
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 24px;
+    width: 100%;
+  }
+
+  /* ---- Sektionsrubrik ---- */
+  .orbit-head {
+    position: relative;
+    z-index: 6;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+    margin-bottom: 18px;
+  }
+  .eyebrow .num {
+    color: var(--fg-2);
+  }
+  .eyebrow .sep {
+    color: var(--border-strong);
+  }
+
+  .orbit-title {
+    font-family: var(--font-sans);
+    font-size: clamp(48px, 3.4vw, 40px);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--fg-1);
+  }
+
+  .orbit-sub {
+    margin-top: 14px;
+    font-size: var(--text-size-base);
+    color: var(--fg-3);
+    max-width: 380px;
+    line-height: 1.6;
+  }
+
+  /* ---- Orbit-scen ---- */
+  .orbit-stage {
+    position: relative;
+    width: min(720px, 92vw);
+    aspect-ratio: 1 / 1;
+    margin: 12px auto 0;
+  }
+
+  /* Koncentriska ringar */
+  .orbit-rings {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .orbit-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--d);
+    height: var(--d);
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+  }
+  .orbit-ring:nth-child(2) {
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.05);
+  }
+
+  /* ---- Spline-kärna ---- */
+  /* Storlek = innersta ringen (62 % av scenen). Centrad absolut;
+     overflow:hidden klipper canvasen till cirkeln.
+     Mustrackning för hela scenen sköts via JS-relay i skriptet. */
+  .orbit-core--spline {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 62%;
+    height: 62%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    overflow: hidden;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .orbit-core--spline spline-viewer {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /*Mjukt bakgrundsljus bakom gubben */
+  /* .orbit-core__halo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150%;
+    height: 150%;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.16) 0%,
+      rgba(255, 255, 255, 0.05) 36%,
+      rgba(255, 255, 255, 0) 64%
+    );
+    filter: blur(10px);
+  } */
+
+  @media (prefers-reduced-motion: no-preference) {
+    .orbit-core__halo {
+      animation: haloPulse 6s var(--ease) infinite;
+    }
+  }
+  @keyframes haloPulse {
+    0%,
+    100% {
+      opacity: 0.8;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.08);
+    }
+  }
+
+  /* ---- Orbiterande chips ----
+     JS sätter transform varje frame. Chipsen roteras aldrig,
+     så logotyp + namn alltid läsbara upprätt. */
+  .orbit-chips {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+  }
+
+  .orbit-chip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: auto;
+    text-decoration: none;
+    will-change: transform;
+  }
+
+  .orbit-chip__badge {
+    display: grid;
+    place-items: center;
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background: rgba(20, 20, 20, 0.96);
+    border: 1px solid var(--border);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.55);
+    transition:
+      border-color 0.2s var(--ease),
+      transform 0.2s var(--ease),
+      box-shadow 0.2s var(--ease);
+  }
+
+  .orbit-chip__badge img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    opacity: 0.9;
+    transition: opacity 0.2s;
+  }
+
+  /* Lettermark-fallback (Leonardo.Ai) */
+  .orbit-chip__word {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 19px;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+
+  /* Namn-etikett under chipet */
+  .orbit-chip__name {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+    white-space: nowrap;
+    padding: 3px 8px;
+    border-radius: 2px;
+    background: rgba(10, 10, 10, 0.5);
+    transition:
+      color 0.2s,
+      background 0.2s,
+      transform 0.2s,
+      box-shadow 0.2s;
+  }
+
+  /* Hover: badge lyfts, namn flippar till vit pill */
+  .orbit-chip:hover,
+  .orbit-chip:focus-visible {
+    z-index: 7;
+  }
+
+  .orbit-chip:hover .orbit-chip__badge,
+  .orbit-chip:focus-visible .orbit-chip__badge {
+    border-color: #fff;
+    transform: scale(1.12);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
+  }
+
+  .orbit-chip:hover .orbit-chip__badge img,
+  .orbit-chip:focus-visible .orbit-chip__badge img {
+    opacity: 1;
+  }
+
+  .orbit-chip:hover .orbit-chip__name,
+  .orbit-chip:focus-visible .orbit-chip__name {
+    color: #0a0a0a;
+    background: #fff;
+    transform: translateX(-50%) scale(1.06);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+  }
+
+  /* ---- Floating CTA i mitten av scenen ---- */
+  .orbit-cta {
+    position: absolute;
+    left: 50%;
+    top: 63%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+    width: max-content;
+    pointer-events: none;
+  }
+  .orbit-cta > * {
+    pointer-events: auto;
+  }
+
+  .orbit-cta__txt {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+    background: rgba(10, 10, 10, 0.6);
+    padding: 4px 10px;
+    border-radius: 2px;
+    backdrop-filter: blur(4px);
+  }
+
+  /* ---- Knapp ---- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 28px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    border: 1px solid transparent;
+    text-decoration: none;
+    transition:
+      background var(--dur-fast) var(--ease),
+      color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease);
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-color: var(--accent);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
+  }
+  .btn-primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+  }
+
+  @media (max-width: 600px) {
+    .orbit-chip__badge {
+      width: 50px;
+      height: 50px;
+    }
+    .orbit-chip__badge img {
+      width: 24px;
+      height: 24px;
+    }
+    .orbit-chip__name {
+      font-size: 9px;
+      padding: 2px 6px;
+    }
+  }
+</style>
+
+<script>
+  // Ladda Spline viewer web component en gång (idempotent)
+  if (!document.querySelector("script[data-spline]")) {
+    const s = document.createElement("script");
+    s.type = "module";
+    s.src =
+      "https://unpkg.com/@splinetool/viewer@1.9.48/build/spline-viewer.js";
+    s.dataset.spline = "";
+    document.head.appendChild(s);
+  }
+
+  // Orbit-animation: positionerar varje chip på sin cirkel varje frame.
+  // Chipsen roteras aldrig — logotyp och namn alltid upprätta och läsbara.
+  // Hovra pausar rörelsen; prefers-reduced-motion fryser vid startposition.
+  (function () {
+    const stage = document.getElementById("orbit-stage");
+    if (!stage) return;
+
+    const chips = Array.from(
+      stage.querySelectorAll<HTMLElement>(".orbit-chip"),
+    );
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    let raf = 0,
+      last = performance.now(),
+      elapsed = 0,
+      paused = false;
+
+    const onEnter = (): void => {
+      paused = true;
+    };
+    const onLeave = (): void => {
+      paused = false;
+    };
+
+    chips.forEach((chip) => {
+      chip.addEventListener("pointerenter", onEnter);
+      chip.addEventListener("pointerleave", onLeave);
+      chip.addEventListener("focus", onEnter);
+      chip.addEventListener("blur", onLeave);
+    });
+
+    const place = (now: number): void => {
+      const dt = now - last;
+      last = now;
+      // Tidssteg ackumuleras bara när ej pausad och rörelse är tillåten
+      if (!paused && !reduce) elapsed += dt;
+
+      const t = elapsed / 1000;
+      const w = stage.clientWidth;
+      const c = w / 2;
+
+      for (const chip of chips) {
+        const rf = parseFloat(chip.dataset.r ?? "0.4");
+        const base = parseFloat(chip.dataset.a ?? "0") * (Math.PI / 180);
+        const ccw = chip.dataset.g === "1";
+        const speed = ccw ? -0.046 : 0.054; // motsols något långsammare
+        const ang = base + speed * t;
+        const x = c + rf * w * Math.cos(ang);
+        const y = c + rf * w * Math.sin(ang);
+        chip.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+      }
+
+      raf = requestAnimationFrame(place);
+    };
+
+    raf = requestAnimationFrame(place);
+
+    // Städa upp vid View Transitions-navigering
+    document.addEventListener(
+      "astro:before-swap",
+      () => {
+        cancelAnimationFrame(raf);
+        chips.forEach((chip) => {
+          chip.removeEventListener("pointerenter", onEnter);
+          chip.removeEventListener("pointerleave", onLeave);
+          chip.removeEventListener("focus", onEnter);
+          chip.removeEventListener("blur", onLeave);
+        });
+      },
+      { once: true },
+    );
+  })();
+
+  // Mustrackning: roboten följer musen vänster/höger över hela orbit-stage.
+  //
+  // Diagnostik visade att ec.pointerScreen INTE driver animationen —
+  // det är ec.pointerWorld (beräknat via raycasting) som gör det.
+  // Raycasting körs bara när Splines egna canvas-events triggas.
+  //
+  // Lösning: dispatcha syntetiska PointerEvents direkt till canvasen i
+  // spline-viewers shadow DOM. CSS pointer-events:none på containern
+  // blockerar native events (med scroll-beroende Y) men syntetiska events
+  // via dispatchEvent() når alltid målet oavsett CSS.
+  //
+  // Y-formel: clientY = scrollY + cr.top + cr.height → ps_y = 0
+  // (roboten tittar rakt fram, ingen bakåtlutning oavsett scroll-position).
+  // X klampad till [0.15, 0.85] — extremvärden triggar felanimation i scenen.
+  // bubbles:false förhindrar att eventen bubblar tillbaka till #orbit-stage
+  // och skapar en oändlig loop.
+  (function () {
+    const stage  = document.getElementById("orbit-stage");
+    const viewer = stage?.querySelector<any>("spline-viewer");
+    if (!stage || !viewer) return;
+
+    let canvas: HTMLCanvasElement | null = null;
+    const getCanvas = (): HTMLCanvasElement | null =>
+      canvas ?? (canvas = viewer.shadowRoot?.querySelector("canvas") ?? null);
+
+    const sendToCanvas = (type: string, clientX: number, clientY: number): void => {
+      const cv = getCanvas();
+      if (!cv) return;
+      cv.dispatchEvent(new PointerEvent(type, {
+        bubbles: false, cancelable: true,
+        clientX, clientY,
+        pointerId: 1, pointerType: "mouse",
+      }));
+    };
+
+    const relay = (e: PointerEvent): void => {
+      const cv = getCanvas();
+      if (!cv) return;
+      const sr = stage.getBoundingClientRect();
+      const cr = cv.getBoundingClientRect();
+
+      // X: normalisera över scenens bredd, klamma till [0.15, 0.85]
+      const rawX = (e.clientX - sr.left) / sr.width;
+      const nx = 0.15 + Math.max(0, Math.min(1, rawX)) * 0.7;
+
+      // Y: normalisera över scenens höjd → önskad ps_y.
+      // LookAt-handlens neutralpunkt: ps_y=0.5 → pointerWorld.y=0 → identity
+      // quaternion = exakt robotens viloläge. Verifierat via Spline-inspektion:
+      //   idle state:  pointerWorld.y=0  (Splines oinit. state = neutral)
+      //   ps_y=0.5 → pointerWorld.y=0   → rakt fram, ingen rotation ✓
+      //   ps_y>0.5  → pointerWorld.y>0  → tittar uppåt (tilt:up)
+      //   ps_y<0.5  → pointerWorld.y<0  → tittar nedåt
+      const rawY = (e.clientY - sr.top) / sr.height;
+      const ps_y = Math.max(0.1, Math.min(0.9, (0.5 - rawY) * 0.6 + 0.5));
+
+      // Splines formel: ps_y = (scrollY + cr.top + cr.height − clientY) / cr.height
+      // Inverterad: clientY = scrollY + cr.top + cr.height − ps_y * cr.height
+      const fakeY = window.scrollY + cr.top + cr.height - ps_y * cr.height;
+
+      sendToCanvas("pointermove",
+        cr.left + nx * cr.width,
+        fakeY,
+      );
+    };
+
+    const onEnter = (): void => {
+      const cv = getCanvas();
+      if (!cv) return;
+      const cr = cv.getBoundingClientRect();
+      // ps_y=0.5 → pointerWorld.y=0 = idle-neutral, ingen synlig rörelse vid hover-start
+      sendToCanvas("pointerenter",
+        cr.left + cr.width / 2,
+        window.scrollY + cr.top + cr.height * 0.5,
+      );
+    };
+
+    const onLeave = (): void => {
+      const cv = getCanvas();
+      if (!cv) return;
+      const cr = cv.getBoundingClientRect();
+      sendToCanvas("pointerleave",
+        cr.left + cr.width / 2,
+        window.scrollY + cr.top + cr.height * 0.5,
+      );
+    };
+
+    stage.addEventListener("pointerenter", onEnter);
+    stage.addEventListener("pointerleave", onLeave);
+    stage.addEventListener("pointermove",  relay, { passive: true });
+
+    document.addEventListener(
+      "astro:before-swap",
+      () => {
+        stage.removeEventListener("pointerenter", onEnter);
+        stage.removeEventListener("pointerleave", onLeave);
+        stage.removeEventListener("pointermove",  relay);
+      },
+      { once: true },
+    );
+  })();
+</script>

@@ -1,0 +1,302 @@
+---
+// Hero.astro – Fullskärmssektion med animerat partikelnät och "AI Partner"-rubrik.
+// Tokens och font-import hanteras i styles/global.css (via Layout.astro).
+---
+
+<section class="hero" aria-label="AI Partner">
+  <!-- Animerad canvas-bakgrund: lutad vågyta med perspektiv -->
+  <canvas class="mesh-canvas" aria-hidden="true"></canvas>
+
+  <!-- Mjuk dimma som skyddar läsbarheten bakom rubriken -->
+  <div class="hero-veil" aria-hidden="true"></div>
+
+  <!-- Centrerat rubrikblock -->
+  <div class="hero-center">
+    <!-- H1: "AI" och "Partner" glider upp vid inladdning -->
+    <h1 class="hero-title">
+      <span class="hero-title__line">
+        <span class="hero-title__in" data-text="AI">AI</span>
+      </span>
+      <span class="hero-title__line">
+        <span class="hero-title__in" data-text="Partner">Partner</span>
+      </span>
+    </h1>
+    <h2 class="hero-sub-title">
+      Din personliga tjänst för utveckling och automatisering
+    </h2>
+  </div>
+
+  <!-- Scroll-indikator längst ner -->
+  <span class="hero-scrollcue" aria-hidden="true">
+    <span class="hero-scrollcue__line"></span>
+  </span>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  .mesh-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* Radial gradient skyddar läsbarheten i mitten; linjär tonar ut mot botten */
+  .hero-veil {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 48% 42% at 50% 50%, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0) 64%),
+      linear-gradient(to bottom, rgba(10,10,10,0) 62%, rgba(10,10,10,0.8) 100%);
+  }
+
+  .hero-center {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .hero-title {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(64px, 14vw, 184px);
+    line-height: 0.86;
+    letter-spacing: -0.05em;
+    color: #fff;
+  }
+
+  .hero-title__line { display: block; }
+
+  .hero-title__in {
+    position: relative;
+    display: inline-block;
+    color: #fff;
+    will-change: transform, opacity;
+  }
+
+  /* Glint-overlay: ett ljusskimmer sveper över bokstäverna via en overlappande kopia.
+     Basen i vitt är alltid synlig — kopian målar bara skimret ovanpå. */
+  .hero-title__in::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    color: transparent;
+    background-image: linear-gradient(105deg, transparent 42%, rgba(255,255,255,0.85) 50%, transparent 58%);
+    background-repeat: no-repeat;
+    background-size: 220% 100%;
+    background-position: 135% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  .hero-scrollcue {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hero-scrollcue__label {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--fg-4);
+  }
+
+  .hero-scrollcue__line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--border-strong), transparent);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-scrollcue__line::after {
+    content: '';
+    position: absolute;
+    top: -40%;
+    left: 0;
+    width: 1px;
+    height: 40%;
+    background: rgba(255, 255, 255, 0.7);
+    animation: scrollcue 2.4s var(--ease) infinite;
+  }
+
+  .hero-sub-title {
+    font-family: var(--font-sans);
+    font-size: clamp(14px, 1.6vw, 18px);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+    text-align: center;
+  }
+
+  /* ---- Keyframes ---- */
+  @keyframes titleRise {
+    from { opacity: 0; transform: translateY(0.42em); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes titleGlint {
+    0%        { background-position: 135% 0; }
+    30%, 100% { background-position: -35% 0; }
+  }
+  @keyframes scrollcue {
+    0%        { top: -40%; }
+    60%, 100% { top: 100%; }
+  }
+
+  /* ---- Entrance-animationer (pausas om användaren föredrar reducerad rörelse) ---- */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-title__in {
+      opacity: 0;
+      transform: translateY(0.42em);
+      animation: titleRise 1s cubic-bezier(0.16, 0.84, 0.32, 1) forwards;
+    }
+    .hero-title__line:nth-child(1) .hero-title__in { animation-delay: .42s; }
+    .hero-title__line:nth-child(2) .hero-title__in { animation-delay: .55s; }
+
+    .hero-title__in::after { animation: titleGlint 6.5s ease-in-out 1.9s infinite; }
+    .hero-title__line:nth-child(2) .hero-title__in::after { animation-delay: 2.05s; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-scrollcue__line::after { animation: none; }
+  }
+
+  @media (max-width: 768px) {
+    .hero-scrollcue { display: none; }
+  }
+</style>
+
+<script>
+  // Animerad canvas: lutad vågyta i perspektiv (Anduril-inspirerad, inte en kopia).
+  // Blandar slumpmässigt mellan ett stort diagonalt svep från höger och turbulenta
+  // smårvágor som krockar. Autonomt utan musinteraktion.
+  (function () {
+    const canvas = document.querySelector<HTMLCanvasElement>('.mesh-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let raf = 0, W = 0, H = 0, dpr = 1, t = 2.0;
+    let COLS = 0, ROWS = 0;
+
+    // Pillfunktioner (ej hoistade) — TypeScript bevarar narrowingen av canvas/ctx
+    const resize = (): void => {
+      dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+      W = canvas.clientWidth;
+      H = canvas.clientHeight;
+      canvas.width  = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      // Fler kolumner/rader = tätare nät = tydligare vågrörelse
+      COLS = Math.max(80, Math.min(150, Math.round(W / 10)));
+      ROWS = Math.max(80, Math.min(135, Math.round(H / 7)));
+    };
+
+    const ro = new ResizeObserver(resize);
+    ro.observe(canvas);
+    resize();
+
+    // Vandrar mjukt mellan enhetligt svep (1) och turbulenta krockar (0).
+    // Tre sinusvågor med inkommensurabel frekvens = aldrig exakt samma period.
+    const regime = (time: number): number => {
+      const v = Math.sin(time * 0.055)
+              + Math.sin(time * 0.087 + 1.7)
+              + Math.sin(time * 0.033 + 4.2);
+      return (v / 3 + 1) / 2;
+    };
+
+    const frame = (animate: boolean): void => {
+      ctx.clearRect(0, 0, W, H);
+
+      const reg  = regime(t);
+      const wBig = 0.34 + 0.66 * reg;
+      const wTur = 0.34 + 0.66 * (1 - reg);
+
+      const topEdge = -H * 0.06;  // lite ovanför kanten → täcker hela sektionen
+      const botEdge =  H * 1.06;
+      const cx = W / 2;
+
+      ctx.fillStyle = '#ffffff';
+
+      for (let j = 0; j < ROWS; j++) {
+        const n     = j / (ROWS - 1);             // 0 = horisont (topp), 1 = nära
+        const persp = Math.pow(n, 1.38);          // rader tätnar mot horisonten
+        const rowY  = topEdge + persp * (botEdge - topEdge);
+        const spread = 1.04 + 0.06 * n;
+        const size   = 1.0 + n * 1.4;
+        const amp    = 26 + n * 74;               // vågkammar reser sig mer nära
+        const zf     = 1 - n;                    // djupfaktor: 0 nära, 1 långt borta
+
+        for (let i = 0; i < COLS; i++) {
+          const u  = i / (COLS - 1) - 0.5;
+          const wx = u * 2;
+
+          // STOR VÅG — parallella kammar in diagonalt från höger hörn
+          const big = Math.sin((-wx * 1.6 + zf * 2.6) * 3.2 - t * 1.15);
+
+          // TURBULENS — interferens från flera riktningar = krockande smárvágor
+          let tur = Math.sin(wx * 5.0 + t * 1.5)
+                  + Math.sin(zf * 5.8 - t * 1.2)
+                  + Math.sin((wx + zf) * 4.1 + t * 1.85)
+                  + Math.sin((wx - zf) * 5.4 - t * 1.45);
+          tur *= 0.25;
+
+          const h    = big * wBig + tur * wTur;
+          const lift = (h + 1) / 2;
+
+          const sx = cx + u * W * spread;
+          const sy = rowY - h * amp;             // kammen lyfts uppåt
+
+          // Smoothstep-ljussättning: mjuka kammar, ingen flicker
+          const e     = lift * lift * (3 - 2 * lift);
+          const alpha = (0.09 + e * 0.66) * (0.55 + 0.45 * n);
+          ctx.globalAlpha = alpha;
+          ctx.fillRect(sx, sy, size, size);
+        }
+      }
+
+      ctx.globalAlpha = 1;
+      if (animate) {
+        t += 0.011;
+        raf = requestAnimationFrame(() => frame(true));
+      }
+    };
+
+    if (reduce) frame(false); else frame(true);
+
+    // Städa upp vid View Transitions-navigering
+    document.addEventListener('astro:before-swap', () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+    }, { once: true });
+  })();
+</script>

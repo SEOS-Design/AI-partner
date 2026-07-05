@@ -1,0 +1,737 @@
+---
+// Departments.astro – sektion "AI per avdelning" (Riktning D)
+// Namngivna agenter i ett matt bento-rutnät. Klick morfar (FLIP) upp ett kort
+// till en scrollbar lightbox med två flikar: "Så fungerar den" / "Exempel".
+// Design från Claude Design; portad till Astro-konventioner (scoped style,
+// vanilla JS, globala tokens i styles/global.css).
+
+interface Example { txt: string; cite?: string }
+interface Agent {
+  id: string;
+  num: string;
+  name: string;
+  lead: string;
+  does: string;
+  build: string;
+  ex: Example | null;
+}
+
+const agents: Agent[] = [
+  {
+    id: 'kundtjanst',
+    num: '01',
+    name: 'Kundtjänst',
+    lead: 'Svarar på återkommande frågor och slussar ärenden — dygnet runt, ur ert eget material.',
+    does: 'Svarar på vanliga kundfrågor dygnet runt hämtat ur er egen kunskap, kvalificerar inkommande ärenden, slussar rätt sak till rätt person och sammanfattar långa trådar.',
+    build: 'Vi kopplar en språkmodell till era egna källor (hjälpcenter, manualer, tidigare ärenden) med RAG, så svaren bygger på er data och kan källhänvisas. Den integreras mot mejl, chatt eller ärendesystem och eskalerar till människa när frågan ligger utanför ramen. Er data stannar hos er, EU-hosting.',
+    ex: null,
+  },
+  {
+    id: 'salj',
+    num: '02',
+    name: 'Sälj',
+    lead: 'Prioriterar leads, sköter uppföljningen och skriver offertutkast.',
+    does: 'Poängsätter inkommande leads efter köpstyrka, håller uppföljningen igång med automatiska sekvenser och tar fram offertutkast — så säljaren lägger tiden på att sälja, inte på administration.',
+    build: 'Vi kopplar agenten mot ert CRM och era mejl, lägger in er leadscoring-logik och bygger uppföljningsflöden som triggas automatiskt. Offertutkast genereras från era mallar och prislistor, och säljaren godkänner innan något går ut.',
+    ex: { txt: 'SEOS Design använde sälj-agenten för att avlasta monotona, återkommande uppgifter i säljflödet.', cite: 'SEOS Design · internt' },
+  },
+  {
+    id: 'ekonomi',
+    num: '03',
+    name: 'Ekonomi',
+    lead: 'Matchar fakturor och förbereder underlag inför bokslut.',
+    does: 'Matchar fakturor mot ordrar och underlag, förbereder material inför bokslut och tar fram rapportutkast — det repetitiva i ekonomiflödet, gjort i tid.',
+    build: 'Vi integrerar mot ert affärs-/bokföringssystem, sätter regler för matchning och avvikelser och låter agenten flagga det som inte stämmer. Inget bokförs utan att en människa godkänner.',
+    ex: null,
+  },
+  {
+    id: 'marknad',
+    num: '04',
+    name: 'Marknad',
+    lead: 'Bevakar marknaden och tar fram kampanj- och rubrikutkast.',
+    does: 'Bevakar marknad och konkurrenter, hittar innehållsluckor och tar fram utkast till kampanjer och rubriker (A/B) — mer muskler på avdelningen utan att anställa fler.',
+    build: 'Vi bygger agenten mot era källor och kanaler, definierar vad den ska bevaka och matar in er tonalitet så utkasten låter som ni. Ni sätter strategin och väljer vad som publiceras.',
+    ex: null,
+  },
+  {
+    id: 'kvalitetskontroll',
+    num: '05',
+    name: 'Kvalitetskontroll',
+    lead: 'Förgranskar avtal, rapporter och innehåll före mänsklig slutgranskning.',
+    does: 'Förgranskar omfattande material — avtal, rapporter, innehåll — och flaggar avvikelser, luckor och risker innan en människa gör slutgranskningen.',
+    build: 'Vi definierar era kriterier och regelverk, kopplar agenten mot era dokumentkällor och bygger en granskningsprocess som lyfter fram det som behöver en mänsklig blick. Den ersätter inte slutgranskningen — den gör den snabbare.',
+    ex: null,
+  },
+  {
+    id: 'projektledning',
+    num: '06',
+    name: 'Projektledning',
+    lead: 'Pullar inkommande mejl, skapar tasks och påminner vid deadline.',
+    does: 'Bevakar en inkorg, skapar och tilldelar tasks i ert projektverktyg och påminner ansvarig när något närmar sig deadline — så inget faller mellan stolarna.',
+    build: 'Vi kopplar agenten mot er mejl och ert projektverktyg (t.ex. Linear), sätter reglerna för hur ett mejl blir en task och vem som blir ansvarig, och låter systemet sköta påminnelserna.',
+    ex: null,
+  },
+];
+---
+
+<section id="avdelningar" class="section aipa" aria-labelledby="aipa-heading">
+  <div class="container">
+    <div class="sec-head reveal">
+      <p class="eyebrow">
+        <span class="num">(02)</span>
+        <span class="sep">—</span>
+        AI PER AVDELNING
+      </p>
+      <h2 id="aipa-heading" class="h2">Vad gör en AI-agent på just er avdelning?</h2>
+      <p class="sec-head__lead">
+        Vi bygger namngivna agenter mot en bestämd avdelning och process — inte en
+        allmän chatt. Här är vad de gör, avdelning för avdelning.
+      </p>
+    </div>
+
+    <div class="agent-grid">
+      {agents.map((a, i) => (
+        <button
+          class="agent-card reveal"
+          type="button"
+          data-index={i}
+          aria-haspopup="dialog"
+          aria-label={`${a.name} – se hur agenten fungerar`}
+        >
+          <span class="agent-card__num">{a.num}</span>
+          <span class="agent-card__name">{a.name}</span>
+          <span class="agent-card__lead">{a.lead}</span>
+          <span class="agent-card__cue">
+            Se hur den fungerar
+            <span class="agent-card__arrow" aria-hidden="true">→</span>
+          </span>
+        </button>
+      ))}
+
+    </div>
+  </div>
+
+  <!-- Agentdata för lightboxen (egen, betrodd data — ej användargenererad) -->
+  <script type="application/json" id="aipa-agents" set:html={JSON.stringify(agents)} is:inline></script>
+
+  <!-- Lightbox: FLIP-morph-mål. Förrenderas dold; JS fyller i och animerar. -->
+  <div class="lb" id="aipa-lb" hidden>
+    <div class="lb__backdrop" data-close></div>
+    <div class="lb__panel" role="dialog" aria-modal="true" aria-labelledby="aipa-lb-title">
+      <div class="lb__surface" aria-hidden="true"></div>
+      <div class="lb__content">
+        <div class="lb__head">
+          <div>
+            <div class="lb__num"></div>
+            <h3 class="lb__title" id="aipa-lb-title"></h3>
+            <p class="lb__lead"></p>
+          </div>
+          <button class="lb__close" data-close type="button" aria-label="Stäng">×</button>
+        </div>
+
+        <div class="atabs">
+          <div class="atabs__list" role="tablist" aria-label="Agentinformation">
+            <button class="atabs__tab is-sel" role="tab" type="button" data-tab="0" aria-selected="true" tabindex="0">Så fungerar den</button>
+            <button class="atabs__tab" role="tab" type="button" data-tab="1" aria-selected="false" tabindex="-1">Exempel</button>
+          </div>
+          <div class="atabs__panel" role="tabpanel" data-panel="0">
+            <div class="agent-field">
+              <span class="agent-field__k">Vad den gör</span>
+              <p class="agent-field__v" data-does></p>
+            </div>
+            <div class="agent-field">
+              <span class="agent-field__k">Så bygger vi den</span>
+              <p class="agent-field__v" data-build></p>
+            </div>
+          </div>
+          <div class="atabs__panel" role="tabpanel" data-panel="1" hidden>
+            <div class="agent-ex" data-ex>
+              <p class="agent-ex__txt" data-ex-txt></p>
+              <div class="agent-ex__cite" data-ex-cite></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ---- layout ---- */
+  .container {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+    width: 100%;
+  }
+  .section {
+    position: relative;
+    padding: var(--section-py) 0;
+    background: var(--bg);
+  }
+
+  /* ---- reveal-on-scroll (innehåll alltid synligt; rörelse förstärker) ---- */
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal.in {
+      animation: fadeUp 0.7s var(--ease) backwards;
+    }
+  }
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* ---- sektionshuvud ---- */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: var(--fs-eyebrow);
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+    color: var(--fg-3);
+    margin-bottom: 18px;
+  }
+  .eyebrow .num { color: var(--fg-2); }
+  .eyebrow .sep { color: var(--border-strong); }
+
+  .h2 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: var(--fs-h2);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-tight);
+    color: #fff;
+  }
+
+  .sec-head {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .sec-head__lead {
+    margin-top: 16px;
+    color: var(--fg-3);
+    font-size: var(--fs-lead);
+    line-height: 1.6;
+    max-width: 600px;
+  }
+
+  /* ============================================================
+     Bento-rutnät — lika, luftiga kort (djupet bor i lightboxen)
+     ============================================================ */
+  .agent-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+    gap: 18px;
+    margin-top: 56px;
+  }
+
+  .agent-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    min-height: 210px;
+    background: linear-gradient(158deg, #181818 0%, #121212 44%, #0c0c0c 100%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 22px;
+    padding: 28px;
+    cursor: pointer;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.45),
+      0 20px 44px -20px rgba(0, 0, 0, 0.92),
+      0 6px 16px -10px rgba(0, 0, 0, 0.8);
+    transition:
+      transform 0.35s var(--ease),
+      box-shadow 0.35s var(--ease),
+      border-color 0.35s var(--ease);
+  }
+  .agent-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(120% 78% at 50% -12%, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0) 62%);
+    opacity: 0;
+    transition: opacity 0.35s var(--ease);
+  }
+  .agent-card:not(.agent-card--soon):hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.09),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+      0 30px 60px -22px rgba(0, 0, 0, 0.96),
+      0 12px 26px -14px rgba(0, 0, 0, 0.85);
+  }
+  .agent-card:not(.agent-card--soon):hover::after { opacity: 1; }
+  .agent-card:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+  .agent-card__num {
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--fg-3);
+    margin-bottom: 22px;
+  }
+  .agent-card__name {
+    position: relative;
+    z-index: 1;
+    font-size: clamp(26px, 2.6vw, 31px);
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.025em;
+    line-height: 1.04;
+    margin-bottom: 12px;
+  }
+  .agent-card__lead {
+    position: relative;
+    z-index: 1;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--fg-3);
+  }
+  .agent-card__cue {
+    position: relative;
+    z-index: 1;
+    margin-top: auto;
+    padding-top: 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+  .agent-card__arrow { transition: transform 0.25s var(--ease); }
+  .agent-card:not(.agent-card--soon):hover .agent-card__arrow { transform: translateX(4px); }
+
+  /* "på väg": samma matta yta men plattare och dämpad */
+  .agent-card--soon {
+    cursor: default;
+    background: linear-gradient(158deg, #131313 0%, #0f0f0f 60%, #0b0b0b 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.03),
+      0 10px 26px -18px rgba(0, 0, 0, 0.8);
+  }
+  .agent-card--soon .agent-card__name { color: var(--fg-2); }
+  .agent-card__soon {
+    position: relative;
+    z-index: 1;
+    margin-top: auto;
+    padding-top: 22px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--fg-4);
+  }
+
+  /* ============================================================
+     Lightbox (FLIP-morph-mål)
+     ============================================================ */
+  .lb {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: none;
+    place-items: center;
+    padding: 26px;
+  }
+  .lb.is-open { display: grid; }
+  .lb__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(6, 6, 6, 0.72);
+    backdrop-filter: blur(3px);
+    cursor: pointer;
+  }
+  .lb__panel {
+    position: relative;
+    width: min(640px, 100%);
+    max-height: 86vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .lb__surface {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: 24px;
+    will-change: transform;
+    background: linear-gradient(158deg, #191919 0%, #121212 52%, #0b0b0b 100%);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 44px 96px -30px rgba(0, 0, 0, 0.96),
+      0 20px 50px -26px rgba(0, 0, 0, 0.85);
+  }
+  .lb__content {
+    position: relative;
+    z-index: 1;
+    max-height: 86vh;
+    overflow-y: auto;
+    padding: 32px 32px 34px;
+  }
+  .lb__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 26px;
+  }
+  .lb__num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+  .lb__title {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: clamp(26px, 3vw, 34px);
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin: 11px 0;
+  }
+  .lb__lead {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--fg-3);
+    max-width: 52ch;
+  }
+  .lb__close {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    color: var(--fg-2);
+    font-size: 21px;
+    line-height: 1;
+    transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
+  }
+  .lb__close:hover { border-color: var(--border-strong); color: #fff; }
+  .lb__close:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  /* ============================================================
+     Flikar — "Så fungerar den" / "Exempel"
+     ============================================================ */
+  .atabs__list {
+    display: flex;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .atabs__tab {
+    position: relative;
+    background: transparent;
+    border: 0;
+    padding: 0 2px 13px;
+    margin-right: 26px;
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fg-4);
+    transition: color 0.2s var(--ease);
+  }
+  .atabs__tab:hover { color: var(--fg-2); }
+  .atabs__tab.is-sel { color: #fff; }
+  .atabs__tab:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-radius: var(--radius-xs);
+  }
+  .atabs__tab::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s var(--ease);
+  }
+  .atabs__tab.is-sel::after { transform: scaleX(1); }
+  @media (prefers-reduced-motion: no-preference) {
+    .atabs__panel:not([hidden]) { animation: fadeUp 0.3s var(--ease); }
+  }
+
+  .agent-field { margin-bottom: 20px; }
+  .agent-field:last-child { margin-bottom: 0; }
+  .agent-field__k {
+    display: block;
+    margin-bottom: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--fg-4);
+  }
+  .agent-field__v {
+    font-size: 14.5px;
+    line-height: 1.62;
+    color: var(--fg-2);
+    max-width: 64ch;
+  }
+
+  .agent-ex {
+    border-left: 1px solid var(--border-strong);
+    padding-left: 20px;
+  }
+  .agent-ex--neutral { border-left-color: var(--border); }
+  .agent-ex__txt {
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--fg-2);
+    max-width: 60ch;
+  }
+  .agent-ex--neutral .agent-ex__txt { color: var(--fg-3); }
+  .agent-ex__cite {
+    margin-top: 11px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fg-4);
+  }
+
+  /* ---- reducerad rörelse + responsivt ---- */
+  @media (prefers-reduced-motion: reduce) {
+    .agent-card__arrow { transition: none; }
+  }
+  @media (max-width: 560px) {
+    /* En ren enkolumn på små skärmar (undviker överflöd från grid-track-min) */
+    .agent-grid { grid-template-columns: 1fr; margin-top: 40px; }
+    .agent-card { min-height: 0; padding: 24px; }
+  }
+  @media (max-width: 520px) {
+    .lb { padding: 14px; }
+    .lb__content { padding: 24px; }
+  }
+</style>
+
+<script>
+  // AI per avdelning — FLIP-lightbox + flikar, tillgänglig vanilla-JS.
+  // Kortet öppnar en dialog; kortets yta morfar (FLIP) upp till lightboxens yta.
+  // Esc/backdrop stänger, fokus fångas i dialogen och återlämnas till kortet.
+  (function () {
+    const section = document.getElementById('avdelningar');
+    if (!section) return;
+
+    const dataEl = section.querySelector<HTMLScriptElement>('#aipa-agents');
+    const lb = section.querySelector<HTMLElement>('#aipa-lb');
+    const panel = lb?.querySelector<HTMLElement>('.lb__panel') ?? null;
+    const surface = lb?.querySelector<HTMLElement>('.lb__surface') ?? null;
+    const content = lb?.querySelector<HTMLElement>('.lb__content') ?? null;
+    if (!dataEl || !lb || !panel || !surface || !content) return;
+
+    interface Example { txt: string; cite?: string }
+    interface Agent { num: string; name: string; lead: string; does: string; build: string; ex: Example | null }
+
+    let agents: Agent[] = [];
+    try {
+      agents = JSON.parse(dataEl.textContent || '[]');
+    } catch {
+      return;
+    }
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const elNum = lb.querySelector<HTMLElement>('.lb__num')!;
+    const elTitle = lb.querySelector<HTMLElement>('.lb__title')!;
+    const elLead = lb.querySelector<HTMLElement>('.lb__lead')!;
+    const elDoes = lb.querySelector<HTMLElement>('[data-does]')!;
+    const elBuild = lb.querySelector<HTMLElement>('[data-build]')!;
+    const exWrap = lb.querySelector<HTMLElement>('[data-ex]')!;
+    const exTxt = lb.querySelector<HTMLElement>('[data-ex-txt]')!;
+    const exCite = lb.querySelector<HTMLElement>('[data-ex-cite]')!;
+    const closeBtn = lb.querySelector<HTMLElement>('.lb__close')!;
+    const tabs = Array.from(lb.querySelectorAll<HTMLElement>('.atabs__tab'));
+    const panels = Array.from(lb.querySelectorAll<HTMLElement>('.atabs__panel'));
+
+    let lastFocused: HTMLElement | null = null;
+
+    const selectTab = (idx: number): void => {
+      tabs.forEach((t, i) => {
+        const sel = i === idx;
+        t.classList.toggle('is-sel', sel);
+        t.setAttribute('aria-selected', sel ? 'true' : 'false');
+        t.setAttribute('tabindex', sel ? '0' : '-1');
+      });
+      panels.forEach((p, i) => { p.hidden = i !== idx; });
+    };
+
+    const populate = (a: Agent): void => {
+      elNum.textContent = a.num;
+      elTitle.textContent = a.name + '-agent';
+      elLead.textContent = a.lead;
+      elDoes.textContent = a.does;
+      elBuild.textContent = a.build;
+      if (a.ex) {
+        exWrap.classList.remove('agent-ex--neutral');
+        exTxt.textContent = a.ex.txt;
+        exCite.textContent = a.ex.cite ?? '';
+        exCite.style.display = a.ex.cite ? '' : 'none';
+      } else {
+        exWrap.classList.add('agent-ex--neutral');
+        exTxt.textContent = 'Vi lägger in konkreta exempel här när de är styrkta.';
+        exCite.textContent = '';
+        exCite.style.display = 'none';
+      }
+      selectTab(0);
+    };
+
+    const flip = (cardRect: DOMRect): void => {
+      if (reduce) return;
+      const p = panel.getBoundingClientRect();
+      const sx = cardRect.width / p.width;
+      const sy = cardRect.height / p.height;
+      const tx = cardRect.left - p.left;
+      const ty = cardRect.top - p.top;
+      surface.style.transformOrigin = 'top left';
+      surface.style.transition = 'none';
+      surface.style.transform = `translate(${tx}px, ${ty}px) scale(${sx}, ${sy})`;
+      void surface.offsetWidth; // reflow
+      surface.style.transition = 'transform 0.44s var(--ease)';
+      surface.style.transform = 'translate(0, 0) scale(1, 1)';
+
+      content.style.opacity = '0';
+      void content.offsetWidth;
+      content.style.transition = 'opacity 0.4s var(--ease) 0.06s';
+      content.style.opacity = '1';
+    };
+
+    const open = (card: HTMLElement): void => {
+      const idx = Number(card.getAttribute('data-index'));
+      const a = agents[idx];
+      if (!a) return;
+      lastFocused = card;
+      populate(a);
+      lb.hidden = false;
+      lb.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+      flip(card.getBoundingClientRect());
+      closeBtn.focus();
+    };
+
+    const close = (): void => {
+      lb.classList.remove('is-open');
+      lb.hidden = true;
+      document.body.style.overflow = '';
+      surface.style.transition = 'none';
+      surface.style.transform = 'none';
+      content.style.transition = '';
+      content.style.opacity = '';
+      if (lastFocused) {
+        lastFocused.focus();
+        lastFocused = null;
+      }
+    };
+
+    const onKey = (e: KeyboardEvent): void => {
+      if (!lb.classList.contains('is-open')) return;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        close();
+        return;
+      }
+      if (e.key === 'Tab') {
+        const focusables = Array.from(
+          panel.querySelectorAll<HTMLElement>('button, [href], [tabindex]:not([tabindex="-1"])'),
+        ).filter((el) => !el.hasAttribute('hidden') && el.offsetParent !== null);
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    const cards = Array.from(
+      section.querySelectorAll<HTMLElement>('.agent-card:not(.agent-card--soon)'),
+    );
+    cards.forEach((card) => card.addEventListener('click', () => open(card)));
+
+    lb.querySelectorAll<HTMLElement>('[data-close]').forEach((b) =>
+      b.addEventListener('click', close),
+    );
+
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => selectTab(i));
+      t.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        e.preventDefault();
+        const next = e.key === 'ArrowRight' ? (i + 1) % tabs.length : (i - 1 + tabs.length) % tabs.length;
+        selectTab(next);
+        tabs[next].focus();
+      });
+    });
+
+    document.addEventListener('keydown', onKey);
+
+    // Reveal-on-scroll
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) {
+            en.target.classList.add('in');
+            io.unobserve(en.target);
+          }
+        });
+      },
+      { threshold: 0.15 },
+    );
+    section.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+
+    // Städa upp vid View Transitions-navigering
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        document.removeEventListener('keydown', onKey);
+        document.body.style.overflow = '';
+        io.disconnect();
+      },
+      { once: true },
+    );
+  })();
+</script>

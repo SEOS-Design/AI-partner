@@ -31,12 +31,12 @@
 
     <!-- Spline-gubbe som följer muspekaren. Fyller hela scenen så att kameran
     centreras och muspåverkan täcker hela sektionen. -->
-    <div class="orbit-core orbit-core--spline">
+    <!-- <div class="orbit-core orbit-core--spline">
       <span class="orbit-core__halo" aria-hidden="true"></span>
       <spline-viewer
         url="https://prod.spline.design/fP0LH65i8bXQDQjZ/scene.splinecode"
         loading-anim-type="none"></spline-viewer>
-    </div>
+    </div> -->
 
     <!-- Orbiterande chips — JS sätter transform varje frame.
          data-r = radieandel av scenens bredd (0–1)
@@ -222,14 +222,14 @@
   .orbit {
     position: relative;
     overflow: hidden;
-    padding: 96px 0 110px;
+    padding: var(--section-py) 0;
     background: var(--bg);
   }
 
   .container {
-    max-width: 1200px;
+    max-width: var(--maxw-content);
     margin-inline: auto;
-    padding-inline: 24px;
+    padding-inline: var(--space-5);
     width: 100%;
   }
 
@@ -244,9 +244,9 @@
     align-items: center;
     gap: 8px;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: var(--fs-eyebrow);
     font-weight: 600;
-    letter-spacing: 0.16em;
+    letter-spacing: var(--tracking-eyebrow);
     text-transform: uppercase;
     color: var(--fg-3);
     margin-bottom: 18px;
@@ -260,16 +260,16 @@
 
   .orbit-title {
     font-family: var(--font-sans);
-    font-size: clamp(48px, 3.4vw, 40px);
+    font-size: var(--fs-h2);
     font-weight: 600;
-    line-height: 1.1;
-    letter-spacing: -0.01em;
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-tight);
     color: var(--fg-1);
   }
 
   .orbit-sub {
     margin-top: 14px;
-    font-size: var(--text-size-base);
+    font-size: var(--fs-lead);
     color: var(--fg-3);
     max-width: 380px;
     line-height: 1.6;
@@ -309,6 +309,7 @@
   /* Storlek = innersta ringen (62 % av scenen). Centrad absolut;
      overflow:hidden klipper canvasen till cirkeln.
      Mustrackning för hela scenen sköts via JS-relay i skriptet. */
+  /*
   .orbit-core--spline {
     position: absolute;
     top: 50%;
@@ -328,7 +329,8 @@
   }
 
   /*Mjukt bakgrundsljus bakom gubben */
-  /* .orbit-core__halo {
+  
+   .orbit-core__halo {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -422,13 +424,13 @@
     left: 50%;
     transform: translateX(-50%);
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: var(--fs-micro);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--fg-3);
     white-space: nowrap;
     padding: 3px 8px;
-    border-radius: 2px;
+    border-radius: var(--radius-xs);
     background: rgba(10, 10, 10, 0.5);
     transition:
       color 0.2s,
@@ -484,13 +486,13 @@
 
   .orbit-cta__txt {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: var(--fs-eyebrow);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--fg-3);
     background: rgba(10, 10, 10, 0.6);
     padding: 4px 10px;
-    border-radius: 2px;
+    border-radius: var(--radius-xs);
     backdrop-filter: blur(4px);
   }
 
@@ -502,10 +504,10 @@
     padding: 13px 28px;
     font-family: var(--font-mono);
     font-weight: 600;
-    font-size: 12px;
-    letter-spacing: 0.09em;
+    font-size: var(--text-size-small);
+    letter-spacing: var(--tracking-button);
     text-transform: uppercase;
-    border-radius: 2px;
+    border-radius: var(--radius-xs);
     border: 1px solid transparent;
     text-decoration: none;
     transition:
@@ -542,6 +544,7 @@
 
 <script>
   // Ladda Spline viewer web component en gång (idempotent)
+  /*
   if (!document.querySelector("script[data-spline]")) {
     const s = document.createElement("script");
     s.type = "module";
@@ -550,7 +553,7 @@
     s.dataset.spline = "";
     document.head.appendChild(s);
   }
-
+ */
   // Orbit-animation: positionerar varje chip på sin cirkel varje frame.
   // Chipsen roteras aldrig — logotyp och namn alltid upprätta och läsbara.
   // Hovra pausar rörelsen; prefers-reduced-motion fryser vid startposition.
@@ -642,88 +645,88 @@
   // X klampad till [0.15, 0.85] — extremvärden triggar felanimation i scenen.
   // bubbles:false förhindrar att eventen bubblar tillbaka till #orbit-stage
   // och skapar en oändlig loop.
-  (function () {
-    const stage  = document.getElementById("orbit-stage");
-    const viewer = stage?.querySelector<any>("spline-viewer");
-    if (!stage || !viewer) return;
+  // (function () {
+  //   const stage  = document.getElementById("orbit-stage");
+  //   const viewer = stage?.querySelector<any>("spline-viewer");
+  //   if (!stage || !viewer) return;
 
-    let canvas: HTMLCanvasElement | null = null;
-    const getCanvas = (): HTMLCanvasElement | null =>
-      canvas ?? (canvas = viewer.shadowRoot?.querySelector("canvas") ?? null);
+  //   let canvas: HTMLCanvasElement | null = null;
+  //   const getCanvas = (): HTMLCanvasElement | null =>
+  //     canvas ?? (canvas = viewer.shadowRoot?.querySelector("canvas") ?? null);
 
-    const sendToCanvas = (type: string, clientX: number, clientY: number): void => {
-      const cv = getCanvas();
-      if (!cv) return;
-      cv.dispatchEvent(new PointerEvent(type, {
-        bubbles: false, cancelable: true,
-        clientX, clientY,
-        pointerId: 1, pointerType: "mouse",
-      }));
-    };
+  //   const sendToCanvas = (type: string, clientX: number, clientY: number): void => {
+  //     const cv = getCanvas();
+  //     if (!cv) return;
+  //     cv.dispatchEvent(new PointerEvent(type, {
+  //       bubbles: false, cancelable: true,
+  //       clientX, clientY,
+  //       pointerId: 1, pointerType: "mouse",
+  //     }));
+  //   };
 
-    const relay = (e: PointerEvent): void => {
-      const cv = getCanvas();
-      if (!cv) return;
-      const sr = stage.getBoundingClientRect();
-      const cr = cv.getBoundingClientRect();
+  //   const relay = (e: PointerEvent): void => {
+  //     const cv = getCanvas();
+  //     if (!cv) return;
+  //     const sr = stage.getBoundingClientRect();
+  //     const cr = cv.getBoundingClientRect();
 
-      // X: normalisera över scenens bredd, klamma till [0.15, 0.85]
-      const rawX = (e.clientX - sr.left) / sr.width;
-      const nx = 0.15 + Math.max(0, Math.min(1, rawX)) * 0.7;
+  //     // X: normalisera över scenens bredd, klamma till [0.15, 0.85]
+  //     const rawX = (e.clientX - sr.left) / sr.width;
+  //     const nx = 0.15 + Math.max(0, Math.min(1, rawX)) * 0.7;
 
-      // Y: normalisera över scenens höjd → önskad ps_y.
-      // LookAt-handlens neutralpunkt: ps_y=0.5 → pointerWorld.y=0 → identity
-      // quaternion = exakt robotens viloläge. Verifierat via Spline-inspektion:
-      //   idle state:  pointerWorld.y=0  (Splines oinit. state = neutral)
-      //   ps_y=0.5 → pointerWorld.y=0   → rakt fram, ingen rotation ✓
-      //   ps_y>0.5  → pointerWorld.y>0  → tittar uppåt (tilt:up)
-      //   ps_y<0.5  → pointerWorld.y<0  → tittar nedåt
-      const rawY = (e.clientY - sr.top) / sr.height;
-      const ps_y = Math.max(0.1, Math.min(0.9, (0.5 - rawY) * 0.6 + 0.5));
+  //     // Y: normalisera över scenens höjd → önskad ps_y.
+  //     // LookAt-handlens neutralpunkt: ps_y=0.5 → pointerWorld.y=0 → identity
+  //     // quaternion = exakt robotens viloläge. Verifierat via Spline-inspektion:
+  //     //   idle state:  pointerWorld.y=0  (Splines oinit. state = neutral)
+  //     //   ps_y=0.5 → pointerWorld.y=0   → rakt fram, ingen rotation ✓
+  //     //   ps_y>0.5  → pointerWorld.y>0  → tittar uppåt (tilt:up)
+  //     //   ps_y<0.5  → pointerWorld.y<0  → tittar nedåt
+  //     const rawY = (e.clientY - sr.top) / sr.height;
+  //     const ps_y = Math.max(0.1, Math.min(0.9, (0.5 - rawY) * 0.6 + 0.5));
 
-      // Splines formel: ps_y = (scrollY + cr.top + cr.height − clientY) / cr.height
-      // Inverterad: clientY = scrollY + cr.top + cr.height − ps_y * cr.height
-      const fakeY = window.scrollY + cr.top + cr.height - ps_y * cr.height;
+  //     // Splines formel: ps_y = (scrollY + cr.top + cr.height − clientY) / cr.height
+  //     // Inverterad: clientY = scrollY + cr.top + cr.height − ps_y * cr.height
+  //     const fakeY = window.scrollY + cr.top + cr.height - ps_y * cr.height;
 
-      sendToCanvas("pointermove",
-        cr.left + nx * cr.width,
-        fakeY,
-      );
-    };
+  //     sendToCanvas("pointermove",
+  //       cr.left + nx * cr.width,
+  //       fakeY,
+  //     );
+  //   };
 
-    const onEnter = (): void => {
-      const cv = getCanvas();
-      if (!cv) return;
-      const cr = cv.getBoundingClientRect();
-      // ps_y=0.5 → pointerWorld.y=0 = idle-neutral, ingen synlig rörelse vid hover-start
-      sendToCanvas("pointerenter",
-        cr.left + cr.width / 2,
-        window.scrollY + cr.top + cr.height * 0.5,
-      );
-    };
+  //   const onEnter = (): void => {
+  //     const cv = getCanvas();
+  //     if (!cv) return;
+  //     const cr = cv.getBoundingClientRect();
+  //     // ps_y=0.5 → pointerWorld.y=0 = idle-neutral, ingen synlig rörelse vid hover-start
+  //     sendToCanvas("pointerenter",
+  //       cr.left + cr.width / 2,
+  //       window.scrollY + cr.top + cr.height * 0.5,
+  //     );
+  //   };
 
-    const onLeave = (): void => {
-      const cv = getCanvas();
-      if (!cv) return;
-      const cr = cv.getBoundingClientRect();
-      sendToCanvas("pointerleave",
-        cr.left + cr.width / 2,
-        window.scrollY + cr.top + cr.height * 0.5,
-      );
-    };
+  //   const onLeave = (): void => {
+  //     const cv = getCanvas();
+  //     if (!cv) return;
+  //     const cr = cv.getBoundingClientRect();
+  //     sendToCanvas("pointerleave",
+  //       cr.left + cr.width / 2,
+  //       window.scrollY + cr.top + cr.height * 0.5,
+  //     );
+  //   };
 
-    stage.addEventListener("pointerenter", onEnter);
-    stage.addEventListener("pointerleave", onLeave);
-    stage.addEventListener("pointermove",  relay, { passive: true });
+  //   stage.addEventListener("pointerenter", onEnter);
+  //   stage.addEventListener("pointerleave", onLeave);
+  //   stage.addEventListener("pointermove",  relay, { passive: true });
 
-    document.addEventListener(
-      "astro:before-swap",
-      () => {
-        stage.removeEventListener("pointerenter", onEnter);
-        stage.removeEventListener("pointerleave", onLeave);
-        stage.removeEventListener("pointermove",  relay);
-      },
-      { once: true },
-    );
-  })();
+  //   document.addEventListener(
+  //     "astro:before-swap",
+  //     () => {
+  //       stage.removeEventListener("pointerenter", onEnter);
+  //       stage.removeEventListener("pointerleave", onLeave);
+  //       stage.removeEventListener("pointermove",  relay);
+  //     },
+  //     { once: true },
+  //   );
+  // })();
 </script>

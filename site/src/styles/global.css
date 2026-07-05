@@ -1,6 +1,11 @@
 /* =============================================================
    AI Partner — globala stilar
-   Importeras i Layout.astro. Innehåller fonter, tokens och resets.
+   Importeras i Layout.astro. Innehåller fonter, design-tokens,
+   resets och opt-in typografi-hjälpklasser.
+
+   Token-uppsättningen är projektets "source of truth". Använd
+   variablerna i komponenternas scoped <style> (särskilt --fs-*
+   för fluid typografi) så blir mobilanpassningen central och enkel.
    ============================================================= */
 
 /* Mona Sans (GitHubs variabla grotesque). Pinnas till Narrow-bredden
@@ -11,38 +16,111 @@
    Design tokens
 --------------------------------------------------------------- */
 :root {
-  /* Bakgrunder */
-  --bg: #0a0a0a;
-  --bg-raised: #101010;
+  /* --- Bakgrunder: skiktade nästan-svarta --- */
+  --bg: #0a0a0a; /* sidans canvas */
+  --bg-raised: #101010; /* kort, upphöjda ytor */
+  --bg-inset: #060606; /* brunnar, kodblock, footer */
 
-  /* Text: fyra nivåer */
-  --fg-1: #ffffff;
-  --fg-2: #e6e6e6;
-  --fg-3: #8f8f8f;
-  --fg-4: rgba(255, 255, 255, 0.3);
+  /* --- Text: fyra nivåer --- */
+  --fg-1: #ffffff; /* rubriker, maxkontrast */
+  --fg-2: #e6e6e6; /* brödtext på mörkt */
+  --fg-3: #8f8f8f; /* dämpad/sekundär, eyebrows */
+  --fg-4: rgba(255, 255, 255, 0.3); /* svaga etiketter, meta */
 
-  /* Accent: gråskala — ingen kromatisk färg (matchar seosdesign.se) */
-  --accent: #e6e6e6;
-  --accent-hover: #ffffff;
-  --accent-ink: #0a0a0a;
+  /* --- Accent: gråskala — ingen kromatisk färg (matchar seosdesign.se) --- */
+  --accent: #e6e6e6; /* ljusgrå — primär fyllning/highlight */
+  --accent-hover: #ffffff; /* ljusnar till vitt vid hover */
+  --accent-press: #bdbdbd; /* mörkare grå vid tryck */
+  --accent-ink: #0a0a0a; /* mörk text/ikon PÅ ljus fyllning */
+  --accent-glow: rgba(255, 255, 255, 0.05); /* svagt vitt fokusljus */
+  --accent-faint: rgba(255, 255, 255, 0.1); /* tintfyllning, fokusringar */
 
-  /* Kantlinjer */
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.18);
-  --grid-line: rgba(255, 255, 255, 0.03);
+  /* --- Kantlinjer: tunn vit vid låg alfa --- */
+  --border: rgba(255, 255, 255, 0.08); /* standard hårstreck */
+  --border-strong: rgba(255, 255, 255, 0.18); /* hörn, betoning */
+  --grid-line: rgba(255, 255, 255, 0.03); /* bakgrundsrutnät */
 
-  /* Typsnitt */
+  /* --- Semantisk status (används sällan; låg kroma) --- */
+  --ok: #cfcfcf;
+  --warn: #e2b341;
+  --error: #e5484d;
+
+  /* --- Fokusring (WCAG 2.1 AA — synlig, ljusgrå på mörkt) --- */
+  --focus-ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+
+  /* --- Typsnitt --- */
   --font-sans: "Mona Sans", "Helvetica Neue", Arial, system-ui, sans-serif;
+  /* Tekniska etiketter/eyebrows/knappar använder samma typsnitt (versaler +
+     tracking), så --font-mono pekar också på Mona Sans. --font-code är
+     äkta monospace, endast för kodsnuttar. */
   --font-mono: var(--font-sans);
   --font-code: "SF Mono", "Fira Code", ui-monospace, monospace;
+
+  /* --- Fluid type-skala (clamp: min, preferens, max) ---
+     Använd dessa istället för hårdkodade px så skalar allt mjukt ner
+     mot mobil av sig självt. */
+  --fs-display: clamp(44px, 7.5vw, 84px); /* hero H1 */
+  --fs-h1: clamp(36px, 5vw, 60px);
+  --fs-h2: clamp(28px, 3.4vw, 40px);
+  --fs-h3: clamp(20px, 2vw, 26px);
+  --fs-lead: clamp(16px, 1.8vw, 19px); /* ingress */
+  --fs-body: 16px;
+  --fs-small: 14px;
+  --fs-eyebrow: 11px; /* eyebrow-etiketter */
+  --fs-micro: 10px; /* meta, små captions */
+
+  /* Legacy-alias (används i Robot.astro) — behålls för bakåtkompatibilitet */
   --text-size-base: 16px;
   --text-size-large: 20px;
   --text-size-small: 12px;
   --text-size-xl: 24px;
 
-  /* Rörelse */
-  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  /* --- Radavstånd --- */
+  --lh-display: 1.04;
+  --lh-heading: 1.1;
+  --lh-body: 1.7;
+
+  /* --- Teckenspärr (tracking) --- */
+  --tracking-display: -0.03em; /* rubriker knyts ihop */
+  --tracking-tight: -0.01em;
+  --tracking-eyebrow: 0.16em; /* versaletikett vidgas */
+  --tracking-button: 0.09em;
+
+  /* --- Spacing-skala --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  /* --- Radier --- */
+  --radius-xs: 2px; /* knappar, chips, inputs — husets radie */
+  --radius-sm: 4px;
+  --radius-md: 6px; /* kort */
+  --radius-lg: 10px; /* stora paneler */
+
+  /* --- Max-bredder --- */
+  --maxw-text: 640px; /* läsbar radlängd */
+  --maxw-content: 1100px; /* huvudkolumn */
+
+  /* --- Sektionsrytm: fluid vertikal padding, delas av alla sektioner --- */
+  --section-py: clamp(72px, 8vw, 112px);
+
+  /* --- Elevation --- */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.55);
+  --shadow-glow: 0 0 0 1px var(--accent-faint), 0 0 32px var(--accent-glow);
+
+  /* --- Rörelse --- */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1); /* standard — ingen studs */
   --dur-fast: 0.18s;
+  --dur-mid: 0.6s;
+  --dur-slow: 12s; /* ambient scanline-loop */
 }
 
 /* ---------------------------------------------------------------
@@ -66,7 +144,7 @@ body {
   font-family: var(--font-sans);
   background: var(--bg);
   color: var(--fg-2);
-  line-height: 1.6;
+  line-height: var(--lh-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -79,4 +157,124 @@ img,
 svg {
   display: block;
   max-width: 100%;
+}
+button {
+  font: inherit;
+  cursor: pointer;
+}
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-xs);
+}
+
+/* ---------------------------------------------------------------
+   Typografi-hjälpklasser (opt-in)
+   Sätt klassen på ett element för att ärva design-systemets typografi
+   utan att upprepa reglerna i varje komponent. Alla bygger på --fs-*,
+   så de skalar fluid mot mobil automatiskt.
+--------------------------------------------------------------- */
+.display {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--fs-display);
+  line-height: var(--lh-display);
+  letter-spacing: var(--tracking-display);
+  color: var(--fg-1);
+}
+.h1 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--fs-h1);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--tracking-display);
+  color: var(--fg-1);
+}
+.h2 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--fs-h2);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-1);
+}
+.h3 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--fs-h3);
+  line-height: 1.25;
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-1);
+}
+.lead {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--fs-lead);
+  line-height: var(--lh-body);
+  color: var(--fg-3);
+}
+.body {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--fg-2);
+  text-wrap: pretty;
+}
+.small {
+  font-size: var(--fs-small);
+  line-height: 1.6;
+  color: var(--fg-3);
+}
+
+/* Eyebrow — den numrerade signaturetiketten, t.ex.  (02) — AI PER AVDELNING */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: var(--fs-eyebrow);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+.eyebrow .num {
+  color: var(--fg-2);
+}
+.eyebrow .sep {
+  color: var(--border-strong);
+}
+
+/* Mono meta — små versala tekniska captions/footer-rader */
+.meta {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: var(--fs-micro);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-4);
+}
+
+/* Inline-kod/data — enda stället äkta monospace används */
+.code {
+  font-family: var(--font-code);
+  font-stretch: normal;
+  font-size: 0.9em;
+  color: var(--fg-2);
+}
+
+/* ---------------------------------------------------------------
+   Layout-hjälpklasser (opt-in)
+--------------------------------------------------------------- */
+.container {
+  max-width: var(--maxw-content);
+  margin-inline: auto;
+  padding-inline: var(--space-5);
+  width: 100%;
+}
+.section {
+  position: relative;
+  padding: var(--section-py) 0;
 }

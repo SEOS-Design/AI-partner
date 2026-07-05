@@ -2,3 +2,15 @@ node_modules
 .env
 dist
 .astro
+
+# Tooling / lokalt
+.claude/
+.playwright-mcp/
+/bash.exe.stackdump
+
+# Screenshots & engångsexporter (behåll lokalt, versionera inte)
+/clean-*.png
+/AI per avdelning (standalone).html
+
+# Design-handoff (referens, ej del av sajten)
+/AI Partner Design System-handoff/

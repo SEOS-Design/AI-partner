@@ -1,0 +1,22 @@
+---
+// Arrow.astro – delad pil-ikon (diagonal upp-höger) för knappar och länkar.
+// Ärver textfärg via currentColor och storlek (1em) via .icon-arrow i
+// global.css. Skicka in `class` för hover-/animationskrokar per kontext
+// (t.ex. "arrow" eller "agent-card__arrow") — samma beteende som förr.
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<svg
+  class:list={['icon-arrow', className]}
+  viewBox="0 0 24 24"
+  fill="currentColor"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path
+    d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"
+  ></path>
+</svg>

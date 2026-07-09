@@ -1,0 +1,164 @@
+---
+// Footer.astro – minimalistisk footer. Stora ordmärket som avslutande signatur
+// allra längst ner (stil oförändrad, bara placering). Länkarna pekar på egna
+// (planerade) undersidor enligt strategins tre lager + Nav:s sidor — inte
+// startsidans sektionsankare. Slugs speglar Nav-konventionen (/om-oss,
+// /kunskapsbank) och bör bekräftas mot Douglas/SEOS slutgiltiga URL-plan.
+
+const sections: [string, string][] = [
+  ['AI per avdelning', '/ai-per-avdelning'],
+  ['Så börjar ni', '/sa-borjar-ni'],
+  ['Rådgivning', '/radgivning'],
+  ['Om oss', '/om-oss'],
+  ['Kunskapsbank', '/kunskapsbank'],
+];
+---
+
+<footer class="foot2">
+  <div class="container">
+    <div class="foot2__top">
+      <div class="foot2__brand">
+        <span class="mark">AI<span class="mid">·</span>PARTNER</span>
+        <p class="foot2__tag">
+          AI-automatisering, RPA, agenter och RAG-system. Vi bygger AI som gör jobbet —
+          och tar ansvar från strategi till driftsatt lösning.
+        </p>
+      </div>
+
+      <nav class="foot2__col" aria-label="Sidan">
+        <span class="meta foot2__colhd">Sidan</span>
+        {sections.map(([label, href]) => <a href={href}>{label}</a>)}
+      </nav>
+
+      <nav class="foot2__col" aria-label="Mer">
+        <span class="meta foot2__colhd">Mer</span>
+        <a href="/kontakt">Kontakt</a>
+        <a href="https://seosdesign.se" target="_blank" rel="noopener noreferrer">Systerbolag: SEOS ↗</a>
+      </nav>
+    </div>
+
+    <div class="foot2__bottom">
+      <span class="foot2__status meta"><span class="dot"></span> Bygger i Sverige — aipartner.se</span>
+      <span class="meta">© 2026 AI Partner · Systerbolag till SEOS Design</span>
+    </div>
+
+    <div class="foot2__wordmark" aria-hidden="true">AIPARTNER</div>
+  </div>
+</footer>
+
+<style>
+  /* ingen topplinje mot ljusbågen (friare avslut) */
+  .foot2 {
+    background: var(--bg);
+    padding: var(--space-6) 0 var(--space-5);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .foot2__top {
+    display: grid;
+    grid-template-columns: 1.7fr 1fr 1fr;
+    gap: 40px;
+  }
+  .foot2__brand .mark {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  .foot2__brand .mark .mid {
+    color: var(--accent);
+  }
+  .foot2__tag {
+    margin-top: 16px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--fg-3);
+    max-width: 300px;
+  }
+  .foot2__col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .foot2__colhd {
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+  .foot2__col a {
+    font-size: 16px;
+    color: var(--fg-3);
+    transition: color var(--dur-fast) var(--ease);
+    width: fit-content;
+  }
+  .foot2__col a:hover {
+    color: #fff;
+  }
+
+  /* meta-raden (status + copyright) ovanför den sista linjen */
+  .foot2__bottom {
+    margin-top: var(--space-6);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .foot2__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--fg-2);
+    position: relative;
+  }
+  .dot::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 1px solid var(--border-strong);
+  }
+
+  /* stora ordmärket — avslutande signatur allra längst ner, enda elementet under
+     den sista linjen. Stilen är oförändrad; bara placeringen. */
+  .foot2__wordmark {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(76px, 19vw, 290px);
+    line-height: 0.82;
+    letter-spacing: -0.045em;
+    white-space: nowrap;
+    text-align: center;
+    user-select: none;
+    pointer-events: none;
+    margin: var(--space-5) 0 -0.06em;
+    border-top: 1px solid var(--border);
+    padding-top: var(--space-5);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.085) 0%, rgba(255, 255, 255, 0.02) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  @media (max-width: 900px) {
+    .foot2__top {
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+    .foot2__brand {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 560px) {
+    .foot2__top {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

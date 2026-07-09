@@ -1,21 +1,25 @@
 ---
+// Nav.astro – flytande navbar. Transparent över hero; morfar till en frostad
+// glas-pill vid scroll (samma glas-språk som hero-CTA:erna). Wordmark i hero-
+// H1:ans stil. Länkarna är planerade egna sidor (Om Oss, Kunskapsbank) + Kontakt.
+// Aktivt-läge är route-baserat (highlightar länken vars href matchar sidans path).
 const links = [
-  { href: "#tjanster", label: "Tjänster" },
-  { href: "#faq", label: "FAQ" },
-  { href: "#kontakt", label: "Kontakt" },
+  { href: '/om-oss', label: 'Om Oss' },
+  { href: '/kunskapsbank', label: 'Kunskapsbank' },
+  { href: '#kontakt', label: 'Kontakt' },
 ];
+const path = Astro.url.pathname;
+const isActive = (href: string) => href.startsWith('/') && path === href;
 ---
 
-<header id="main-nav" class="nav-default">
-  <div class="container nav-container">
-    <a href="#top" class="logo">
-      AI<span>·</span>PARTNER
-    </a>
+<header id="main-nav" class="nav">
+  <div class="navwrap">
+    <a class="wordmark" href="#top" aria-label="AI Partner — till toppen">AI PARTNER</a>
 
-    <nav class="nav-desktop">
+    <nav class="nlinks nav-desktop" aria-label="Primär">
       {
         links.map((l) => (
-          <a href={l.href} class="nav-link">
+          <a class:list={['nlink', { 'is-active': isActive(l.href) }]} href={l.href}>
             {l.label}
           </a>
         ))
@@ -23,140 +27,235 @@ const links = [
     </nav>
 
     <button
-      id="mobile-toggle"
-      aria-label="Meny"
-      aria-expanded="false"
       class="nav-toggle"
+      aria-label="Öppna meny"
+      aria-expanded="false"
+      aria-controls="drawer"
+      data-menu-open
     >
-      <span class="line"></span>
-      <span class="line"></span>
-      <span class="line"></span>
+      <span></span><span></span><span></span>
     </button>
-  </div>
-
-  <div id="mobile-drawer" class="nav-mobile">
-    <div class="container drawer-container">
-      {
-        links.map((l) => (
-          <a href={l.href} class="drawer-link">
-            {l.label}
-          </a>
-        ))
-      }
-      <a class="btn btn-primary btn-drawer" href="#kontakt"
-        >Kontakt <span class="arrow">→</span></a
-      >
-    </div>
   </div>
 </header>
 
+<!-- Mobil-drawer -->
+<div class="drawer-scrim" data-menu-close></div>
+<aside class="drawer" id="drawer" aria-label="Meny" aria-hidden="true">
+  <div class="drawer__hd">
+    <a class="wordmark" href="#top" data-menu-close>AI Partner</a>
+    <button class="drawer__close" aria-label="Stäng meny" data-menu-close>✕</button>
+  </div>
+  <nav class="drawer__links" aria-label="Meny">
+    {
+      links.map((l) => (
+        <a class:list={[{ 'is-active': isActive(l.href) }]} href={l.href} data-menu-close>
+          {l.label}
+        </a>
+      ))
+    }
+  </nav>
+</aside>
+
 <style>
-  header {
+  /* ══ Navbar ══
+     Topp: helt transparent. Vid scroll: flytande frostad glas-pill. */
+  .nav {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 50;
-    border-bottom: 1px solid transparent;
-    background: transparent;
-    transition:
-      background 0.3s var(--ease),
-      border-color 0.3s var(--ease);
+    z-index: 100;
+    padding: 14px 24px;
+    transition: padding var(--dur-mid) var(--ease);
   }
-
-  /* Klassen som JavaScriptet lägger till vid scroll */
-  header.is-scrolled {
-    border-bottom: 1px solid var(--border);
-    background: rgba(10, 10, 10, 0.72);
-    backdrop-filter: blur(10px);
-  }
-
-  /* .container (global) ger max-bredd + inline-padding; här bara nav-layouten */
-  .nav-container {
+  .navwrap {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: var(--space-8);
+    gap: 24px;
+    padding: 10px 6px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: transparent;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    transition:
+      padding var(--dur-mid) var(--ease),
+      background var(--dur-mid) var(--ease),
+      border-color var(--dur-mid) var(--ease),
+      box-shadow var(--dur-mid) var(--ease),
+      backdrop-filter var(--dur-mid) var(--ease);
+  }
+  .nav.scrolled {
+    padding-top: 12px;
+  }
+  .nav.scrolled .navwrap {
+    padding: 11px 24px;
+    background: linear-gradient(180deg, rgba(20, 22, 26, 0.66), rgba(12, 13, 17, 0.72));
+    border-color: var(--border-strong);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.07),
+      0 14px 40px rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(16px) saturate(1.15);
+    backdrop-filter: blur(16px) saturate(1.15);
   }
 
-  .logo {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-family: var(--font-mono);
-    font-size: var(--text-size-xl);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+  /* wordmark — ren "AI Partner" i hero-H1:ans stil (Mona Sans 700, ingen prick) */
+  .wordmark {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.03em;
     color: var(--fg-1);
-    text-decoration: none;
-  }
-  .logo span {
-    color: var(--accent);
+    white-space: nowrap;
   }
 
-  .nav-desktop {
+  .nlinks {
     display: flex;
     align-items: center;
-    gap: var(--space-7);
+    gap: 32px;
   }
-  .nav-link {
-    font-family: var(--font-mono);
-    font-size: var(--text-size-base);
+  .nlink {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 14px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--fg-3);
+    padding: 6px 0;
     transition: color var(--dur-fast) var(--ease);
-    text-decoration: none;
+  }
+  .nlink:hover,
+  .nlink.is-active {
+    color: var(--fg-1);
+  }
+  .nlink:focus-visible {
+    outline: none;
+    color: var(--fg-1);
+    box-shadow: var(--focus-ring);
+    border-radius: var(--radius-xs);
   }
 
+  /* hamburger */
   .nav-toggle {
     display: none;
-    background: none;
-    border: none;
     flex-direction: column;
     gap: 5px;
-    padding: var(--space-2);
+    justify-content: center;
+    align-items: center;
+    width: 42px;
+    height: 42px;
+    background: none;
+    border: none;
     cursor: pointer;
+    border-radius: var(--radius-xs);
   }
-  .line {
-    width: 22px;
+  .nav-toggle span {
+    width: 20px;
     height: 1.5px;
     background: var(--fg-1);
+    border-radius: 2px;
     transition:
-      transform 0.25s,
-      opacity 0.2s;
+      transform 0.28s var(--ease),
+      opacity 0.2s var(--ease);
+  }
+  .nav-toggle[aria-expanded='true'] span:nth-child(1) {
+    transform: translateY(6.5px) rotate(45deg);
+  }
+  .nav-toggle[aria-expanded='true'] span:nth-child(2) {
+    opacity: 0;
+  }
+  .nav-toggle[aria-expanded='true'] span:nth-child(3) {
+    transform: translateY(-6.5px) rotate(-45deg);
+  }
+  .nav-toggle:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
   }
 
-  .nav-mobile {
-    overflow: hidden;
-    max-height: 0;
-    transition: max-height 0.35s var(--ease);
-    background: rgba(10, 10, 10, 0.96);
+  /* ══ Mobil-drawer (glas) ══ */
+  .drawer-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.3s var(--ease),
+      visibility 0.3s;
   }
-  /* Klassen som JavaScriptet lägger till vid klick */
-  .nav-mobile.is-open {
-    max-height: 320px;
-    border-top: 1px solid var(--border);
+  :global(body.menu-open) .drawer-scrim {
+    opacity: 1;
+    visibility: visible;
   }
-
-  .drawer-container {
-    padding-block: var(--space-4);
+  .drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 160;
+    width: min(84vw, 340px);
+    transform: translateX(100%);
+    transition: transform 0.38s var(--ease);
+    background: linear-gradient(180deg, rgba(18, 20, 24, 0.96), rgba(10, 11, 14, 0.98));
+    -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    backdrop-filter: blur(20px) saturate(1.2);
+    border-left: 1px solid var(--border-strong);
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
+    padding: 22px 22px calc(22px + env(safe-area-inset-bottom));
   }
-  .drawer-link {
-    padding: var(--space-3) 0;
-    font-family: var(--font-mono);
-    font-size: 13px;
+  :global(body.menu-open) .drawer {
+    transform: translateX(0);
+  }
+  .drawer__hd {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .drawer__links {
+    display: flex;
+    flex-direction: column;
+    margin-top: 12px;
+  }
+  .drawer__links a {
+    padding: 16px 4px;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 14px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--fg-2);
+    color: var(--fg-3);
     border-bottom: 1px solid var(--border);
-    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .drawer__links a:hover,
+  .drawer__links a.is-active {
+    color: var(--fg-1);
+  }
+  .drawer__close {
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    color: var(--fg-2);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+  }
+  .drawer__close:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
   }
 
-  @media (max-width: 768px) {
+  /* ── Tablet/mobil: dölj desktop-länkar, visa hamburger ── */
+  @media (max-width: 820px) {
     .nav-desktop {
       display: none;
     }
@@ -167,46 +266,34 @@ const links = [
 </style>
 
 <script>
-  // Vi lägger till "as HTMLElement" för att lova TypeScript att elementen är just HTML-element
-  const header = document.getElementById("main-nav") as HTMLElement;
-  const toggleBtn = document.getElementById("mobile-toggle") as HTMLElement;
-  const drawer = document.getElementById("mobile-drawer") as HTMLElement;
+  (function () {
+    const body = document.body;
+    const header = document.getElementById('main-nav');
+    const drawer = document.getElementById('drawer');
+    if (!header || !drawer) return;
 
-  // Vi kör bara koden om vi är säkra på att elementen faktiskt laddades
-  if (header && toggleBtn && drawer) {
-    // Scroll-logik
-    window.addEventListener(
-      "scroll",
-      () => {
-        if (window.scrollY > 24) {
-          header.classList.add("is-scrolled");
-        } else {
-          header.classList.remove("is-scrolled");
-        }
-      },
-      { passive: true },
-    );
+    // Transparent topp → frostad glas-pill vid scroll
+    const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 24);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
 
-    // Hamburgermeny-logik
-    toggleBtn.addEventListener("click", () => {
-      drawer.classList.toggle("is-open");
-      const isOpen = drawer.classList.contains("is-open");
-
-      // Vi gör om boolean (true/false) till en sträng för att TypeScript ska bli nöjd
-      toggleBtn.setAttribute("aria-expanded", String(isOpen));
-
-      // Vi lägger till <HTMLElement> för att berätta att noderna har en .style-egenskap
-      const lines = toggleBtn.querySelectorAll<HTMLElement>(".line");
-
-      if (isOpen) {
-        lines[0].style.transform = "translateY(6.5px) rotate(45deg)";
-        lines[1].style.opacity = "0";
-        lines[2].style.transform = "translateY(-6.5px) rotate(-45deg)";
-      } else {
-        lines[0].style.transform = "none";
-        lines[1].style.opacity = "1";
-        lines[2].style.transform = "none";
-      }
+    // Drawer öppna/stäng
+    const setMenu = (open: boolean) => {
+      body.classList.toggle('menu-open', open);
+      drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+      document.querySelectorAll<HTMLElement>('.nav-toggle').forEach((t) => {
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+        t.setAttribute('aria-label', open ? 'Stäng meny' : 'Öppna meny');
+      });
+    };
+    document
+      .querySelectorAll<HTMLElement>('[data-menu-open]')
+      .forEach((t) => t.addEventListener('click', () => setMenu(!body.classList.contains('menu-open'))));
+    document
+      .querySelectorAll<HTMLElement>('[data-menu-close]')
+      .forEach((t) => t.addEventListener('click', () => setMenu(false)));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && body.classList.contains('menu-open')) setMenu(false);
     });
-  }
+  })();
 </script>

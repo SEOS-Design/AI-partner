@@ -1,0 +1,228 @@
+---
+// FAQ.astro – sektion "Vanliga frågor" (AEO-accordion).
+// Centrerad kolumn (rubrik + frågelista mitt på sidan); svarstexten hålls
+// vänsterställd i varje rad för läsbarhet. Single-open accordion, första
+// frågan öppen som default. DS-tokens. Genererar FAQPage-strukturdata (JSON-LD)
+// så frågorna blir maskinläsbara för Google (rich results) + AI-modeller.
+
+const FAQS = [
+  {
+    q: 'Var börjar vi om vi inte vet vad AI kan göra hos oss?',
+    a: 'Med en kostnadsfri AI-kartläggning. Vi kommer ut, går igenom era processer och lämnar en prioriterad lista över var automation lönar sig — och var den inte gör det. Ni bestämmer om ni går vidare.',
+  },
+  {
+    q: 'Vad kan en AI-agent göra på min avdelning?',
+    a: 'En agent läser, beslutar och agerar i era system mot en bestämd process — svarar på kundärenden, prioriterar leads, matchar fakturor. Den byggs mot en avdelning, inte som allmän chatt, och människan äger strategin och slutkontrollen.',
+  },
+  {
+    q: 'Hur får vi AI att svara på våra egna dokument — utan att data läcker?',
+    a: 'Med ett RAG-system. Vi kopplar en språkmodell till er egen data så att svaren bygger på era dokument — korrekta, spårbara, med källa. Er data stannar hos er: EU-hosting och GDPR.',
+  },
+  {
+    q: 'Vad kostar det?',
+    a: 'Vi publicerar inga fasta priser och har inget abonnemang — varje uppdrag prissätts mot problemet, inte mot en nivåtabell. Efter kartläggningen ger vi ett konkret förslag, och vi börjar oftast avgränsat så ni ser resultatet innan ni skalar.',
+  },
+  {
+    q: 'Måste vi redan kunna AI för att börja?',
+    a: 'Nej. Vi jobbar både med er som vet exakt vad ni vill automatisera och er som inte vet var ni ska börja. Vill ni förstå först kommer vi gärna ut och föreläser. Vi jobbar med små och medelstora företag i alla branscher.',
+  },
+  {
+    q: 'Vad säger EU AI Act — får vi använda det här?',
+    a: 'För de flesta processer: ja, utan problem. Vissa användningar (t.ex. CV-gallring) klassas som högrisk och kräver extra mänsklig kontroll — vi hjälper er sätta en policy och möta regelverket innan det blir ett problem.',
+  },
+  {
+    q: 'Äger vi lösningen, eller låser ni in oss?',
+    a: 'Ni äger allt — kod, prompts och dashboards. Vi bygger, driftar och lämnar över. Ingen inlåsning.',
+  },
+];
+
+// FAQPage-strukturdata (schema.org) — AEO: maskinläsbart för sök + AI-modeller.
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQS.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+
+<section id="faq" class="section faq" aria-labelledby="faq-heading">
+  <div class="container">
+    <div class="faq-head">
+      <h2 id="faq-heading" class="h2">Det ni undrar, rakt på sak.</h2>
+    </div>
+
+    <div class="faq-list">
+      {FAQS.map((f, i) => (
+        <div class={`faq-item${i === 0 ? ' open' : ''}`}>
+          <h3 class="faq-q-wrap">
+            <button
+              class="faq-btn"
+              type="button"
+              aria-expanded={i === 0 ? 'true' : 'false'}
+              aria-controls={`faq-a-${i}`}
+            >
+              <span class="faq-q">{f.q}</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div class="faq-answer" id={`faq-a-${i}`} role="region">
+            <div class="faq-answer__inner">
+              <p class="faq-a">{f.a}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />
+</section>
+
+<style>
+  /* ---- centrerat sektionshuvud ---- */
+  .faq-head {
+    max-width: 640px;
+    margin: 0 auto 40px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .faq-head .eyebrow {
+    margin-bottom: 18px;
+  }
+
+  /* ---- centrerad frågelista (svarstext vänsterställd i raderna) ---- */
+  .faq-list {
+    max-width: 780px;
+    margin: 0 auto;
+    border-top: 1px solid var(--border);
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+  }
+  .faq-q-wrap {
+    margin: 0;
+    font: inherit;
+  }
+  .faq-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 22px 0;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+  }
+  .faq-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-radius: var(--radius-xs);
+  }
+  .faq-q {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: clamp(17px, 2vw, 20px);
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    color: var(--fg-2);
+    transition: color 0.2s var(--ease);
+  }
+  .faq-item.open .faq-q {
+    color: var(--fg-1);
+  }
+
+  /* +/− toggle: vågrätt streck alltid, lodrätt roterar bort när öppen */
+  .faq-icon {
+    position: relative;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    color: var(--accent);
+  }
+  .faq-icon::before,
+  .faq-icon::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 20px;
+    height: 1.5px;
+    background: currentColor;
+    transform: translateY(-50%);
+  }
+  .faq-icon::after {
+    transform: translateY(-50%) rotate(90deg);
+    transition: transform 0.28s var(--ease);
+  }
+  .faq-item.open .faq-icon::after {
+    transform: translateY(-50%) rotate(0deg);
+  }
+
+  /* utfällning utan clipping (grid-rows 0fr → 1fr) */
+  .faq-answer {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s var(--ease);
+  }
+  .faq-item.open .faq-answer {
+    grid-template-rows: 1fr;
+  }
+  .faq-answer__inner {
+    overflow: hidden;
+  }
+  .faq-a {
+    padding-bottom: 24px;
+    max-width: 640px;
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--fg-3);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-answer,
+    .faq-icon::after,
+    .faq-q {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // Single-open accordion. Klick öppnar en fråga och stänger övriga.
+  (function () {
+    const section = document.getElementById('faq');
+    if (!section) return;
+    const items = Array.from(section.querySelectorAll<HTMLElement>('.faq-item'));
+
+    const onClick = (e: Event): void => {
+      const btn = (e.currentTarget as HTMLElement);
+      const item = btn.closest('.faq-item') as HTMLElement | null;
+      if (!item) return;
+      const isOpen = item.classList.contains('open');
+      items.forEach((i) => {
+        i.classList.remove('open');
+        i.querySelector('.faq-btn')?.setAttribute('aria-expanded', 'false');
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    };
+
+    const buttons = Array.from(section.querySelectorAll<HTMLElement>('.faq-btn'));
+    buttons.forEach((b) => b.addEventListener('click', onClick));
+
+    document.addEventListener(
+      'astro:before-swap',
+      () => buttons.forEach((b) => b.removeEventListener('click', onClick)),
+      { once: true },
+    );
+  })();
+</script>

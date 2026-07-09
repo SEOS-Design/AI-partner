@@ -4,6 +4,7 @@
 // till en scrollbar lightbox med två flikar: "Så fungerar den" / "Exempel".
 // Design från Claude Design; portad till Astro-konventioner (scoped style,
 // vanilla JS, globala tokens i styles/global.css).
+import Arrow from './Arrow.astro';
 
 interface Example { txt: string; cite?: string }
 interface Agent {
@@ -47,7 +48,7 @@ const agents: Agent[] = [
   {
     id: 'marknad',
     num: '04',
-    name: 'Marknad',
+    name: 'Marknadsföring',
     lead: 'Bevakar marknaden och tar fram kampanj- och rubrikutkast.',
     does: 'Bevakar marknad och konkurrenter, hittar innehållsluckor och tar fram utkast till kampanjer och rubriker (A/B) — mer muskler på avdelningen utan att anställa fler.',
     build: 'Vi bygger agenten mot era källor och kanaler, definierar vad den ska bevaka och matar in er tonalitet så utkasten låter som ni. Ni sätter strategin och väljer vad som publiceras.',
@@ -66,7 +67,7 @@ const agents: Agent[] = [
     id: 'projektledning',
     num: '06',
     name: 'Projektledning',
-    lead: 'Pullar inkommande mejl, skapar tasks och påminner vid deadline.',
+    lead: 'Fångar inkommande mejl, skapar tasks och påminner vid deadline.',
     does: 'Bevakar en inkorg, skapar och tilldelar tasks i ert projektverktyg och påminner ansvarig när något närmar sig deadline — så inget faller mellan stolarna.',
     build: 'Vi kopplar agenten mot er mejl och ert projektverktyg (t.ex. Linear), sätter reglerna för hur ett mejl blir en task och vem som blir ansvarig, och låter systemet sköta påminnelserna.',
     ex: null,
@@ -77,11 +78,6 @@ const agents: Agent[] = [
 <section id="avdelningar" class="section aipa" aria-labelledby="aipa-heading">
   <div class="container">
     <div class="sec-head reveal">
-      <p class="eyebrow">
-        <span class="num">(02)</span>
-        <span class="sep">—</span>
-        AI PER AVDELNING
-      </p>
       <h2 id="aipa-heading" class="h2">Vad gör en AI-agent på just er avdelning?</h2>
       <p class="sec-head__lead">
         Vi bygger namngivna agenter mot en bestämd avdelning och process — inte en
@@ -89,7 +85,9 @@ const agents: Agent[] = [
       </p>
     </div>
 
-    <div class="agent-grid">
+    <div class="grid-wrap">
+      <div class="grid-glow" aria-hidden="true"></div>
+      <div class="agent-grid">
       {agents.map((a, i) => (
         <button
           class="agent-card reveal"
@@ -103,11 +101,12 @@ const agents: Agent[] = [
           <span class="agent-card__lead">{a.lead}</span>
           <span class="agent-card__cue">
             Se hur den fungerar
-            <span class="agent-card__arrow" aria-hidden="true">→</span>
+            <Arrow class="agent-card__arrow" />
           </span>
         </button>
       ))}
 
+      </div>
     </div>
   </div>
 
@@ -164,10 +163,13 @@ const agents: Agent[] = [
     padding-inline: var(--space-5);
     width: 100%;
   }
+  /* Raised-yta: lyfter denna kort-tunga sektion från void-sektionerna runtom
+     (subtil nivåskillnad ger rytm). Hårfina kanter delar av ytan. */
   .section {
     position: relative;
     padding: var(--section-py) 0;
-    background: var(--bg);
+    background: var(--bg-raised);
+    border-block: 1px solid var(--border);
   }
 
   /* ---- reveal-on-scroll (innehåll alltid synligt; rörelse förstärker) ---- */
@@ -234,11 +236,34 @@ const agents: Agent[] = [
   /* ============================================================
      Bento-rutnät — lika, luftiga kort (djupet bor i lightboxen)
      ============================================================ */
+  .grid-wrap {
+    position: relative;
+    margin-top: 56px;
+  }
+  /* EN bred, mjuk ljuskälla bakom HELA rutnätet — glaset plockar upp den */
+  .grid-glow {
+    position: absolute;
+    left: 50%;
+    top: 46%;
+    transform: translate(-50%, -50%);
+    width: 82%;
+    height: 78%;
+    pointer-events: none;
+    filter: blur(60px);
+    z-index: 0;
+    background: radial-gradient(
+      55% 55% at 50% 45%,
+      rgba(255, 255, 255, 0.09),
+      hsl(var(--arc-hue) 100% 60% / 0.054) 45%,
+      transparent 72%
+    );
+  }
   .agent-grid {
+    position: relative;
+    z-index: 1;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
     gap: 18px;
-    margin-top: 56px;
   }
 
   .agent-card {
@@ -247,20 +272,43 @@ const agents: Agent[] = [
     flex-direction: column;
     text-align: left;
     min-height: 210px;
-    background: linear-gradient(158deg, #181818 0%, #121212 44%, #0c0c0c 100%);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    isolation: isolate;
     border-radius: 22px;
     padding: 28px;
     cursor: pointer;
+    /* Glas-look ("Tydligare") utan LIVE backdrop-filter: den kostade en om-
+       suddning per scroll-frame × 6 kort (= scroll-lagg) för nästan noll vinst,
+       eftersom bakgrunden bakom korten är statisk. Genomskinlig bas släpper in
+       grid-glöden → samma glasiga känsla, men billigt och scroll-smooth. */
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.09), transparent 32%),
+      linear-gradient(180deg, rgba(26, 29, 35, 0.72), rgba(14, 16, 21, 0.82));
+    border: 1px solid rgba(255, 255, 255, 0.14);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.05),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.45),
-      0 20px 44px -20px rgba(0, 0, 0, 0.92),
-      0 6px 16px -10px rgba(0, 0, 0, 0.8);
-    transition:
-      transform 0.35s var(--ease),
-      box-shadow 0.35s var(--ease),
-      border-color 0.35s var(--ease);
+      inset 0 1px 0 rgba(255, 255, 255, 0.28),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+      0 12px 30px rgba(0, 0, 0, 0.42);
+    /* Endast billiga (kompositor-vänliga) egenskaper animeras — INGEN transform
+       eller box-shadow, som tvingar frostat glas att räkna om suddningen varje
+       frame och gör hovern laggig. */
+    transition: border-color 0.22s var(--ease);
+  }
+  /* azur-glöd som blommar BAKOM det hovrade kortet (viloläge lugnt → liv vid hover) */
+  .agent-card::before {
+    content: "";
+    position: absolute;
+    inset: -30px;
+    z-index: -1;
+    border-radius: 52px;
+    pointer-events: none;
+    opacity: 0;
+    filter: blur(30px);
+    transition: opacity 0.3s var(--ease);
+    background: radial-gradient(
+      50% 50% at 50% 50%,
+      hsl(var(--arc-hue) 100% 58% / 0.24),
+      transparent 70%
+    );
   }
   .agent-card::after {
     content: "";
@@ -273,15 +321,20 @@ const agents: Agent[] = [
     transition: opacity 0.35s var(--ease);
   }
   .agent-card:not(.agent-card--soon):hover {
-    transform: translateY(-3px);
-    border-color: rgba(255, 255, 255, 0.1);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.09),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.5),
-      0 30px 60px -22px rgba(0, 0, 0, 0.96),
-      0 12px 26px -14px rgba(0, 0, 0, 0.85);
+    border-color: hsl(var(--arc-hue) 70% 66% / 0.4);
   }
   .agent-card:not(.agent-card--soon):hover::after { opacity: 1; }
+  /* azur-bloom bakom kortet vid hover/fokus */
+  .agent-card:not(.agent-card--soon):hover::before,
+  .agent-card:focus-visible::before { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .agent-card,
+    .agent-card::before,
+    .agent-card::after,
+    .agent-card__arrow {
+      transition: none;
+    }
+  }
   .agent-card:focus-visible {
     outline: none;
     box-shadow: var(--focus-ring);
@@ -327,7 +380,7 @@ const agents: Agent[] = [
     color: var(--fg-3);
   }
   .agent-card__arrow { transition: transform 0.25s var(--ease); }
-  .agent-card:not(.agent-card--soon):hover .agent-card__arrow { transform: translateX(4px); }
+  .agent-card:not(.agent-card--soon):hover .agent-card__arrow { transform: translate(3px, -3px); }
 
   /* "på väg": samma matta yta men plattare och dämpad */
   .agent-card--soon {

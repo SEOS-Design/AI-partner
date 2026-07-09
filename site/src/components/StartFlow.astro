@@ -1,0 +1,453 @@
+---
+// StartFlow.astro – sektion "Så börjar ni" (Ingång A som connected-node-flöde).
+// Tre stegkort i diagonal kaskad bundna av en lysande ljusslinga (1→2→3).
+// Uttryck: mörkt, monokromt, matt bento-yta (samma som Departments), DS-tokens.
+//
+// Animation: ENDAST den loopande ljuspulsen längs slingan (ren CSS, respekterar
+// prefers-reduced-motion). Den GSAP-drivna scroll-reveal-uppbyggnaden från
+// designen är medvetet utelämnad — flödet renderas i sitt statiska slutläge
+// (.built). En "cool" scroll-animation kan läggas till senare vid behov.
+//
+// Avslut: "Boka-block" (design Alternativ C) — ett centrerat, upphöjt kort med
+// de TVÅ ingångarna (kartläggning + föreläsning) som benämnt par + en delad
+// vit primär-CTA (samma som sidans övriga CTA:er). Ersätter den tidigare
+// flytande vita CTA:n och det nedsänkta "Annat spår"-blocket.
+
+import Arrow from './Arrow.astro';
+
+const BOOK = '#boka';
+
+const STEPS = [
+  { n: '01', t: 'Vi kommer ut och går igenom era processer — vad tar tid idag?' },
+  { n: '02', t: 'Vi prioriterar var AI/automation ger störst effekt — och var den inte gör det.' },
+  { n: '03', t: 'Ni får en konkret åtgärdslista och bestämmer själva om ni går vidare.' },
+];
+
+// Slingans bana lever i ett 960×600-viewBox; nodernas %-positioner speglar den.
+const STRAND = 'M356,90 C500,90 484,300 604,300 L772,372 C772,470 500,510 356,510';
+---
+
+<section id="sa-borjar-ni" class="section flow-sec" aria-labelledby="flow-heading">
+  <div class="container">
+    <div class="sec-head">
+      <h2 id="flow-heading" class="h2">Var börjar ni med AI?</h2>
+      <p class="sec-head__lead">
+        Med en kostnadsfri kartläggning. Så här går den till:
+      </p>
+    </div>
+
+
+    <!-- Kaskad-scen: aspect-låst så nodernas %-positioner mappar mot SVG-viewBoxen.
+         .built = statiskt slutläge (ljuspulsen loopar). -->
+    <div class="flow-stage built">
+      <svg
+        class="flow-svg"
+        viewBox="0 0 960 600"
+        preserveAspectRatio="xMidYMid meet"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path class="flow-strand flow-strand--glow" d={STRAND} />
+        <path class="flow-strand flow-strand--mid" d={STRAND} />
+        <path class="flow-strand flow-strand--base" d={STRAND} />
+        <path class="flow-pulse flow-pulse--halo" d={STRAND} pathLength="1000" />
+        <path class="flow-pulse flow-pulse--core" d={STRAND} pathLength="1000" />
+        <circle class="flow-port" cx="356" cy="90" r="4.5" />
+        <circle class="flow-port" cx="604" cy="300" r="4.5" />
+        <circle class="flow-port" cx="356" cy="510" r="4.5" />
+      </svg>
+
+      <ol class="flow-nodes">
+        {STEPS.map((s, i) => (
+          <li class={`flow-node flow-node--${i + 1}`}>
+            <span class="flow-node__n">{s.n}</span>
+            <p class="flow-node__t">{s.t}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    <!-- Boka-block (design Alternativ C): två benämnda ingångar i par + delad CTA -->
+    <div class="boka">
+      <h3 class="boka__title">Två sätt att komma igång</h3>
+      <p class="boka__lede">
+        Båda är kostnadsfria och utan köptvång. Välj det som passar er bäst.
+      </p>
+
+      <div class="boka__pair">
+        <div class="boka__cell">
+          <span class="boka__ck">Kartläggning</span>
+          <p>Genomgången ovan, på plats hos er — vi pekar ut var AI faktiskt lönar sig.</p>
+        </div>
+        <span class="boka__vline" aria-hidden="true"></span>
+        <div class="boka__cell">
+          <span class="boka__ck">Föreläsning</span>
+          <p>Vill ni förstå AI först? Vi föreläser för teamet eller ledningen, anpassat efter er.</p>
+        </div>
+      </div>
+
+      <a class="btn btn-primary boka__btn" href={BOOK}>
+        Boka en tid <Arrow class="arrow" />
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ---- sektionshuvud ---- */
+  .sec-head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 660px;
+  }
+  .sec-head .eyebrow {
+    margin-bottom: 18px;
+  }
+  .sec-head__lead {
+    margin-top: 16px;
+    color: var(--fg-3);
+    font-size: var(--fs-lead);
+    line-height: 1.6;
+    max-width: 600px;
+  }
+
+  /* ---- Ingång A: eyebrow + en-rads ovanför flödet ---- */
+  
+
+  /* ---- scenen: aspect-låst så %-positioner mappar mot SVG-viewBoxen ---- */
+  .flow-stage {
+    position: relative;
+    width: 100%;
+    max-width: 960px;
+    margin: 30px auto 0;
+    aspect-ratio: 960 / 600;
+  }
+  .flow-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  /* slingan — lagrade vita streck läses som ett mjukt monokromt sken */
+  .flow-strand {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .flow-strand--glow {
+    stroke: rgba(255, 255, 255, 0.06);
+    stroke-width: 7;
+  }
+  .flow-strand--mid {
+    stroke: rgba(255, 255, 255, 0.12);
+    stroke-width: 3;
+  }
+  .flow-strand--base {
+    stroke: rgba(255, 255, 255, 0.28);
+    stroke-width: 1.4;
+  }
+
+  /* vandrande ljuspuls 1→2→3 — loopar i .built (om rörelse tillåts) */
+  .flow-pulse {
+    fill: none;
+    stroke-linecap: round;
+    opacity: 0;
+  }
+  /* Samma dämpade azur-komet som hero-beamen: tunt streck + mjuk glöd via
+     stackade drop-shadows (SVG-stroke tar inte box-shadow). Nyans via --arc-hue. */
+  .flow-pulse--halo {
+    stroke: hsl(var(--arc-hue) 100% 72%);
+    stroke-width: 2.5;
+    stroke-dasharray: 46 1600;
+    filter:
+      drop-shadow(0 0 2px hsl(var(--arc-hue) 100% 70% / 0.55))
+      drop-shadow(0 0 6px hsl(var(--arc-hue) 100% 60% / 0.28));
+  }
+  .flow-pulse--core {
+    stroke: hsl(var(--arc-hue) 100% 94%);
+    stroke-width: 1;
+    stroke-dasharray: 40 1606;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .flow-stage.built .flow-pulse--halo {
+      opacity: 1;
+      animation: flowPulse 3.6s linear infinite;
+    }
+    .flow-stage.built .flow-pulse--core {
+      opacity: 1;
+      animation: flowPulse 3.6s linear infinite;
+    }
+  }
+  @keyframes flowPulse {
+    from {
+      stroke-dashoffset: 0;
+    }
+    to {
+      stroke-dashoffset: -1646;
+    }
+  }
+
+  /* portar där slingan möter en nod */
+  .flow-port {
+    fill: var(--bg);
+    stroke: rgba(255, 255, 255, 0.5);
+    stroke-width: 1.2;
+  }
+
+  /* ---- nod-kort: samma matta bento-yta som Departments ---- */
+  .flow-nodes {
+    position: absolute;
+    inset: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .flow-node {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    /* Kort-look som Departments (utan hover — info-rutor). OGENOMSKINlig bas:
+       korten ligger ovanför nodesnöret/kometen, som inte får skymta igenom. */
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.09), transparent 32%),
+      linear-gradient(180deg, #1a1d23 0%, #0e1015 100%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 22px;
+    padding: 26px 28px;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.28),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+      0 12px 30px rgba(0, 0, 0, 0.42);
+  }
+  .flow-node__n {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    letter-spacing: 0.16em;
+    color: var(--fg-3);
+    margin-bottom: 15px;
+  }
+  .flow-node__n::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--fg-3);
+  }
+  .flow-node__t {
+    position: relative;
+    z-index: 1;
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--fg-2);
+    letter-spacing: -0.005em;
+  }
+  .flow-node--1 {
+    left: 2.083%;
+    top: 0%;
+    width: 38%;
+    height: 29%;
+  }
+  .flow-node--2 {
+    left: 60%;
+    top: 35.5%;
+    width: 38%;
+    height: 29%;
+  }
+  .flow-node--3 {
+    left: 2.083%;
+    top: 71%;
+    width: 38%;
+    height: 29%;
+  }
+
+  /* ---- Boka-block (Alternativ C) — centrerat, upphöjt kort ---- */
+  /* Knappar (.btn/.btn-primary/.btn-ghost/.btn-glass) är centraliserade i global.css */
+  .boka {
+    position: relative;
+    max-width: 940px;
+    margin: 52px auto 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: clamp(30px, 3.4vw, 42px) clamp(36px, 5vw, 64px);
+    border-radius: 26px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.022), transparent 40%),
+      var(--bg-raised);
+    border: 1px solid var(--border);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 30px 70px -44px rgba(0, 0, 0, 0.9);
+  }
+  .boka__title {
+    font-weight: 600;
+    font-size: clamp(24px, 2.9vw, 32px);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--fg-1);
+    text-wrap: balance;
+    max-width: 22ch;
+    margin-bottom: 8px;
+  }
+  .boka__lede {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--fg-3);
+    /* max-width: 48ch; */
+    margin-bottom: clamp(20px, 2.4vw, 28px);
+    text-wrap: pretty;
+  }
+
+  /* två benämnda celler med hårstrecks-avdelare */
+  .boka__pair {
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    width: 100%;
+    max-width: 720px;
+    text-align: left;
+    margin-bottom: clamp(22px, 2.6vw, 30px);
+  }
+  .boka__cell {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 2px 32px;
+  }
+  .boka__cell:first-child { padding-left: 0; }
+  .boka__cell:last-child { padding-right: 0; }
+  .boka__ck {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+    color: var(--fg-2);
+  }
+  .boka__ck::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--fg-2);
+  }
+  .boka__cell p {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--fg-3);
+  }
+  .boka__vline {
+    background: linear-gradient(180deg, transparent, var(--border) 16%, var(--border) 84%, transparent);
+  }
+
+  /* ============================================================
+     Mobil — kaskaden faller till en lodrät stapel med sken-räls
+     ============================================================ */
+  @media (max-width: 820px) {
+    .flow-stage {
+      aspect-ratio: auto;
+      height: auto;
+      max-width: 520px;
+      margin-top: 28px;
+    }
+    .flow-svg {
+      display: none;
+    }
+    .flow-nodes {
+      position: relative;
+      inset: auto;
+      display: flex;
+      flex-direction: column;
+      padding-left: 28px;
+    }
+    .flow-nodes::before {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 14px;
+      bottom: 14px;
+      width: 1px;
+      background: linear-gradient(var(--border-strong), var(--border));
+    }
+    .flow-node {
+      position: relative !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      height: auto !important;
+      margin-bottom: 16px;
+    }
+    .flow-node::before {
+      content: "";
+      position: absolute;
+      left: -28px;
+      top: 26px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      z-index: 2;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .flow-nodes::after {
+        content: "";
+        position: absolute;
+        left: 1px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 0 9px rgba(255, 255, 255, 0.7);
+        animation: railPulse 3.4s linear infinite;
+      }
+    }
+  }
+  @keyframes railPulse {
+    0% {
+      top: 14px;
+      opacity: 0;
+    }
+    12% {
+      opacity: 1;
+    }
+    88% {
+      opacity: 1;
+    }
+    100% {
+      top: calc(100% - 14px);
+      opacity: 0;
+    }
+  }
+
+  /* Boka-paret faller till en kolumn med liggande avdelare; CTA:n fyller bredden */
+  @media (max-width: 600px) {
+    .boka__pair {
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 360px;
+    }
+    .boka__cell {
+      padding: 0;
+    }
+    .boka__vline {
+      width: auto;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+    .boka__btn {
+      width: 100%;
+    }
+  }
+</style>

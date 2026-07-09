@@ -1,0 +1,65 @@
+---
+// ArcBand.astro – tunn, elegant azur-horisontlinje ovanför footern (statisk).
+// Samma språk som Positioneringens .accent-rule, men skenet ligger jämnt längs
+// HELA bredden (ej center-koncentrerat): en vertikal bloom ovan/under linjen,
+// maskad i kanterna så inget hårt slut syns. Accentfärg via --arc-hue i
+// global.css. Tonar ut helt inom bandet → overflow-klippet ger aldrig en kant.
+---
+
+<div class="arc-band" aria-hidden="true">
+  <span class="arc-glow"></span>
+  <span class="arc-line"></span>
+</div>
+
+<style>
+  .arc-band {
+    position: relative;
+    height: 180px;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  /* Tunn linje — azur längs hela bredden, mjuk uttoning bara vid kanterna. */
+  .arc-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    transform: translateY(-50%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--arc-hue) 100% 64% / 0.7) 20%,
+      hsl(var(--arc-hue) 100% 68% / 0.85) 50%,
+      hsl(var(--arc-hue) 100% 64% / 0.7) 80%,
+      transparent
+    );
+  }
+
+  /* Mjukt sken jämnt längs HELA linjen: vertikal bloom ovan/under, maskad i
+     kanterna så det tonar ut i stället för att sluta tvärt. */
+  .arc-glow {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 150px;
+    transform: translateY(-50%);
+    background: linear-gradient(
+      180deg,
+      transparent,
+      hsl(var(--arc-hue) 100% 56% / 0.13) 50%,
+      transparent
+    );
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    filter: blur(14px);
+    pointer-events: none;
+  }
+
+  @media (max-width: 720px) {
+    .arc-band { height: 140px; }
+    .arc-glow { height: 120px; }
+  }
+</style>

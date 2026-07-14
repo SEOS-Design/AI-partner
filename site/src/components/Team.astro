@@ -1,0 +1,248 @@
+---
+import Arrow from './Arrow.astro';
+import BeamCta from './BeamCta.astro';
+
+// Team.astro – sektion "Vilka står bakom AI Partner?" (Om oss-teaser).
+// Design "Team (export)", variant A "Paret": SEOS-loggan + AI PARTNER-ordmärket
+// komponerade som ETT system, sammanbundna av en azur-glödlinje ("Ett team").
+// Berättar systervarumärkes-storyn UTAN foton — värmen bärs av varumärkes-
+// kompositionen och rösten. Ersätter tidigare Robot/logo-orbit; efter Advisory.
+//
+// SEOS-märket är loggan (public/seos-logo.png) — den har SVART bakgrund inbakad
+// (PNG utan alfa), så mix-blend-mode:screen släcker den rena svärtan och lämnar
+// bara märket. AI PARTNER i hero/nav-ordmärkets stil (Mona Sans 700, tight
+// tracking, INGEN azur-prick). SEOS-utlänken bor här (flyttad från Advisory):
+// "Mer om oss" = vit primär (håller kvar i tratten), "Till SEOS Design" =
+// sekundär glas-CTA med hero-kometen (BeamCta).
+---
+
+<section id="team" class="team" aria-labelledby="team-heading">
+  <div class="container">
+    <h2 id="team-heading" class="team__h" data-reveal>Ett team. Två varumärken.</h2>
+    <p class="team__lead" data-reveal style="--d: 0.08s">
+      Samma team som byggt webb och synlighet åt svenska företag — nu med ett systerbolag
+      som bygger AI:n.
+    </p>
+
+    <div class="team__pair" data-reveal style="--d: 0.16s">
+      <div class="team__brand">
+        <span class="team__mark">
+          <span class="team__wm">AI PARTNER</span>
+        </span>
+        <p class="team__role">AI-agenter, automation och RAG-system. Vi bygger AI:n — och driftar den.</p>
+        <a class="btn btn-primary team__brand-cta" href="/om-oss">
+          Mer om oss <Arrow class="arrow" />
+        </a>
+      </div>
+
+      <div class="team__link" aria-hidden="true">
+        <span class="team__lbl">Ett team</span>
+        <span class="team__line"></span>
+      </div>
+
+      <div class="team__brand">
+        <span class="team__mark">
+          <img class="team__logo" src="/seos-logo.png" alt="SEOS Design" width="2056" height="1032" />
+        </span>
+        <p class="team__role">Design, webb och SEO. Etablerad webbyrå i Stockholm.</p>
+        <BeamCta href="https://seosdesign.se" target="_blank" rel="noopener noreferrer" class="team__brand-cta">
+          Till SEOS Design <Arrow class="arrow" />
+        </BeamCta>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .team {
+    padding: var(--section-py) 0;
+    text-align: center;
+  }
+  .team__h {
+    font-weight: 600;
+    font-size: var(--fs-h1);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+    max-width: 18ch;
+    margin-inline: auto;
+    text-wrap: balance;
+  }
+  .team__lead {
+    margin: var(--space-5) auto 0;
+    max-width: var(--maxw-text);
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-3);
+    text-wrap: pretty;
+  }
+
+  /* ---- ordmärkes-paret: SEOS-logga + AI PARTNER som ETT system ---- */
+  .team__pair {
+    margin: clamp(56px, 7vw, 88px) auto 0;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: stretch; /* kolumnerna blir lika höga → knapparna kan botten-linjeras */
+    column-gap: clamp(20px, 3vw, 40px);
+    max-width: 900px;
+  }
+  .team__brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  /* fast höjd på märkes-raden så logga och ordmärke centreras i linje */
+  .team__mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: clamp(56px, 7vw, 88px);
+  }
+  .team__logo {
+    /* tile:n har luft inbakad runt märket → större höjd för att väga jämnt
+       mot AI PARTNER-ordmärket. Svart bakgrund släcks av mix-blend-mode. */
+    height: clamp(56px, 7vw, 88px);
+    width: auto;
+    mix-blend-mode: screen;
+  }
+  .team__wm {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(26px, 3.4vw, 40px);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--fg-1);
+    white-space: nowrap;
+  }
+  .team__role {
+    font-size: var(--fs-body);
+    line-height: 1.5;
+    color: var(--fg-2);
+    max-width: 22ch;
+    text-wrap: balance;
+  }
+
+  /* kopplingen: "Ett team" + tunn linje med azur-glöd (större/synligare) */
+  .team__link {
+    align-self: center;
+    display: grid;
+    justify-items: center;
+    row-gap: 12px;
+  }
+  .team__lbl {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+    color: var(--fg-2);
+    white-space: nowrap;
+  }
+  .team__line {
+    position: relative;
+    width: clamp(84px, 11vw, 150px);
+    height: 2px;
+    transform-origin: center;
+    border-radius: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--border) 14%,
+      hsl(var(--arc-hue) 100% 64% / 0.85) 50%,
+      var(--border) 86%,
+      transparent
+    );
+    box-shadow: 0 0 12px hsl(var(--arc-hue) 100% 60% / 0.35);
+  }
+
+  /* CTA bor nu i varje brand-kolumn, botten-linjerad (margin-top:auto trycker den
+     till kolumnens botten → båda knapparna hamnar på samma höjd trots olika
+     lång roll-text). Flex-gapet (16px) håller minsta avstånd till texten. */
+  .team__brand-cta {
+    margin-top: auto;
+  }
+
+  /* ---- responsivt: paret staplas, kopplingen blir vertikal ---- */
+  @media (max-width: 720px) {
+    .team__pair {
+      grid-template-columns: 1fr;
+      row-gap: 30px;
+      justify-items: center;
+    }
+    .team__link {
+      row-gap: 10px;
+    }
+    .team__line {
+      width: 2px;
+      height: 46px;
+      background: linear-gradient(
+        180deg,
+        transparent,
+        var(--border) 14%,
+        hsl(var(--arc-hue) 100% 64% / 0.85) 50%,
+        var(--border) 86%,
+        transparent
+      );
+    }
+  }
+
+  /* ---- reveal: synligt som bas, rörelse förstärker (repo-konventionen) ---- */
+  @media (prefers-reduced-motion: no-preference) {
+    .team.is-inview [data-reveal] {
+      animation: teamRise 0.6s var(--ease) backwards;
+      animation-delay: var(--d, 0s);
+    }
+    .team.is-inview .team__line {
+      animation: teamLine 0.6s var(--ease) backwards;
+      animation-delay: 0.35s;
+    }
+  }
+  @keyframes teamRise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+  @keyframes teamLine {
+    from {
+      transform: scaleX(0);
+    }
+  }
+  @media (max-width: 720px) {
+    @media (prefers-reduced-motion: no-preference) {
+      .team.is-inview .team__line {
+        animation-name: teamLineV;
+      }
+    }
+    @keyframes teamLineV {
+      from {
+        transform: scaleY(0);
+      }
+    }
+  }
+</style>
+
+<script>
+  // Reveal-on-scroll: lägg .is-inview på sektionen när den syns.
+  (function () {
+    const section = document.getElementById('team');
+    if (!section) return;
+    if (!('IntersectionObserver' in window)) {
+      section.classList.add('is-inview');
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-inview');
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.2 },
+    );
+    io.observe(section);
+    document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
+  })();
+</script>

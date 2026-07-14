@@ -1,11 +1,13 @@
 ---
 import Hero from '../components/Hero.astro';
 import Positionering from '../components/Positionering.astro';
-import Robot from '../components/Robot.astro';
+import Stats from '../components/Stats.astro';
 import Departments from '../components/Departments.astro';
 import StartFlow from '../components/StartFlow.astro';
 import Advisory from '../components/Advisory.astro';
-import FAQ from '../components/FAQ.astro';
+import Team from '../components/Team.astro';
+import StackFlow from '../components/StackFlow.astro';
+// FAQ parkerad: flyttas till /om-oss när den sidan byggs (komponenten är kvar).
 import Contact from '../components/Contact.astro';
 import ArcBand from '../components/ArcBand.astro';
 import Footer from '../components/Footer.astro';
@@ -15,12 +17,20 @@ import Layout from '../layouts/Layout.astro';
 <Layout>
   <Hero />
   <Positionering />
+  <Stats />
   <StartFlow />
+  {/* Departments är en katalog (6 kort man skannar samtidigt) → egen obunden
+      sektion, INTE i stacken. Ligger direkt före stacken så Bygg-läget i flödet
+      hålls (Ingång → Bygg → avslutande stack-berättelse). */}
   <Departments />
-  <Advisory />
-  <Robot />
-  <FAQ />
-  <Contact />
+  {/* Kortstack: tre stack-vänliga en-budskaps-paneler (förvaltning → vilka vi är
+      → boka). Revertera genom att ta bort <StackFlow> och lägga tillbaka de tre
+      som vanliga syskon. FAQ är parkerad (flyttas till /om-oss). */}
+  <StackFlow>
+    <Advisory slot="one" />
+    <Team slot="two" />
+    <Contact slot="three" />
+  </StackFlow>
   <ArcBand />
   <Footer />
 </Layout>

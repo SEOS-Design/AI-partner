@@ -1,0 +1,256 @@
+---
+// Stats.astro – sektion "Läget i siffror" (lätt, skannbar proof-paus).
+// Design: "Statistik (export)", variant B "Editorial stapel" — stora siffror i
+// en ledger (en stat i taget), azur-tick per rad, statement i display-storlek
+// + nedåtpekande överlämning till StartFlow ("Det är där vi kommer in.").
+//
+// KÄLLDISCIPLIN: siffrorna är LÅSTA och verifierade mot primärkällor
+// (2026-07-11). Formuleringsvakter som MÅSTE stå kvar: "har potential att"
+// (McKinsey — teknisk potential, inte prognos) och "som övervägt" (SCB —
+// gruppen siffran avser). Årtal i källraderna. Ändra aldrig utan ny verifiering.
+//
+// Räknare: markupen bär SLUTVÄRDENA (SEO/AEO + no-JS). JS nollställer och
+// räknar upp per rad vid inscroll — endast om rörelse är OK (annars står
+// slutvärdena kvar). Animerade räknare = medvetet familje-eko av seosdesign.se.
+---
+
+<section id="statistik" class="stats" aria-labelledby="stats-heading">
+  <div class="container">
+    <h2 id="stats-heading" class="h2 stats-h" data-row>
+      Vad är de största utmaningarna för företag i dag?
+    </h2>
+
+    <ul class="ledger">
+      <li class="stat" data-row>
+        <span class="tick" aria-hidden="true"></span>
+        <span class="idx" aria-hidden="true">(01)</span>
+        <p class="num">
+          <span data-count="60" style="min-width:2ch">60</span><span class="soft">–</span><span data-count="70" style="min-width:2ch">70</span><span class="soft">&nbsp;%</span>
+        </p>
+        <div class="meta">
+          <p class="claim">av arbetstiden består av uppgifter som dagens AI har potential att ta över.</p>
+          <p class="src">
+            <a href="https://www.mckinsey.com/capabilities/tech-and-ai/our-insights/the-economic-potential-of-generative-ai-the-next-productivity-frontier" target="_blank" rel="noopener noreferrer">Källa: McKinsey, 2023</a>
+          </p>
+        </div>
+      </li>
+      <li class="stat" data-row>
+        <span class="tick" aria-hidden="true"></span>
+        <span class="idx" aria-hidden="true">(02)</span>
+        <p class="num"><span data-count="7" style="min-width:1ch">7</span> <span class="soft">av</span> 10</p>
+        <div class="meta">
+          <p class="claim">svenska småföretag använder ännu inte AI.</p>
+          <p class="src">
+            <a href="https://www.scb.se/hitta-statistik/statistik-efter-amne/forskning-och-det-digitala-samhallet/ovrigt/artificiell-intelligens-i-sverige/pong/statistiknyhet/artificiell-intelligens-i-sverige-2026/" target="_blank" rel="noopener noreferrer">Källa: SCB, 2025</a>
+          </p>
+        </div>
+      </li>
+      <li class="stat" data-row>
+        <span class="tick" aria-hidden="true"></span>
+        <span class="idx" aria-hidden="true">(03)</span>
+        <p class="num"><span data-count="3" style="min-width:1ch">3</span> <span class="soft">av</span> 4</p>
+        <div class="meta">
+          <p class="claim">företag som övervägt AI avstår — vanligaste skälet: brist på expertis.</p>
+          <p class="src">
+            <a href="https://www.scb.se/hitta-statistik/statistik-efter-amne/forskning-och-det-digitala-samhallet/det-digitala-samhallet/it-anvandning-i-foretag/pong/statistiknyhet/it-anvandning-i-foretag-2025/" target="_blank" rel="noopener noreferrer">Källa: SCB, 2025</a>
+          </p>
+        </div>
+      </li>
+    </ul>
+
+    <p class="statement" data-row>Det är där vi kommer in.</p>
+  </div>
+</section>
+
+<style>
+  /* Raised band — lyfter sektionen från void-sektionerna runtom (samma
+     rytm-grepp som Departments): void → raised → void → raised. */
+  .stats {
+    --a1: hsl(var(--arc-hue) 100% 66%);
+    --a1-dim: hsl(var(--arc-hue) 90% 62% / 0.5);
+    padding: var(--section-py) 0;
+    background: var(--bg-raised);
+    border-block: 1px solid var(--border);
+  }
+
+  .stats-h {
+    max-width: 20ch;
+    text-wrap: balance;
+  }
+
+  /* ---- Ledger: en stat i taget, buren av siffer-typografin ---- */
+  .ledger {
+    margin-top: clamp(40px, 5vw, 64px);
+    list-style: none;
+  }
+  .stat {
+    position: relative;
+    display: grid;
+    grid-template-columns: clamp(44px, 6vw, 80px) 1fr minmax(220px, 300px);
+    align-items: center;
+    column-gap: clamp(24px, 4vw, 64px);
+    padding: clamp(44px, 6vw, 84px) 0;
+    border-top: 1px solid var(--border);
+  }
+  /* azur-signaturen: en tunn glödande tick per stat — enda blå ytan */
+  .tick {
+    position: absolute;
+    top: -1px;
+    left: 0;
+    display: block;
+    width: 28px;
+    height: 2px;
+    background: var(--a1);
+    box-shadow: 0 0 10px var(--a1-dim);
+  }
+  .idx {
+    align-self: start;
+    padding-top: 12px;
+    font-size: var(--fs-small);
+    letter-spacing: 0.08em;
+    color: var(--fg-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .num {
+    display: block;
+    font-weight: 700;
+    font-size: clamp(76px, 11vw, 168px);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    color: var(--fg-1);
+    font-variant-numeric: tabular-nums;
+  }
+  .num :global([data-count]) {
+    display: inline-block;
+  }
+  .num .soft {
+    color: var(--fg-3);
+    font-weight: 500;
+  }
+  .claim {
+    max-width: 28ch;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--fg-1);
+    text-wrap: pretty;
+  }
+  .src {
+    margin-top: 14px;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .src a {
+    color: var(--fg-3);
+    border-bottom: 1px solid var(--border-strong);
+    padding-bottom: 1px;
+    transition:
+      color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease);
+  }
+  .src a:hover {
+    color: var(--fg-2);
+    border-color: var(--fg-3);
+  }
+  .src a:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-radius: 2px;
+  }
+
+  /* ---- Statement (punchline efter siffrorna) ---- */
+  .statement {
+    margin-top: clamp(40px, 5vw, 72px);
+    font-weight: 600;
+    font-size: var(--fs-display);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+    text-wrap: balance;
+    max-width: 12ch;
+  }
+
+  /* ---- Reveal: synligt som bas, rörelse förstärker (repo-konventionen) ---- */
+  @media (prefers-reduced-motion: no-preference) {
+    .stat.in,
+    .stats-h.in,
+    .statement.in {
+      animation: statRise 0.6s var(--ease) backwards;
+    }
+  }
+  @keyframes statRise {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+  }
+
+  /* ---- Responsivt: raderna faller till vertikal stapel ---- */
+  @media (max-width: 760px) {
+    .stat {
+      grid-template-columns: 1fr;
+      row-gap: 16px;
+      align-items: start;
+      padding: clamp(36px, 8vw, 56px) 0;
+    }
+    .idx {
+      padding-top: 0;
+    }
+    .claim {
+      max-width: 30ch;
+    }
+  }
+</style>
+
+<script>
+  // Räknare + per-rad-reveal. Markupen bär slutvärdena; vid reduced motion
+  // eller utan IntersectionObserver händer ingenting (värdena står kvar).
+  (function () {
+    const section = document.getElementById('statistik');
+    if (!section) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced || !('IntersectionObserver' in window)) return;
+
+    const rows = Array.from(section.querySelectorAll<HTMLElement>('[data-row]'));
+    section.querySelectorAll<HTMLElement>('[data-count]').forEach((el) => {
+      el.textContent = '0';
+    });
+
+    const easeOut = (t: number): number => 1 - Math.pow(1 - t, 3);
+
+    const runCounters = (scope: HTMLElement): void => {
+      const counters = Array.from(scope.querySelectorAll<HTMLElement>('[data-count]'));
+      if (!counters.length) return;
+      const dur = 1300;
+      let t0: number | null = null;
+      const frame = (ts: number): void => {
+        if (t0 === null) t0 = ts;
+        const p = Math.min((ts - t0) / dur, 1);
+        counters.forEach((el) => {
+          const target = parseInt(el.getAttribute('data-count') ?? '0', 10);
+          el.textContent = String(Math.round(target * easeOut(p)));
+        });
+        if (p < 1) requestAnimationFrame(frame);
+      };
+      requestAnimationFrame(frame);
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            const el = e.target as HTMLElement;
+            el.classList.add('in');
+            runCounters(el);
+            io.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.35 },
+    );
+    rows.forEach((r) => io.observe(r));
+
+    document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
+  })();
+</script>

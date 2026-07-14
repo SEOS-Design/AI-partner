@@ -1,7 +1,9 @@
 ---
-// Robot.astro – "AI-verktygen vi använder"
+// Robot.astro – "Rätt verktyg för jobbet" (vendor-neutral trovärdighets-beat).
 // Logotyp-chips kretsar runt ett mjukt accent-sken i mitten (Raycast-inspirerat).
-// Spline-roboten är borttagen — endast ljusskenet används nu.
+// Budskap: vi väljer modell efter uppgiften, ingen inlåsning — inte en tech-flex.
+// Spline-roboten borttagen (endast ljusskenet). CTA nedgraderad till sekundär
+// (ghost) så den inte konkurrerar med #boka-flödet.
 import Arrow from './Arrow.astro';
 ---
 
@@ -9,10 +11,11 @@ import Arrow from './Arrow.astro';
   <!-- Sektionsrubrik (övre del) -->
   <div class="container orbit-head">
     <h2 id="orbit-heading" class="orbit-title">
-      Några av verktygen<br />vi bygger med
+      Rätt verktyg för jobbet<br />— ingen inlåsning
     </h2>
     <p class="orbit-sub">
-      Hovra för att se vilket verktyg — klicka för att läsa mer i ordlistan.
+      Vi väljer modell efter uppgiften, inte tvärtom. Hovra för att se verktygen
+      vi bygger med.
     </p>
   </div>
 
@@ -196,8 +199,8 @@ import Arrow from './Arrow.astro';
 
     <!-- Floating text + knapp i mitten av scenen -->
     <div class="orbit-cta">
-      <p class="orbit-cta__txt">Läs mer om hur vi jobbar</p>
-      <a class="btn btn-primary orbit-cta__btn" href="/om-oss">
+      <p class="orbit-cta__txt">Ni binds inte vid en enda leverantör</p>
+      <a class="btn btn-ghost orbit-cta__btn" href="/om-oss">
         Om oss <Arrow class="arrow" />
       </a>
     </div>

@@ -1,0 +1,13 @@
+{
+  "name": "ai-partner",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Bekvämlighets-proxy: Astro-projektet bor i site/. Dessa scripts kör mot site/ så man slipper cd:a dit.",
+  "scripts": {
+    "dev": "npm --prefix site run dev",
+    "build": "npm --prefix site run build",
+    "preview": "npm --prefix site run preview",
+    "astro": "npm --prefix site run astro",
+    "install:site": "npm --prefix site install"
+  }
+}

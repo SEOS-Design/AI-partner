@@ -1,239 +1,144 @@
 ---
-// Positionering.astro – sektion direkt under Hero. Sidans "argument"-moment:
-// kärnpositioneringen (AI som gör jobbet, hela kedjan) + tre bärande punkter.
-// Editoriell/typografisk yta med EN azur-signatur (glödande horisontlinje) —
-// medvetet luftigare än de kort-tunga sektionerna nedanför. Design från Claude
-// Design, portad till Astro-konventioner (DS-tokens i global.css, .section/
-// .container, reveal via backwards-animation som övriga sektioner).
+// Positionering.astro – sektion direkt under Hero: sidans "vad gör AI Partner?"-
+// statement. Stort, fett, vänsterställt påstående (SEOS-kadens: "Vi bygger… Vi
+// hjälper…") med en diskret azur-accent (lysande punkt på sista punkten), dämpad
+// stödtext och sidans två CTA:er. Portad från Claude
+// Design ("Positionering") till Astro-konventioner: globala tokens, delade
+// knappar, reveal-on-scroll, ingen dev-panel.
+//
+// CTA:erna är FLYTTADE HIT FRÅN HERON (heron är nu ren, utan knappar) → primär
+// vit `.btn-primary` + sekundär glas-komet `BeamCta` (samma beam som förut i
+// heron; delas nu med Team). Löser CTA-dubbleringen och ger sektionen syfte.
+import Arrow from './Arrow.astro';
+import BeamCta from './BeamCta.astro';
 ---
 
-<section id="positionering" class="section positionering" aria-labelledby="pos-title">
+<section id="positionering" class="pos" aria-labelledby="pos-stmt">
   <div class="container">
-    <div class="statement">
-      <h2 id="pos-title" class="reveal">
-        AI som gör jobbet
-        <span class="soft">från kartläggning till drift.</span>
-      </h2>
-      <p class="lead reveal" style="--d: 0.08s">
-        Vi kartlägger era processer, pekar ut var AI faktiskt lönar sig, och bygger och
-        driftar lösningen. Människan äger strategin och kvaliteten. AI:n ger tempo och skala.
-      </p>
-    </div>
+    <h2 class="stmt" id="pos-stmt">
+      Vi bygger AI-agenter och automation. Vår ambition är att hjälpa företag att kapa rutinarbetet,
+      avlasta teamen och växa utan att anställa fler<span class="az">.</span>
+    </h2>
 
-    <div class="accent-rule reveal" style="--d: 0.16s" aria-hidden="true">
-      <span class="glow"></span>
-      <span class="line"></span>
-    </div>
+    <p class="pos__body">
+      Det börjar i era egna processer, er data och rätt AI-modell, tillsammans med en
+      ärlig bild av vad som faktiskt lönar sig att automatisera. Resultatet blir lösningar
+      som körs i skarpt läge: sparar tid, tar bort moment och håller kvaliteten.
+    </p>
 
-    <ul class="points">
-      <li class="reveal" style="--d: 0.22s">
-        <h3>Mer kapacitet, samma budget</h3>
-        <p>
-          En AI-kollega tar det manuella grovjobbet på avdelningen som redan blöder tid.
-          Ni skalar utan att anställa fler.
-        </p>
-      </li>
-      <li class="reveal" style="--d: 0.3s">
-        <h3>Er data stannar hos er</h3>
-        <p>
-          Ni äger koden, prompterna och dashboarderna. EU-hosting och GDPR från start —
-          era uppgifter tränar ingen annans modell.
-        </p>
-      </li>
-      <li class="reveal" style="--d: 0.38s">
-        <h3>Byggd och driftad</h3>
-        <p>
-          Vi tar hela kedjan: kartläggning, bygge och löpande drift. Ni får en lösning som
-          körs i skarpt läge, inte en rapport att agera på själva.
-        </p>
-      </li>
-    </ul>
+    <div class="pos__cta">
+      <a class="btn btn-primary" href="#boka">Boka kartläggning <Arrow class="arrow" /></a>
+      <BeamCta href="/om-oss">Mer om oss <Arrow class="arrow" /></BeamCta>
+    </div>
   </div>
 </section>
 
 <style>
-  /* Sömlös mot den mörka heron ovanför — samma canvas (--bg via body). */
+  .pos {
+    position: relative;
+    padding: var(--section-py) 0;
+    overflow: hidden;
+  }
 
-  /* ---- Statement ---- */
-  .statement h2 {
-    font-weight: 600;
-    font-size: var(--fs-h2);
-    line-height: var(--lh-heading);
-    letter-spacing: var(--tracking-display);
+  .stmt {
+    max-width: 20ch;
+    font-weight: 800;
+    font-stretch: 78%;
+    font-size: clamp(36px, 5.6vw, 72px);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
     color: var(--fg-1);
-    max-width: 16ch;
     text-wrap: balance;
   }
-  /* Andra raden viker undan — tyngden ligger på "AI som gör jobbet". */
-  .statement h2 .soft {
-    color: var(--fg-1);
+  /* lysande vit punkt på den avslutande punkten */
+  .stmt .az {
+    color: #fff;
+    text-shadow:
+      0 0 18px rgba(255, 255, 255, 0.9),
+      0 0 42px rgba(255, 255, 255, 0.5);
   }
-  .statement .lead {
-    margin-top: var(--space-6);
+
+  /* stödtext — dämpad, smalare mätt */
+  .pos__body {
+    margin-top: clamp(26px, 3.4vw, 40px);
     max-width: var(--maxw-text);
     font-size: var(--fs-lead);
-    line-height: var(--lh-body);
+    line-height: 1.62;
     color: var(--fg-3);
     text-wrap: pretty;
   }
 
-  /* ---- Azur-signatur: en enda blå glödande horisontlinje ---- */
-  .accent-rule {
-    position: relative;
-    height: 1px;
-    margin: var(--space-9) 0 var(--space-8);
-  }
-  .accent-rule .line {
-    display: block;
-    height: 1px;
-    width: 100%;
-    transform-origin: center;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      var(--border) 10%,
-      hsl(var(--arc-hue) 100% 62% / 0.7) 50%,
-      var(--border) 90%,
-      transparent
-    );
-  }
-  /* mjuk blå bloom som strålar ut från mitten */
-  .accent-rule .glow {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: min(640px, 74%);
-    height: 110px;
-    background: radial-gradient(
-      58% 100% at 50% 50%,
-      hsl(var(--arc-hue) 100% 58% / 0.22),
-      hsl(var(--arc-hue) 100% 55% / 0.06) 45%,
-      transparent 72%
-    );
-    filter: blur(8px);
-    pointer-events: none;
+  /* CTA-rad (flyttad från heron): vit primär + glas-komet sekundär */
+  .pos__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: clamp(18px, 2.4vw, 30px);
+    margin-top: clamp(30px, 4vw, 46px);
   }
 
-  /* ---- Tre bärande punkter — rena kolumner, inga kort ---- */
-  .points {
-    list-style: none;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    column-gap: var(--space-7);
-  }
-  .points li {
-    position: relative;
-    padding-left: var(--space-6);
-  }
-  /* Tunn vertikal skiljelinje mellan punkterna (ej före den första). */
-  .points li + li::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 2px;
-    bottom: 2px;
-    width: 1px;
-    background: var(--border);
-  }
-  .points h3 {
-    font-weight: 600;
-    font-size: 24px;
-    line-height: 1.25;
-    letter-spacing: -0.01em;
-    color: var(--fg-1);
-  }
-  .points p {
-    margin-top: var(--space-4);
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
-    color: var(--fg-3);
-    text-wrap: pretty;
-  }
-
-  /* ---- Responsivt ---- */
-  @media (max-width: 760px) {
-    .accent-rule {
-      margin: var(--space-8) 0 var(--space-7);
-    }
-    .points {
-      grid-template-columns: 1fr;
-      row-gap: var(--space-6);
-    }
-    .points li {
-      padding-left: 0;
-    }
-    .points li + li {
-      padding-top: var(--space-6);
-    }
-    .points li + li::before {
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: auto;
-      width: auto;
-      height: 1px;
-    }
-  }
-
-  /* ---- Reveal: synligt som bas, rörelse förstärker (samma backwards-mönster
-         som Departments). Stagger via --d; accentlinjen ritas ut. ---- */
-  .reveal {
+  /* ---- Reveal-on-scroll: synligt som bas, rörelse förstärker (repo-konvention).
+          Staggrad in när sektionen syns. ---- */
+  .stmt,
+  .pos__body,
+  .pos__cta {
     opacity: 1;
     transform: none;
   }
   @media (prefers-reduced-motion: no-preference) {
-    .is-inview .reveal {
-      animation: posFadeUp 0.7s var(--ease) backwards;
-      animation-delay: var(--d, 0s);
+    .pos.is-inview .stmt {
+      animation: posRise var(--dur-mid) var(--ease) backwards;
+      animation-delay: 0.08s;
     }
-    .is-inview .accent-rule .line {
-      animation: posDrawLine 0.7s var(--ease) backwards;
-      animation-delay: var(--d, 0s);
+    .pos.is-inview .pos__body {
+      animation: posRise var(--dur-mid) var(--ease) backwards;
+      animation-delay: 0.22s;
     }
-    .is-inview .accent-rule .glow {
-      animation: posFadeGlow 0.7s var(--ease) backwards;
-      animation-delay: 0.4s;
+    .pos.is-inview .pos__cta {
+      animation: posRise var(--dur-mid) var(--ease) backwards;
+      animation-delay: 0.32s;
     }
   }
-  @keyframes posFadeUp {
+  @keyframes posRise {
     from {
       opacity: 0;
       transform: translateY(14px);
     }
   }
-  @keyframes posDrawLine {
-    from {
-      transform: scaleX(0);
+
+  @media (max-width: 620px) {
+    .stmt {
+      max-width: none;
     }
-  }
-  @keyframes posFadeGlow {
-    from {
-      opacity: 0;
+    .pos__cta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 18px;
     }
   }
 </style>
 
 <script>
-  // Reveal-on-scroll: lägg .is-inview på sektionen när den syns.
-  const section = document.querySelector('.positionering');
-  if (section) {
+  // Reveal-on-scroll: lägg .is-inview på sektionen när den syns (staggern bor i CSS).
+  (function () {
+    const section = document.querySelector('.pos');
+    if (!section) return;
     if (!('IntersectionObserver' in window)) {
       section.classList.add('is-inview');
-    } else {
-      const io = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              e.target.classList.add('is-inview');
-              io.unobserve(e.target);
-            }
-          });
-        },
-        { threshold: 0.15 },
-      );
-      io.observe(section);
-      document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
+      return;
     }
-  }
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-inview');
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.2 },
+    );
+    io.observe(section);
+    document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
+  })();
 </script>

@@ -1,0 +1,229 @@
+---
+// StackFlow.astro – kortstack för de tre avslutande sektionerna
+// (Advisory · Team · Contact). De blir glaspaneler i heroens material som PINNAS
+// (position: sticky): varje panel låser sig i topp och nästa glider upp och
+// TÄCKER den (opaka glaspaneler → ren cover-effekt). Sidan avslutas på Contact
+// (bokningen). Mobil = vanligt vertikalt flöde.
+//
+// VARFÖR INTE DEPARTMENTS/FAQ? Departments är en KATALOG (6 kort man skannar
+// samtidigt) → egen sektion FÖRE stacken. FAQ är ett dragspel (behöver fri
+// scroll) → parkerad till /om-oss. Kvar är tre stack-vänliga en-skärms-paneler.
+//
+// INGEN DIM-SLÖJA: en scroll-driven veil (view-timeline) provades men blir
+// INAKTIV när subjektet är position:sticky i nuvarande engine (currentTime null)
+// → den dimmade aldrig. Cover-effekten sköts nu enbart av de opaka panelerna.
+// Vill man ha dim/scale-koreografi görs den robust i den planerade GSAP-fasen.
+//
+// MEDVETET INKAPSLAD & LÄTT ATT REVERTERA:
+//  • Sektionskomponenterna är ORÖRDA — de skickas in som named slots.
+//  • All stack-logik + neutralisering av sektionernas EGNA sektions-bakgrunder/
+//    padding sker HÄR via :global(). Advisorys arc-båge döljs bara i stacken.
+//  • Ta bort <StackFlow>-wrappern i index.astro (lägg tillbaka de två som vanliga
+//    syskon) → allt återgår exakt, arc-bågen kommer tillbaka. Radera sen filen.
+//
+// Panelerna är content-sized (växer med innehållet) → ingen beskärning/tomrum.
+---
+
+<div class="stackflow">
+  <div class="step" data-step="1">
+    <div class="panel glass">
+      <span class="grain" aria-hidden="true"></span>
+      <div class="panel__content"><slot name="one" /></div>
+    </div>
+  </div>
+  <div class="step" data-step="2">
+    <div class="panel glass">
+      <span class="grain" aria-hidden="true"></span>
+      <div class="panel__content"><slot name="two" /></div>
+    </div>
+  </div>
+  <div class="step" data-step="3">
+    <div class="panel glass">
+      <span class="grain" aria-hidden="true"></span>
+      <div class="panel__content"><slot name="three" /></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .stackflow {
+    --gap: clamp(14px, 2vw, 22px);
+    --r: clamp(30px, 4vw, 40px);
+    /* Var panelen LÅSER sig: under den flytande nav-pillen (botten ~72px) + luft.
+       Sista kortet låser inte — det glider upp bakom nav:en. */
+    --lock: 94px;
+    --foot: 26px; /* luft mellan låst panel och vyns botten */
+    position: relative;
+    /* Panelernas glaskant ska ligga i linje med nav-pillen (samma bredd som
+       sidans innehåll). max-width + 2×gap → panelen blir exakt --maxw-content
+       på desktop, men behåller gap-inset på smala skärmar. */
+    max-width: calc(var(--maxw-content) + 2 * var(--gap));
+    margin-inline: auto;
+    padding: 6svh var(--gap) 10svh;
+  }
+  /* Steg 1 & 2 pinnas UNDER nav-pillen (med luft). Steg 3 (Contact) pinnas INTE
+     — det glider upp över steg 2 och vidare bakom nav:en in i footern. Steg 2
+     släpper exakt när Contact täckt det → ingen åter-visning. */
+  .step {
+    position: sticky;
+    top: var(--lock);
+  }
+  .step[data-step="3"] {
+    position: static;
+  }
+  .step + .step {
+    margin-top: 16svh; /* scroll-avstånd för varje cover-övergång */
+  }
+  .panel {
+    position: relative;
+    /* Höjden är ETT enda värde (samma för alla tre paneler → alltid uniform, ingen
+       genomlys): fyller vyn under nav:en på höga skärmar, men aldrig lägre än ett
+       golv (30rem) på korta/skalade vyer. Det trimmade innehållet (nedan) ryms
+       alltid inom golvet → ingen avklippning oavsett viewport-höjd. Vertikalt
+       centrerat. */
+    min-height: max(30rem, calc(100svh - var(--lock) - var(--foot)));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: var(--r);
+    overflow: hidden;
+    padding: clamp(16px, 2.2vh, 28px) 0;
+  }
+  .panel__content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+  }
+
+  /* ── Glasmaterialet (heroens signatur) ── */
+  .glass {
+    background:
+      radial-gradient(90% 46% at 50% 0%, hsl(var(--arc-hue) 80% 55% / 0.05), transparent 58%),
+      radial-gradient(90% 40% at 50% 100%, hsl(var(--arc-hue) 80% 55% / 0.04), transparent 58%),
+      radial-gradient(72% 56% at 50% 44%, rgba(0, 0, 0, 0.55), transparent 72%),
+      linear-gradient(180deg, #0b0e12 0%, #07090c 45%, #090c10 100%);
+    box-shadow:
+      inset 0 32px 70px -42px hsl(var(--arc-hue) 100% 72% / 0.14),
+      inset 0 -22px 60px -42px hsl(var(--arc-hue) 100% 65% / 0.07),
+      0 -14px 60px -14px hsl(var(--arc-hue) 100% 62% / 0.16),
+      0 0 110px hsl(var(--arc-hue) 100% 55% / 0.05),
+      0 40px 110px rgba(0, 0, 0, 0.65);
+  }
+  /* 1px neon-rim — ljusast i topp, dov azur längs sidorna */
+  .glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    z-index: 2;
+    background: conic-gradient(
+      from 0deg,
+      hsl(var(--arc-hue) 30% 97% / 0.85) 0%,
+      hsl(var(--arc-hue) 95% 80% / 0.5) 6%,
+      hsl(var(--arc-hue) 90% 62% / 0.26) 18%,
+      hsl(var(--arc-hue) 85% 52% / 0.12) 34%,
+      hsl(var(--arc-hue) 95% 66% / 0.3) 50%,
+      hsl(var(--arc-hue) 85% 52% / 0.12) 66%,
+      hsl(var(--arc-hue) 90% 62% / 0.26) 82%,
+      hsl(var(--arc-hue) 95% 80% / 0.5) 94%,
+      hsl(var(--arc-hue) 30% 97% / 0.85) 100%
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+  .grain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.045;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ── Mobil + fallback: vanligt vertikalt flöde ── */
+  @media (max-width: 719px) {
+    .step {
+      position: static;
+    }
+    .step + .step {
+      margin-top: var(--gap);
+    }
+    .panel {
+      min-height: 0;
+      padding: 40px 0;
+    }
+  }
+
+  /* ── Neutralisera de inbäddade sektionernas EGNA yttre look (komponenterna
+        är orörda; detta gäller bara när de ligger i stacken) ── */
+  .step :global(.adv),
+  .step :global(.team),
+  .step :global(.cta-contact) {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    overflow: visible !important;
+  }
+  /* pausa Advisorys arc-båge i stacken (återkommer när stacken tas bort) */
+  .step :global(.adv-horizon) {
+    display: none !important;
+  }
+  /* .adv-under har stor padding-top som skjuter ner innehållet UNDER bågen. I
+     stacken är bågen dold → den paddingen blir dött tomrum högst upp i panelen.
+     Nolla den så innehållet syns direkt (bågen + paddingen återkommer utan stack). */
+  .step :global(.adv-under) {
+    padding-top: 0 !important;
+  }
+
+  /* ── Kompaktering i stacken så innehållet ryms i EN låst panel även på korta
+        vyer (t.ex. Windows-skalning 125–150% → låg CSS-viewport). Gäller BARA i
+        stacken — Advisory/Team är orörda och behåller sin fulla skala fristående.
+
+        1) Rubriker/ingresser: hero-/sektionsskala är för stor för ett kort → ner
+           till kompakt kort-skala. 2) Trimmad vertikal rytm. ── */
+  .step :global(.adv) :global(h2),
+  .step :global(.team__h) {
+    font-size: var(--fs-h2) !important;
+    line-height: var(--lh-heading) !important;
+  }
+  /* Team-rubriken på EN rad i stacken (ingen wrap) */
+  .step :global(.team__h) {
+    max-width: none !important;
+  }
+  .step :global(.sec-head) :global(p),
+  .step :global(.team__lead) {
+    font-size: var(--fs-body) !important;
+    margin-top: 12px !important;
+  }
+  /* Advisory: lista + rader + SEOS-brygga */
+  .step :global(.adv-list) {
+    margin-top: clamp(12px, 1.6vw, 18px) !important;
+  }
+  .step :global(.adv-item) {
+    padding-block: clamp(10px, 1.3vw, 15px) !important;
+  }
+  .step :global(.adv-seos) {
+    margin-top: clamp(12px, 1.6vw, 16px) !important;
+  }
+  /* Team: paret + lite större märke/ordmärke (CTA bor nu i varje brand-kolumn) */
+  .step :global(.team__pair) {
+    margin-top: clamp(18px, 2.4vw, 28px) !important;
+  }
+  .step :global(.team__mark),
+  .step :global(.team__logo) {
+    min-height: clamp(52px, 5.5vw, 72px) !important;
+    height: clamp(52px, 5.5vw, 72px) !important;
+  }
+  .step :global(.team__wm) {
+    font-size: clamp(28px, 3vw, 38px) !important;
+  }
+</style>

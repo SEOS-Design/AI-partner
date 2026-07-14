@@ -3,9 +3,9 @@
 // Split: budskap + trust-punkter vänster, kontaktformulär höger.
 // Landningsmål för "#boka"-CTA:erna i StartFlow (anchor nedan) samt Nav "#kontakt".
 //
-// Scroll-koreografi: sektionen är PINNAD (position: sticky) medan avslutet
-// (ArcBand + Footer, i .page-end med högre z-index) scrollar UPP framför/över den.
-// Pin bara på desktop; mobil = normalt flöde. Formuläret saknar backend ännu —
+// Sitter som TREDJE (sista) panelen i <StackFlow> → pinnas där tillsammans med
+// Advisory + Team (StackFlow äger sticky-logiken; sektionen själv är orörd och
+// neutraliseras via :global i wrappern). Formuläret saknar backend ännu —
 // submit visar ett demo-kvitto.
 import Arrow from './Arrow.astro';
 ---
@@ -15,7 +15,7 @@ import Arrow from './Arrow.astro';
   <div class="container cta2">
     <div class="cta2__grid">
       <div class="cta2__head">
-        <h2 id="cta-heading" class="cta2__big">Vad vill ni ta bort först?</h2>
+        <h2 id="cta-heading" class="cta2__big">Börja med er största tidstjuv.</h2>
         <p class="cta2__sub">
           Berätta om en process som tar för mycket tid. Vi återkommer med vad som går att
           automatisera — och vad det skulle ge.

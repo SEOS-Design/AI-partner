@@ -1,0 +1,143 @@
+---
+// BeamCta.astro – frostad glas-CTA med azur-komet längs kanten (samma beam som
+// hero-sekundären "Se hur det fungerar"). Kometen = flera tunna stroke-segment
+// med fallande opacitet + fas-förskjutning som bildar EN uttonande strimma;
+// banan ritas i JS efter knappens exakta mått (rundad rektangel, ResizeObserver).
+// Bygger på .btn-basen (global.css) så den paras jämnt med .btn-primary.
+// Innehåll (text + ev. Arrow) skickas via <slot>.
+interface Props {
+  href: string;
+  target?: string;
+  rel?: string;
+  class?: string;
+}
+const { href, target, rel, class: className } = Astro.props;
+
+// Komet-segment: front ljusast & leder (mest negativ delay), bakre svagast.
+const COMET = [
+  { op: 0.62, delay: '-0.42s' },
+  { op: 0.48, delay: '-0.35s' },
+  { op: 0.36, delay: '-0.28s' },
+  { op: 0.26, delay: '-0.21s' },
+  { op: 0.17, delay: '-0.14s' },
+  { op: 0.1, delay: '-0.07s' },
+  { op: 0.05, delay: '0s' },
+];
+---
+
+<a class:list={['btn', 'beam-cta', className]} href={href} target={target} rel={rel}>
+  <slot />
+  <span class="beam-cta__beam" aria-hidden="true">
+    <svg class="beam-cta__svg" aria-hidden="true">
+      {COMET.map((s) => (
+        <path class="beam-cta__seg" pathLength="100" style={`--op:${s.op};--delay:${s.delay}`}></path>
+      ))}
+    </svg>
+  </span>
+</a>
+
+<style>
+  .beam-cta {
+    position: relative;
+    isolation: isolate;
+    color: var(--fg-1);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03) 42%, transparent 72%),
+      rgba(255, 255, 255, 0.05);
+    -webkit-backdrop-filter: blur(18px) saturate(1.1);
+    backdrop-filter: blur(18px) saturate(1.1);
+    border-color: rgba(255, 255, 255, 0.22);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.38),
+      inset 0 0 20px rgba(255, 255, 255, 0.04),
+      0 8px 26px rgba(0, 0, 0, 0.4);
+  }
+  .beam-cta:hover {
+    border-color: rgba(255, 255, 255, 0.34);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      inset 0 0 24px rgba(255, 255, 255, 0.06),
+      0 12px 32px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Komet: flera tunna stroke-segment (front ljus → bakre transparent). */
+  .beam-cta__beam {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 2;
+    overflow: visible; /* låt glöden stråla utanför kanten */
+  }
+  .beam-cta__svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    fill: none;
+  }
+  .beam-cta__seg {
+    fill: none;
+    stroke: hsl(var(--arc-hue) 100% 86%);
+    stroke-width: 1;
+    stroke-linecap: round;
+    stroke-dasharray: 2.6 97.4;
+    stroke-dashoffset: 0;
+    opacity: var(--op, 0.5);
+    filter: drop-shadow(0 0 1.5px hsl(var(--arc-hue) 100% 78% / 0.3));
+    animation: beamComet 5.5s linear infinite;
+    animation-delay: var(--delay, 0s);
+  }
+  @keyframes beamComet {
+    to {
+      stroke-dashoffset: -100;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .beam-cta__beam {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  // Rita banan som en rundad rektangel i knappens exakta pixelmått så strimman
+  // följer kanten (inkl. hörnradien). ResizeObserver håller banan i synk.
+  (function () {
+    const btns = document.querySelectorAll<HTMLElement>('.beam-cta');
+    if (!btns.length) return;
+    const observers: ResizeObserver[] = [];
+    btns.forEach((btn) => {
+      const paths = btn.querySelectorAll<SVGPathElement>('.beam-cta__seg');
+      if (!paths.length) return;
+      const inset = 0.5; // border-mittlinjen (1px border → 0.5px inset)
+      const sync = (): void => {
+        const w = btn.clientWidth;
+        const h = btn.clientHeight;
+        const x = inset;
+        const y = inset;
+        const bw = Math.max(0, w - inset * 2);
+        const bh = Math.max(0, h - inset * 2);
+        const r = Math.max(0, Math.min(21.5, bw / 2, bh / 2));
+        const cx = x + bw / 2;
+        const d =
+          `M${cx},${y + bh} H${x + r} A${r},${r} 0 0 1 ${x},${y + bh - r}` +
+          ` V${y + r} A${r},${r} 0 0 1 ${x + r},${y}` +
+          ` H${x + bw - r} A${r},${r} 0 0 1 ${x + bw},${y + r}` +
+          ` V${y + bh - r} A${r},${r} 0 0 1 ${x + bw - r},${y + bh}` +
+          ` H${cx} Z`;
+        paths.forEach((p) => p.setAttribute('d', d));
+      };
+      sync();
+      const ro = new ResizeObserver(sync);
+      ro.observe(btn);
+      observers.push(ro);
+    });
+    document.addEventListener(
+      'astro:before-swap',
+      () => observers.forEach((o) => o.disconnect()),
+      { once: true },
+    );
+  })();
+</script>

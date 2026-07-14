@@ -67,11 +67,11 @@
   /* --- Fluid type-skala (clamp: min, preferens, max) ---
      Använd dessa istället för hårdkodade px så skalar allt mjukt ner
      mot mobil av sig självt. */
-  --fs-display: clamp(44px, 7.5vw, 84px); /* hero H1 */
-  --fs-h1: clamp(36px, 5vw, 60px);
-  --fs-h2: clamp(28px, 3.4vw, 40px);
-  --fs-h3: clamp(20px, 2vw, 26px);
-  --fs-lead: clamp(16px, 1.8vw, 19px); /* ingress */
+  --fs-display: clamp(46px, 7.8vw, 88px); /* hero H1 */
+  --fs-h1: clamp(38px, 5.2vw, 64px);
+  --fs-h2: clamp(30px, 3.6vw, 44px);
+  --fs-h3: clamp(21px, 2.1vw, 27px);
+  --fs-lead: clamp(17px, 1.9vw, 20px); /* ingress */
   --fs-body: 16px;
   --fs-small: 14px;
   --fs-eyebrow: 11px; /* eyebrow-etiketter */
@@ -89,8 +89,8 @@
   --lh-body: 1.7;
 
   /* --- Teckenspärr (tracking) --- */
-  --tracking-display: -0.03em; /* rubriker knyts ihop */
-  --tracking-tight: -0.01em;
+  --tracking-display: -0.02em; /* rubriker knyts ihop (mjukare — var -0.03) */
+  --tracking-tight: -0.005em; /* var -0.01 */
   --tracking-eyebrow: 0.16em; /* versaletikett vidgas */
   --tracking-button: 0.09em;
 

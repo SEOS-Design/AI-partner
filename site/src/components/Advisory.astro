@@ -1,6 +1,4 @@
 ---
-import Arrow from './Arrow.astro';
-
 // Advisory.astro – sektion "Rådgivning & förvaltning" (Lager 3).
 // Design v5, variant A: den lysande azur-bågen (samma glöd som footer-
 // horisonten) välver som ett TAK högst upp i sektionen — bågkurvan är den enda
@@ -45,10 +43,10 @@ const OFFERS = [
   <div class="container">
     <div class="adv-under">
       <div class="sec-head">
-        <h2 id="adv-heading">Vem tar hand om AI:n när den väl kör?</h2>
+        <h2 id="adv-heading">Vi släpper inte taget vid lansering.</h2>
         <p>
-          Det gör vi. Samma team som bygger lösningen förvaltar den vidare — vi släpper inte
-          taget vid driftsättning. De här tre sakerna sköter vi <b>löpande</b>.
+          Samma team som bygger lösningen förvaltar den vidare — vi finns kvar långt efter
+          driftsättning. De här tre sakerna sköter vi löpande.
         </p>
       </div>
 
@@ -86,16 +84,15 @@ const OFFERS = [
       </div>
     </div>
 
-    <!-- SEOS-bryggan — inbakad löptext + en diskret utlänk (måttfullt) -->
+    <!-- SEOS-bryggan — inbakad löptext (måttfullt). Den framträdande SEOS-CTA:n
+         bor numera i Team-sektionen; här räcker en diskret inline-länk. -->
     <div class="adv-seos">
       <p>
         Syns ni när kunden frågar en AI om er bransch? AI-synlighet och AEO — att synas i
-        AI-svar, inte bara i Google — levereras genom vårt systervarumärke <b>SEOS Design</b>,
+        AI-svar, inte bara i Google — levereras genom vårt systervarumärke
+        <a class="adv-seos__link" href="https://seosdesign.se" target="_blank" rel="noopener noreferrer">SEOS Design</a>,
         en av Sveriges ledande webbyråer med egna SEO/AEO-processer.
       </p>
-      <a class="btn btn-primary adv-seos__link" href="https://seosdesign.se" target="_blank" rel="noopener noreferrer">
-        Till SEOS Design <Arrow class="arrow" />
-      </a>
     </div>
   </div>
 </section>
@@ -226,9 +223,23 @@ const OFFERS = [
     color: var(--fg-2);
     font-weight: 600;
   }
-  /* .btn/.btn-primary (global) styr färg/radie/typografi; här bara avstånd */
+  /* Diskret inline-länk på varumärkesnamnet (ingen CTA-knapp) */
   .adv-seos__link {
-    margin-top: 20px;
+    color: var(--fg-2);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-strong);
+    transition:
+      color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease);
+  }
+  .adv-seos__link:hover {
+    color: var(--fg-1);
+    border-color: var(--fg-3);
+  }
+  .adv-seos__link:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-radius: 2px;
   }
 
   /* ---- responsivt ---- */

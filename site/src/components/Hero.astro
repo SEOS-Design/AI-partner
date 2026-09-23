@@ -16,9 +16,12 @@
         mätt sömlös (kvot 1,51). Videon ligger på z1; postern (.hero-bg, z0) är
         första rutan och visas innan videon laddat OCH vid reduced-motion, då
         videon döljs. Den gamla /hero-bg.webp är kvar i public/ för återbruk. */}
+    {/* Ingen autoplay: inview-video.ts spelar den när den syns och pausar den när
+        man scrollat förbi. preload="auto" så den är buffrad direkt (hero syns först). */}
     <video
       class="hero-video"
-      autoplay
+      data-inview-video
+      preload="auto"
       muted
       loop
       playsinline
@@ -252,3 +255,7 @@
   }
 
 </style>
+
+<script>
+  import '../scripts/inview-video';
+</script>

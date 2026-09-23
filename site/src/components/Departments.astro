@@ -76,6 +76,29 @@ const agents: Agent[] = [
 ---
 
 <section id="avdelningar" class="section aipa" aria-labelledby="aipa-heading">
+  {/* Bakgrund: crossfade-loopad glas-video (Wannathis "Glass cylinders", dark;
+      skarven var 7,16 → 0,85 efter crossfade). Ersatte /dep-bg.webp. Videon (z1)
+      ligger över postern (z0 = fallback + reduced-motion) och under slöjan (z2)
+      som mörkar/tonar ut mot kanterna så sektionen läser som raised yta, inte
+      tapet. INGEN isolation/transform på .section — den innehåller lightboxen
+      (position:fixed) som annars fångas under navbaren. */}
+  <div class="dep-bg" aria-hidden="true"></div>
+  {/* Ingen autoplay + preload="none": laddas inte ens ner förrän sektionen närmar
+      sig vyn, och pausas när den lämnar den (inview-video.ts). Postern syns tills dess. */}
+  <video
+    class="dep-bg-video"
+    data-inview-video
+    preload="none"
+    muted
+    loop
+    playsinline
+    poster="/dep-glass-poster.webp"
+    aria-hidden="true"
+  >
+    <source src="/dep-glass.webm" type="video/webm" />
+    <source src="/dep-glass.mp4" type="video/mp4" />
+  </video>
+  <div class="dep-veil" aria-hidden="true"></div>
   <div class="container">
     <div class="sec-head reveal">
       <h2 id="aipa-heading" class="h2">Vad gör en AI-agent på just er avdelning?</h2>
@@ -158,31 +181,54 @@ const agents: Agent[] = [
 <style>
   /* ---- layout ---- */
   .container {
+    position: relative; /* + z-index → innehållet ovanför video/slöja (z0–2) */
+    z-index: 3;
     max-width: var(--maxw-content);
     margin-inline: auto;
     padding-inline: var(--space-5);
     width: 100%;
   }
-  /* Raised-yta: lyfter denna kort-tunga sektion från void-sektionerna runtom
-     (subtil nivåskillnad ger rytm). Hårfina kanter delar av ytan.
+  /* Raised-yta: lyfter denna kort-tunga sektion från void-sektionerna runtom.
+     Bakgrunden är sedan sept 2026 en glas-VIDEO (se markupen) i stället för
+     /dep-bg.webp (fotot kvar i public för ev. återbruk). Lagren: .dep-bg (poster,
+     z0) · .dep-bg-video (z1) · .dep-veil (z2) · .container (z3).
 
-     BAKGRUNDSBILD 2026-07-17 (Unsplash, boliviainteligente — WJokCtm7wcc), lagd i
-     background-stacken i stället för som eget element. Det är med flit: sektionen
-     innehåller lightboxen (position:fixed, z-index 100), och ett lager som tvingat
-     fram en stacking-kontext här hade fångat den och lagt den UNDER navbaren.
-
-     Slöjan ovanpå bilden mörkar ner den och tonar ut mot kanterna, så sektionen
-     fortfarande läser som en raised yta och inte som en tapet. Bilden är mätt:
-     medelluminans 0,045 med 86,9% av ytan under 0,04 — mörkare än hero-bilden. */
+     VIKTIGT: .section får INTE isolation/transform/filter/will-change — den
+     innehåller lightboxen (position:fixed, z-index 100), och en containing block
+     här hade fångat den under navbaren. position:relative är OK (fångar inte
+     fixed). Slöjan mörkar/tonar videon mot kanterna så det läser som raised yta. */
   .section {
     position: relative;
     padding: var(--section-py) 0;
+    background: var(--bg-raised);
+    border-block: 1px solid var(--border);
+  }
+  .dep-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: url("/dep-glass-poster.webp") center / cover no-repeat;
+  }
+  .dep-bg-video {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .dep-veil {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
     background:
       radial-gradient(120% 90% at 50% 50%, rgba(16, 16, 16, 0.55) 0%, rgba(16, 16, 16, 0.86) 72%),
-      linear-gradient(180deg, var(--bg-raised) 0%, rgba(16, 16, 16, 0) 14%, rgba(16, 16, 16, 0) 86%, var(--bg-raised) 100%),
-      url("/dep-bg.webp") center / cover no-repeat,
-      var(--bg-raised);
-    border-block: 1px solid var(--border);
+      linear-gradient(180deg, var(--bg-raised) 0%, rgba(16, 16, 16, 0) 14%, rgba(16, 16, 16, 0) 86%, var(--bg-raised) 100%);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dep-bg-video { display: none; }
   }
 
   /* ---- reveal-on-scroll (innehåll alltid synligt; rörelse förstärker) ---- */
@@ -800,4 +846,8 @@ const agents: Agent[] = [
       { once: true },
     );
   })();
+</script>
+
+<script>
+  import '../scripts/inview-video';
 </script>

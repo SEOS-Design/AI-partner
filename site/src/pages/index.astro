@@ -18,11 +18,11 @@ import Layout from '../layouts/Layout.astro';
   <Hero />
   <Positionering />
   <Stats />
-  <StartFlow />
   {/* Departments är en katalog (6 kort man skannar samtidigt) → egen obunden
-      sektion, INTE i stacken. Ligger direkt före stacken så Bygg-läget i flödet
-      hålls (Ingång → Bygg → avslutande stack-berättelse). */}
+      sektion, INTE i stacken. Bygg-läget i flödet: Ingång → Bygg → avslutande
+      stack-berättelse. */}
   <Departments />
+  <StartFlow />
   {/* Kortstack: tre stack-vänliga en-budskaps-paneler (förvaltning → vilka vi är
       → boka). Revertera genom att ta bort <StackFlow> och lägga tillbaka de tre
       som vanliga syskon. FAQ är parkerad (flyttas till /om-oss). */}

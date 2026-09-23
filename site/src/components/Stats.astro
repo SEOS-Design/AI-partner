@@ -66,15 +66,14 @@
   /* Raised band — lyfter sektionen från void-sektionerna runtom (samma
      rytm-grepp som Departments): void → raised → void → raised. */
   .stats {
-    --a1: hsl(var(--arc-hue) 100% 66%);
-    --a1-dim: hsl(var(--arc-hue) 90% 62% / 0.5);
     padding: var(--section-py) 0;
     background: var(--bg-raised);
     border-block: 1px solid var(--border);
   }
 
   .stats-h {
-    max-width: 20ch;
+    /* Självständig rubrik → sträcker ut sig naturligt (ingen tvingad max-bredd).
+       Wrappar bara om den är för lång för radbredden. */
     text-wrap: balance;
   }
 
@@ -92,16 +91,48 @@
     padding: clamp(44px, 6vw, 84px) 0;
     border-top: 1px solid var(--border);
   }
-  /* azur-signaturen: en tunn glödande tick per stat — enda blå ytan */
+  /* azur-signaturen per stat: en tunn linje som ligger på radens hårstreck och
+     tonar ut åt höger. Samma recept som ArcBand ovanför footern — 1px kärna +
+     maskad, blurrad bloom — men ankrad i radens vänsterkant i stället för
+     centrerad över hela bredden. */
   .tick {
     position: absolute;
     top: -1px;
     left: 0;
-    display: block;
-    width: 28px;
-    height: 2px;
-    background: var(--a1);
-    box-shadow: 0 0 10px var(--a1-dim);
+    width: clamp(200px, 30%, 380px);
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      hsl(var(--arc-hue) 100% 68% / 0) 0%,
+      hsl(var(--arc-hue) 100% 68% / 0.85) 7%,
+      hsl(var(--arc-hue) 100% 64% / 0.5) 48%,
+      hsl(var(--arc-hue) 100% 64% / 0) 100%
+    );
+  }
+  /* Bloomen tonar ut åt alla håll: uppåt/nedåt via färggradienten, i sidled via
+     masken. Båda ändarna måste nå alfa 0 — annars läser den som en box.
+
+     INGEN filter: blur() här, medvetet. ArcBand kan blurra för att dess bloom är
+     150px hög mot 14px blur; på 29px hade blurren smetat upp mittpartiets ljus i
+     gradientens genomskinliga ändar, och blurbleedet klipps vid boxkanten →
+     mätbar hård kant (~7 luminanssteg på en pixel). Blurren SKAPADE alltså kanten
+     den skulle mjuka upp. Gradientens egna stopp ger uttoningen gratis — och utan
+     extra rasterpass. Höjs bloomen rejält kan blur övervägas igen. */
+  .tick::after {
+    content: '';
+    position: absolute;
+    inset: -16px 0;
+    background: linear-gradient(
+      180deg,
+      hsl(var(--arc-hue) 100% 56% / 0) 0%,
+      hsl(var(--arc-hue) 100% 56% / 0.05) 32%,
+      hsl(var(--arc-hue) 100% 56% / 0.3) 50%,
+      hsl(var(--arc-hue) 100% 56% / 0.05) 68%,
+      hsl(var(--arc-hue) 100% 56% / 0) 100%
+    );
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 10%, transparent 88%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 10%, transparent 88%);
+    pointer-events: none;
   }
   .idx {
     align-self: start;
@@ -114,7 +145,7 @@
   .num {
     display: block;
     font-weight: 700;
-    font-size: clamp(76px, 11vw, 168px);
+    font-size: clamp(60px, 8.6vw, 132px);
     line-height: 0.98;
     letter-spacing: -0.03em;
     color: var(--fg-1);
@@ -129,7 +160,7 @@
   }
   .claim {
     max-width: 28ch;
-    font-size: 20px;
+    font-size: var(--fs-lead);
     font-weight: 500;
     line-height: 1.5;
     color: var(--fg-1);
@@ -137,7 +168,7 @@
   }
   .src {
     margin-top: 14px;
-    font-size: 13px;
+    font-size: var(--fs-small);
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
@@ -163,12 +194,10 @@
   .statement {
     margin-top: clamp(40px, 5vw, 72px);
     font-weight: 600;
-    font-size: var(--fs-display);
+    font-size: var(--fs-h2);
     line-height: var(--lh-heading);
     letter-spacing: var(--tracking-display);
     color: var(--fg-1);
-    text-wrap: balance;
-    max-width: 12ch;
   }
 
   /* ---- Reveal: synligt som bas, rörelse förstärker (repo-konventionen) ---- */

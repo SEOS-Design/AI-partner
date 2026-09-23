@@ -14,3 +14,16 @@ dist
 
 # Design-handoff (referens, ej del av sajten)
 /AI Partner Design System-handoff/
+
+# Källfiler & nedladdningar — behåll på disk, versionera INTE (för stora /
+# ej del av den byggda sajten). De färdiga webb-filerna i site/public/ committas.
+/*.zip
+/*.mp4
+/boliviainteligente-*.jpg
+/AI Partner - *.html
+*.bak
+
+# Oanvända/trasiga assets i public (källa resp. död demo)
+site/public/hero-bg.jpg
+site/public/hero-glas-demo.html
+site/src/assets/pexels-*.jpg

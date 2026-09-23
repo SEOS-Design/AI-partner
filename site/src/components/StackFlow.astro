@@ -49,9 +49,14 @@
   .stackflow {
     --gap: clamp(14px, 2vw, 22px);
     --r: clamp(30px, 4vw, 40px);
-    /* Var panelen LÅSER sig: under den flytande nav-pillen (botten ~72px) + luft.
-       Sista kortet låser inte — det glider upp bakom nav:en. */
-    --lock: 94px;
+    /* Var panelen LÅSER sig. Kortets top-kant linjerar med navbarens top-kant
+       (= Nav.astros --nav-top, 18px) och kortet glider BAKOM den flytande
+       pillen (pillret är z-index 100, panelen lägre). Låg tidigare på 94px =
+       UNDER pillen med luft, vilket åt ~76px höjd → innehållet trycktes ner och
+       nästa kort täckte det innan allt fått plats. Att låsa vid navbarens top ger
+       den höjden tillbaka. Håll i synk med Nav.astros --nav-top. Sista kortet
+       låser inte — det glider upp bakom nav:en. */
+    --lock: 18px;
     --foot: 26px; /* luft mellan låst panel och vyns botten */
     position: relative;
     /* Panelernas glaskant ska ligga i linje med nav-pillen (samma bredd som
@@ -78,10 +83,24 @@
     position: relative;
     /* Höjden är ETT enda värde (samma för alla tre paneler → alltid uniform, ingen
        genomlys): fyller vyn under nav:en på höga skärmar, men aldrig lägre än ett
-       golv (30rem) på korta/skalade vyer. Det trimmade innehållet (nedan) ryms
-       alltid inom golvet → ingen avklippning oavsett viewport-höjd. Vertikalt
-       centrerat. */
-    min-height: max(30rem, calc(100svh - var(--lock) - var(--foot)));
+       golv på korta/skalade vyer. Vertikalt centrerat.
+
+       GOLVET MÅSTE RYMMA DET HÖGSTA INNEHÅLLET, annars bryts uniformiteten:
+       min-height är ett minimum, så en panel vars innehåll är högre än golvet
+       VÄXER — och sticker då upp bakom de kortare, som är låsta på samma topp.
+       Det är precis den genomlys konstruktionen ska undvika.
+
+       Golvet var 30rem (480px) och Advisory låg på 476px — 4px marginal. När
+       fontstorleken höjdes krävde Advisory 508px och uniformiteten sprack.
+
+       GOLVET FÖLJER BREDDEN, för vilken panel som är högst byter vid 920px:
+         >=920px  Advisory högst, max 516px  -> 34rem (544px)
+         <920px   Contact  högst, max 652px  -> 42rem (672px), för formuläret
+                  kollapsar då till en kolumn och nästan dubblas i höjd.
+       Ett enda golv hade tvingat 42rem även på breda vyer, där 34 räcker.
+       Mät om över HELA spannet 720–1600px innan något sänks — maxet infaller
+       inte vid ytterkanterna. Stacken blir vanligt flöde <720px. */
+    min-height: max(34rem, calc(100svh - var(--lock) - var(--foot)));
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -146,6 +165,15 @@
     opacity: 0.045;
     mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Contacts formulär kollapsar till en kolumn under 920px och blir då högst av
+     panelerna (652px mot Advisorys 526). Golvet måste följa med, annars växer
+     Contact förbi de andra och sticker upp bakom dem = genomlys. */
+  @media (max-width: 919px) {
+    .panel {
+      min-height: max(42rem, calc(100svh - var(--lock) - var(--foot)));
+    }
   }
 
   /* ── Mobil + fallback: vanligt vertikalt flöde ── */

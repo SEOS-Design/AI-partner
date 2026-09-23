@@ -24,7 +24,7 @@
   /* --- Text: fyra nivåer --- */
   --fg-1: #ffffff; /* rubriker, maxkontrast */
   --fg-2: #e6e6e6; /* brödtext på mörkt */
-  --fg-3: #8f8f8f; /* dämpad/sekundär, eyebrows */
+  --fg-3: #a8a8a8; /* dämpad/sekundär, eyebrows — ljusare för läsbarhet mot svart (var #8f8f8f) */
   --fg-4: rgba(255, 255, 255, 0.3); /* svaga etiketter, meta */
 
   /* --- Accent: gråskala — ingen kromatisk färg (matchar seosdesign.se) --- */
@@ -69,10 +69,10 @@
      mot mobil av sig självt. */
   --fs-display: clamp(46px, 7.8vw, 88px); /* hero H1 */
   --fs-h1: clamp(38px, 5.2vw, 64px);
-  --fs-h2: clamp(30px, 3.6vw, 44px);
-  --fs-h3: clamp(21px, 2.1vw, 27px);
-  --fs-lead: clamp(17px, 1.9vw, 20px); /* ingress */
-  --fs-body: 16px;
+  --fs-h2: clamp(32px, 4.4vw, 52px); /* sektionsrubriker — ganska stora, konsekventa */
+  --fs-h3: clamp(24px, 2.8vw, 34px);
+  --fs-lead: clamp(18px, 1.9vw, 20px); /* ingress */
+  --fs-body: 17px;
   --fs-small: 14px;
   --fs-eyebrow: 11px; /* eyebrow-etiketter */
   --fs-micro: 10px; /* meta, små captions */
@@ -217,7 +217,8 @@ button {
   transform: translateX(4px);
 }
 
-/* Primär — ljus/vit (grå-accent, matchar SEOS). AKTIV variant. */
+/* Primär — ljus/vit (grå-accent, matchar SEOS). AKTIV variant.
+   Används av StartFlow, Team, Contact och Positioneringens sekundär. */
 .btn-primary {
   background: var(--accent);
   color: var(--accent-ink);
@@ -230,6 +231,168 @@ button {
 .btn-primary:active {
   background: var(--accent-press);
   border-color: var(--accent-press);
+}
+
+/* Azur — glaskant med bloom (Framer-referensen). EGEN VARIANT, inte primären:
+   används bara där en enskild CTA ska bära accenten (i dag Positioneringens
+   "Boka kartläggning"). Låg kortvarigt på .btn-primary 2026-07-17, men den är
+   centraliserad och färgade då om alla fyra primärknappar på sidan.
+
+   Nyansen är oförändrad: --arc-hue 204 ÄR #0099ff. "Poppet" kommer av att färgen
+   används nära 50-58% ljushet i stället för 86%, där den blir vitaktig. */
+.btn-azur {
+  color: var(--fg-1);
+  border-color: hsl(var(--arc-hue) 100% 58% / 0.85);
+  background:
+    linear-gradient(180deg, hsl(var(--arc-hue) 100% 62% / 0.16), hsl(var(--arc-hue) 100% 52% / 0.05) 46%, transparent 76%),
+    rgba(255, 255, 255, 0.03);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  backdrop-filter: blur(18px) saturate(1.1);
+  box-shadow:
+    inset 0 1px 0 hsl(var(--arc-hue) 100% 88% / 0.35),
+    inset 0 0 22px hsl(var(--arc-hue) 100% 55% / 0.2),
+    0 0 14px -1px hsl(var(--arc-hue) 100% 56% / 0.5),
+    0 0 40px 2px hsl(var(--arc-hue) 100% 52% / 0.28);
+}
+.btn-azur:hover {
+  border-color: hsl(var(--arc-hue) 100% 66% / 1);
+  box-shadow:
+    inset 0 1px 0 hsl(var(--arc-hue) 100% 92% / 0.5),
+    inset 0 0 26px hsl(var(--arc-hue) 100% 58% / 0.3),
+    0 0 18px 0 hsl(var(--arc-hue) 100% 60% / 0.65),
+    0 0 54px 6px hsl(var(--arc-hue) 100% 54% / 0.4);
+}
+.btn-azur:active {
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.5),
+    inset 0 0 22px hsl(var(--arc-hue) 100% 55% / 0.24);
+}
+
+/* ── Fundamental-referensen (fundamental.bg, Björns val 2026-07-17) ──────────
+   Två MÖRKA varianter där den lysande kanten bär hela uttrycket. Båda använder
+   samma grepp: `border: <n>px solid transparent` + två bakgrundslager — mörk yta
+   klippt till padding-box, ljus gradient klippt till border-box. Kanten BLIR
+   gradienten. Ingen extra markup; texten ligger kvar överst av sig själv.
+
+   Uppmätt på originalet (Playwright, ej preview-panelen — se nedan):
+   · Kometen är INTE statisk. Den orbiterar knappens mitt, ~4 s/varv, MEDURS
+     (botten → vänster → topp → höger). Blobben är ~28×21 px på ett 138×42-pill
+     och pulsar i storlek. Syns bara genom 2px-kanten (svart platta täcker mitten).
+   · Statiska knappen: kanten ljus till VÄNSTER, uttonad åt höger; vid hover
+     tänds hela kanten + skenet pulsar.
+   · Originalet är grönt (#3EC092 kometen, #1F8053 den statiska). Här: azur.
+
+   FÄLLA: preview-panelen visade kometen som stillastående på sitt startvärde —
+   den kör sidan med document.hidden=true, vilket dödar rAF. Mät rörelse med
+   Playwright. INGEN blur på kanten: 2px-ring + blur = mos, och blur i låga boxar
+   skapar klippta kanter (se Stats-linjen). Gradienternas egen uttoning räcker. */
+
+@property --comet-x {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 50%;
+}
+@property --comet-y {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+
+/* Kometen — mörk yta, azur blob som orbiterar kanten. */
+.btn-comet {
+  position: relative;
+  /* Ytan: nästan svart med en aning azur i (originalets #0D0F0C har på samma
+     sätt en gnutta av sin egen grönska i). Ljusare än sidans --bg (#0a0a0a) så
+     knappen läser som ett föremål mot sektionen, inte som ett hål. */
+  --btn-face: #0d1016;
+  color: var(--fg-1);
+  border: 2px solid transparent;
+  /* INGEN baskant — kometen ska åka i tomhet, inte i en synlig ring (Björn
+     2026-07-17). Originalet har `bg-black/20` i ringen, alltså en MÖRK kant: den
+     läser mot deras ljusa videohero men blir osynlig mot vår mörka sektion, så
+     den är utelämnad i stället för härmad. Knappen identifieras av sin vita text
+     (hög kontrast, WCAG 1.4.3) + ytan som ligger en aning ljusare än sektionen;
+     kanten är ren effekt. Lägg inte tillbaka en ljus baskant utan att fråga. */
+  background:
+    linear-gradient(var(--btn-face), var(--btn-face)) padding-box,
+    radial-gradient(
+        26px 20px at var(--comet-x) var(--comet-y),
+        hsl(var(--arc-hue) 100% 66%) 0%,
+        hsl(var(--arc-hue) 100% 60% / 0) 100%
+      )
+      border-box;
+  animation: comet-orbit 4s linear infinite;
+}
+.btn-comet:hover {
+  --btn-face: #12161d;
+}
+@keyframes comet-orbit {
+  0% {
+    --comet-x: 50%;
+    --comet-y: 100%;
+  }
+  25% {
+    --comet-x: 0%;
+    --comet-y: 50%;
+  }
+  50% {
+    --comet-x: 50%;
+    --comet-y: 0%;
+  }
+  75% {
+    --comet-x: 100%;
+    --comet-y: 50%;
+  }
+  100% {
+    --comet-x: 50%;
+    --comet-y: 100%;
+  }
+}
+/* Rörelse förstärker, den är inte förutsättningen: utan rörelse parkeras
+   kometen i överkanten så kanten fortfarande har sitt sken. */
+@media (prefers-reduced-motion: reduce) {
+  .btn-comet {
+    animation: none;
+    --comet-x: 50%;
+    --comet-y: 0%;
+  }
+}
+
+/* Statiskt sken — mörk yta, kanten ljus till vänster och uttonad åt höger.
+   Vid hover tänds hela kanten och skenet växer. */
+.btn-glow {
+  --btn-face: #0d1016;
+  color: var(--fg-1);
+  border: 2px solid transparent;
+  background:
+    linear-gradient(var(--btn-face), var(--btn-face)) padding-box,
+    linear-gradient(
+        90deg,
+        hsl(var(--arc-hue) 100% 60%) 0%,
+        hsl(var(--arc-hue) 100% 56% / 0.28) 55%,
+        hsl(var(--arc-hue) 100% 56% / 0.12) 100%
+      )
+      border-box;
+  box-shadow:
+    0 0 16px -2px hsl(var(--arc-hue) 100% 55% / 0.45),
+    0 0 44px 2px hsl(var(--arc-hue) 100% 50% / 0.2);
+}
+.btn-glow:hover {
+  background:
+    linear-gradient(var(--btn-face), var(--btn-face)) padding-box,
+    linear-gradient(
+        90deg,
+        hsl(var(--arc-hue) 100% 64%) 0%,
+        hsl(var(--arc-hue) 100% 62% / 1) 55%,
+        hsl(var(--arc-hue) 100% 60% / 1) 100%
+      )
+      border-box;
+  box-shadow:
+    0 0 22px 0 hsl(var(--arc-hue) 100% 60% / 0.6),
+    0 0 58px 6px hsl(var(--arc-hue) 100% 54% / 0.32);
+}
+.btn-glow:active {
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 /* ── SPARAD azur-variant (mörk-azur) ─────────────────────────────────────────

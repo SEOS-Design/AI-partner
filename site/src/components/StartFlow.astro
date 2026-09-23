@@ -43,15 +43,15 @@ const BOOK = '#boka';
 
       <ol class="steps">
         <li class="step step--1">
-          <h3>Vi kommer ut</h3>
-          <p>Vi går igenom era processer på plats — vad tar tid idag, och vad återkommer varje vecka?</p>
+          <h3>Kartläggning på plats</h3>
+          <p>Vi går igenom era processer på plats — vad tar tid i dag, och vad återkommer varje vecka?</p>
         </li>
         <li class="step step--2">
-          <h3>Vi prioriterar</h3>
+          <h3>Prioritering</h3>
           <p>Var ger AI och automation störst effekt — och var gör den det inte? Vi är ärliga med båda.</p>
         </li>
         <li class="step step--3">
-          <h3>Ni får en åtgärdslista</h3>
+          <h3>Åtgärdsplan</h3>
           <p>Konkret och prioriterad. Inget köptvång — ni bestämmer själva om ni går vidare.</p>
         </li>
       </ol>
@@ -72,7 +72,7 @@ const BOOK = '#boka';
     overflow: hidden;
     /* justerbar steg-geometri (desktop-vågen) */
     --ghost-size: 140px;
-    --num-gap: 12px;
+    --num-gap: 20px;
     --text-gap: 40px;
   }
 
@@ -84,7 +84,7 @@ const BOOK = '#boka';
   }
   .sec-head h2 {
     font-weight: 600;
-    font-size: var(--fs-h1);
+    font-size: var(--fs-h2);
     line-height: var(--lh-heading);
     letter-spacing: var(--tracking-display);
     color: var(--fg-1);
@@ -103,7 +103,7 @@ const BOOK = '#boka';
     position: relative;
     width: 100%;
     max-width: 1120px;
-    margin: clamp(60px, 8vw, 104px) auto 0;
+    margin: clamp(40px, 5vw, 64px) auto 0; /* samma rubrik→innehåll-rytm som övriga sektioner */
     aspect-ratio: 1120 / 470;
   }
   .wave {
@@ -184,7 +184,7 @@ const BOOK = '#boka';
   }
   .step p {
     margin: 11px auto 0;
-    font-size: var(--fs-body);
+    font-size: var(--fs-lead);
     line-height: 1.6;
     color: var(--fg-3);
     text-wrap: pretty;
@@ -226,7 +226,9 @@ const BOOK = '#boka';
   /* ══════════ ljust avslut (ingen boxad CTA) ══════════ */
   .close {
     max-width: 820px;
-    margin: clamp(40px, 6vw, 80px) auto 0;
+    /* extra topp-luft: stegtexten (nu större) kan hänga ned en bit under vågen,
+       så close-blocket behöver marginal för att inte trängas ihop med steg 3. */
+    margin: clamp(56px, 7vw, 100px) auto 0;
     text-align: center;
   }
   .close__lead {

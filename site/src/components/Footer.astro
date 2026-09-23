@@ -1,16 +1,20 @@
 ---
 // Footer.astro – minimalistisk footer. Stora ordmärket som avslutande signatur
-// allra längst ner (stil oförändrad, bara placering). Länkarna pekar på egna
-// (planerade) undersidor enligt strategins tre lager + Nav:s sidor — inte
-// startsidans sektionsankare. Slugs speglar Nav-konventionen (/om-oss,
-// /kunskapsbank) och bör bekräftas mot Douglas/SEOS slutgiltiga URL-plan.
+// allra längst ner (stil oförändrad, bara placering).
+//
+// LÄNKARNA speglar nu Nav exakt (Björns beslut 2026-07-17): fyra egna sidor, alla
+// 404 tills de byggs. Borttagna för att de aldrig funnits som sidor:
+// /ai-per-avdelning, /sa-borjar-ni, /radgivning (de var sektionsankare på
+// startsidan förklädda till undersidor) och /kunskapsbank (bor på seosdesign.se
+// enligt kannibaliseringskartan i docs/seo-soktermer.md — vi länkar dit,
+// dubblerar inte). Kontakt ligger kvar i "Mer" så kolumnerna blir 3+2 i stället
+// för 4+1; alla fyra nav-sidorna nås ändå härifrån.
+// Slugarna är förslag — sidstruktur ska spikas mot Douglas/SEOS efter SERP-analys.
 
 const sections: [string, string][] = [
-  ['AI per avdelning', '/ai-per-avdelning'],
-  ['Så börjar ni', '/sa-borjar-ni'],
-  ['Rådgivning', '/radgivning'],
+  ['Tjänster', '/tjanster'],
   ['Om oss', '/om-oss'],
-  ['Kunskapsbank', '/kunskapsbank'],
+  ['Blogg', '/blogg'],
 ];
 ---
 

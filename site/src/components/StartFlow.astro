@@ -114,11 +114,11 @@ const BOOK = '#boka';
     overflow: visible;
     pointer-events: none;
   }
-  .w-glow { fill: none; stroke: hsl(var(--arc-hue) 100% 58% / 0.16); stroke-width: 16; stroke-linecap: round; filter: blur(6px); }
-  .w-echo2 { fill: none; stroke: hsl(var(--arc-hue) 100% 60% / 0.09); stroke-width: 2.4; stroke-linecap: round; filter: blur(2.5px); }
-  .w-echo1 { fill: none; stroke: hsl(var(--arc-hue) 100% 62% / 0.2); stroke-width: 2.6; stroke-linecap: round; filter: blur(1.2px); }
-  .w-halo { fill: none; stroke: hsl(var(--arc-hue) 100% 62% / 0.4); stroke-width: 5; stroke-linecap: round; }
-  .w-core { fill: none; stroke: hsl(var(--arc-hue) 100% 82%); stroke-width: 2; stroke-linecap: round; filter: drop-shadow(0 0 4px hsl(var(--arc-hue) 100% 66% / 0.95)); }
+  .w-glow { fill: none; stroke: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 58% / 0.16); stroke-width: 16; stroke-linecap: round; filter: blur(6px); }
+  .w-echo2 { fill: none; stroke: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 60% / 0.09); stroke-width: 2.4; stroke-linecap: round; filter: blur(2.5px); }
+  .w-echo1 { fill: none; stroke: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 62% / 0.2); stroke-width: 2.6; stroke-linecap: round; filter: blur(1.2px); }
+  .w-halo { fill: none; stroke: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 62% / 0.4); stroke-width: 5; stroke-linecap: round; }
+  .w-core { fill: none; stroke: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 82%); stroke-width: 2; stroke-linecap: round; filter: drop-shadow(0 0 4px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 66% / 0.95)); }
 
   /* nod = statisk glödande punkt på topp/dal */
   .pt {
@@ -133,16 +133,16 @@ const BOOK = '#boka';
     border-radius: 50%;
     background: #fff;
     box-shadow:
-      0 0 0 4px hsl(var(--arc-hue) 100% 60% / 0.18),
-      0 0 14px 3px hsl(var(--arc-hue) 100% 62% / 0.8),
-      0 0 34px 8px hsl(var(--arc-hue) 100% 56% / 0.5);
+      0 0 0 4px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 60% / 0.18),
+      0 0 14px 3px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 62% / 0.8),
+      0 0 34px 8px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 56% / 0.5);
   }
   .pt::after {
     content: "";
     position: absolute;
     inset: 4px;
     border-radius: 50%;
-    background: hsl(var(--arc-hue) 100% 92%);
+    background: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 92%);
   }
 
   /* enorm spök-siffra bakom varje steg — fast bredd + centrerad box så glyfen
@@ -268,8 +268,8 @@ const BOOK = '#boka';
       bottom: 16px;
       width: 2px;
       border-radius: 2px;
-      background: linear-gradient(180deg, hsl(var(--arc-hue) 100% 60% / 0.1), hsl(var(--arc-hue) 100% 60% / 0.55), hsl(var(--arc-hue) 100% 60% / 0.1));
-      box-shadow: 0 0 10px hsl(var(--arc-hue) 100% 58% / 0.4);
+      background: linear-gradient(180deg, hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 60% / 0.1), hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 60% / 0.55), hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 60% / 0.1));
+      box-shadow: 0 0 10px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 58% / 0.4);
     }
     .step {
       position: relative !important;
@@ -292,8 +292,8 @@ const BOOK = '#boka';
       border-radius: 50%;
       background: #fff;
       box-shadow:
-        0 0 0 3px hsl(var(--arc-hue) 100% 60% / 0.18),
-        0 0 12px 2px hsl(var(--arc-hue) 100% 62% / 0.7);
+        0 0 0 3px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 60% / 0.18),
+        0 0 12px 2px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 62% / 0.7);
     }
   }
 </style>

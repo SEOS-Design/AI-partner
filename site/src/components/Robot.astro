@@ -285,8 +285,8 @@ import Arrow from './Arrow.astro';
     pointer-events: none;
     background: radial-gradient(
       circle at 50% 50%,
-      hsl(var(--arc-hue) 100% 60% / 0.3),
-      hsl(var(--arc-hue) 100% 52% / 0.1) 38%,
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 60% / 0.3),
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 52% / 0.1) 38%,
       transparent 66%
     );
   }

@@ -148,11 +148,11 @@ import BeamCta from './BeamCta.astro';
       90deg,
       transparent,
       var(--border) 14%,
-      hsl(var(--arc-hue) 100% 64% / 0.85) 50%,
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 64% / 0.85) 50%,
       var(--border) 86%,
       transparent
     );
-    box-shadow: 0 0 12px hsl(var(--arc-hue) 100% 60% / 0.35);
+    box-shadow: 0 0 12px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 60% / 0.35);
   }
 
   /* CTA bor nu i varje brand-kolumn, botten-linjerad (margin-top:auto trycker den
@@ -179,7 +179,7 @@ import BeamCta from './BeamCta.astro';
         180deg,
         transparent,
         var(--border) 14%,
-        hsl(var(--arc-hue) 100% 64% / 0.85) 50%,
+        hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 64% / 0.85) 50%,
         var(--border) 86%,
         transparent
       );

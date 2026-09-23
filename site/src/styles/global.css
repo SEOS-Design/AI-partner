@@ -35,12 +35,21 @@
   --accent-glow: rgba(255, 255, 255, 0.05); /* svagt vitt fokusljus */
   --accent-faint: rgba(255, 255, 255, 0.1); /* tintfyllning, fokusringar */
 
-  /* --- Accent-sken (EXPERIMENT, för Douglas-granskning) ---
-     Byt bara --arc-hue för annan nyans: 18 = orange-röd (Convex-likt),
-     204 = azurblå (Framer, #0099ff), 190 = cyan, 265 = violett,
-     330 = magenta. Vill du tillbaka till monokromt: sätt mättnaden
-     (100%) till 0% nedan. */
-  --arc-hue: 204;
+  /* --- Accent-sken (för Douglas-granskning) ---
+     232 × 0.85 = dämpad indigo (Björns val 2026-09-23, "tillsvidare").
+     Historik: 204 (azur, Framer #0099ff) → 245 (lila-blå, matchade glas-videornas
+     244–246°) → 232/0.85 eftersom 245 i full mättnad kändes "disco". Videornas
+     belysta pixlar har medianmättnad ~0,53 — accenten i 100% var ~2× mättare.
+     Alla accentytor (ArcBand, StartFlow-vågen, Stats-linjen, StackFlow-kanten,
+     hero-tinten …) läser dessa två tokens → ett byte här räcker.
+     OBS: blå/lila är mörkare för ögat än azur vid samma HSL-ljushet — poppar något
+     för lite: höj LJUSHETEN där, inte nyansen. Lägre mättnad ljusar också upp.
+     Andra nyanser: 18 orange-röd, 190 cyan, 204 azur, 245 lila-blå, 265 violett. */
+  --arc-hue: 232;
+  /* Mättnads-SKALA för alla accentytor (0–1): varje hsl(var(--arc-hue) …) räknar
+     calc(var(--arc-sat) * N%), så 1 = originalvärdena, 0.5 = hälften överallt
+     (inbördes proportioner behålls), 0 = monokromt. */
+  --arc-sat: 0.85;
   --arc-rim: rgba(255, 255, 255, 0.7); /* mjuk vit-het rim vid bågens krön (sken, ej linje) */
 
   /* --- Kantlinjer: tunn vit vid låg alfa --- */
@@ -146,6 +155,11 @@
 html {
   font-stretch: 75%;
   scroll-behavior: smooth;
+  /* Reservera scrollbarens plats även när sidan låses (overflow:hidden, t.ex.
+     när Departments-lightboxen är öppen). Annars försvinner Windows-scrollbaren
+     (15px), viewporten blir bredare och HELA sidan — inkl. den fasta nav-pillen —
+     hoppar ~8px i sidled. Uppmätt 2026-09. */
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -242,33 +256,64 @@ button {
    används nära 50-58% ljushet i stället för 86%, där den blir vitaktig. */
 .btn-azur {
   color: var(--fg-1);
-  border-color: hsl(var(--arc-hue) 100% 58% / 0.85);
+  border-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 58% / 0.85);
   background:
-    linear-gradient(180deg, hsl(var(--arc-hue) 100% 62% / 0.16), hsl(var(--arc-hue) 100% 52% / 0.05) 46%, transparent 76%),
+    linear-gradient(180deg, hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 62% / 0.16), hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 52% / 0.05) 46%, transparent 76%),
     rgba(255, 255, 255, 0.03);
   -webkit-backdrop-filter: blur(18px) saturate(1.1);
   backdrop-filter: blur(18px) saturate(1.1);
   box-shadow:
-    inset 0 1px 0 hsl(var(--arc-hue) 100% 88% / 0.35),
-    inset 0 0 22px hsl(var(--arc-hue) 100% 55% / 0.2),
-    0 0 14px -1px hsl(var(--arc-hue) 100% 56% / 0.5),
-    0 0 40px 2px hsl(var(--arc-hue) 100% 52% / 0.28);
+    inset 0 1px 0 hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 88% / 0.35),
+    inset 0 0 22px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 55% / 0.2),
+    0 0 14px -1px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 56% / 0.5),
+    0 0 40px 2px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 52% / 0.28);
 }
 .btn-azur:hover {
-  border-color: hsl(var(--arc-hue) 100% 66% / 1);
+  border-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 66% / 1);
   box-shadow:
-    inset 0 1px 0 hsl(var(--arc-hue) 100% 92% / 0.5),
-    inset 0 0 26px hsl(var(--arc-hue) 100% 58% / 0.3),
-    0 0 18px 0 hsl(var(--arc-hue) 100% 60% / 0.65),
-    0 0 54px 6px hsl(var(--arc-hue) 100% 54% / 0.4);
+    inset 0 1px 0 hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 92% / 0.5),
+    inset 0 0 26px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 58% / 0.3),
+    0 0 18px 0 hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 60% / 0.65),
+    0 0 54px 6px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 54% / 0.4);
 }
 .btn-azur:active {
   box-shadow:
     inset 0 2px 8px rgba(0, 0, 0, 0.5),
-    inset 0 0 22px hsl(var(--arc-hue) 100% 55% / 0.24);
+    inset 0 0 22px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 55% / 0.24);
+}
+
+/* Glas — frostad grå glasknapp. SIDANS ENHETLIGA SEKUNDÄR/ACCENT-CTA (Björn
+   sept 2026: knapparna var spretiga, och de mörka komet-/glow-knapparna syntes
+   knappt förutom kanten). Samma värden som "Till SEOS Design" hade — BeamCta.astro
+   använder nu DENNA klass, så alla glasknappar delar en definition. Ändra här.
+   Används av: nav-CTA:n (desktop + drawer), Positioneringens båda CTA:er, BeamCta.
+   backdrop-filter är OK här (litet område) — till skillnad från helskärms-blur. */
+.btn-glass {
+  color: var(--fg-1);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03) 42%, transparent 72%),
+    rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  backdrop-filter: blur(18px) saturate(1.1);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    inset 0 0 20px rgba(255, 255, 255, 0.04),
+    0 8px 26px rgba(0, 0, 0, 0.4);
+}
+.btn-glass:hover {
+  border-color: rgba(255, 255, 255, 0.34);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 0 24px rgba(255, 255, 255, 0.06),
+    0 12px 32px rgba(0, 0, 0, 0.5);
 }
 
 /* ── Fundamental-referensen (fundamental.bg, Björns val 2026-07-17) ──────────
+   OANVÄNDA sedan sept 2026 (ersatta av .btn-glass ovan) — kvar för enkel revert:
+   .btn-comet (orbiterande komet) och .btn-glow (statiskt kantsken). Byt tillbaka
+   klassen i Positionering/Nav så kommer de tillbaka.
+
    Två MÖRKA varianter där den lysande kanten bär hela uttrycket. Båda använder
    samma grepp: `border: <n>px solid transparent` + två bakgrundslager — mörk yta
    klippt till padding-box, ljus gradient klippt till border-box. Kanten BLIR
@@ -317,15 +362,14 @@ button {
     linear-gradient(var(--btn-face), var(--btn-face)) padding-box,
     radial-gradient(
         26px 20px at var(--comet-x) var(--comet-y),
-        hsl(var(--arc-hue) 100% 66%) 0%,
-        hsl(var(--arc-hue) 100% 60% / 0) 100%
+        hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 66%) 0%,
+        hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 60% / 0) 100%
       )
       border-box;
   animation: comet-orbit 4s linear infinite;
 }
-.btn-comet:hover {
-  --btn-face: #12161d;
-}
+/* Hover: samma som .btn-glow (delad regel nedan) — hela ringen tänds och
+   skenet växer; kometen går upp i den tända ringen. */
 @keyframes comet-orbit {
   0% {
     --comet-x: 50%;
@@ -368,30 +412,35 @@ button {
     linear-gradient(var(--btn-face), var(--btn-face)) padding-box,
     linear-gradient(
         90deg,
-        hsl(var(--arc-hue) 100% 60%) 0%,
-        hsl(var(--arc-hue) 100% 56% / 0.28) 55%,
-        hsl(var(--arc-hue) 100% 56% / 0.12) 100%
+        hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 60%) 0%,
+        hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 56% / 0.28) 55%,
+        hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 56% / 0.12) 100%
       )
       border-box;
   box-shadow:
-    0 0 16px -2px hsl(var(--arc-hue) 100% 55% / 0.45),
-    0 0 44px 2px hsl(var(--arc-hue) 100% 50% / 0.2);
+    0 0 16px -2px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 55% / 0.45),
+    0 0 44px 2px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 50% / 0.2);
 }
-.btn-glow:hover {
+/* DELAD hover för båda accentknapparna (Björn sept 2026: kometen ska ha samma
+   hover som glow-knappen) — en regel så de aldrig glider isär. Skenet tonas in
+   via .btn:s box-shadow-transition; ringen byts direkt. */
+.btn-glow:hover,
+.btn-comet:hover {
   background:
     linear-gradient(var(--btn-face), var(--btn-face)) padding-box,
     linear-gradient(
         90deg,
-        hsl(var(--arc-hue) 100% 64%) 0%,
-        hsl(var(--arc-hue) 100% 62% / 1) 55%,
-        hsl(var(--arc-hue) 100% 60% / 1) 100%
+        hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 64%) 0%,
+        hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 62% / 1) 55%,
+        hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 60% / 1) 100%
       )
       border-box;
   box-shadow:
-    0 0 22px 0 hsl(var(--arc-hue) 100% 60% / 0.6),
-    0 0 58px 6px hsl(var(--arc-hue) 100% 54% / 0.32);
+    0 0 22px 0 hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 60% / 0.6),
+    0 0 58px 6px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 54% / 0.32);
 }
-.btn-glow:active {
+.btn-glow:active,
+.btn-comet:active {
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
@@ -401,27 +450,27 @@ button {
 
   .btn-primary {
     color: #fff;
-    border: 1px solid hsl(var(--arc-hue) 60% 60% / 0.35);
+    border: 1px solid hsl(var(--arc-hue) calc(var(--arc-sat) * 60%) 60% / 0.35);
     background:
       linear-gradient(180deg, rgba(255,255,255,.1), transparent 42%),
-      radial-gradient(130% 160% at 50% 135%, hsl(var(--arc-hue) 100% 52% / .55), hsl(var(--arc-hue) 90% 44% / .18) 46%, transparent 72%),
+      radial-gradient(130% 160% at 50% 135%, hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 52% / .55), hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 44% / .18) 46%, transparent 72%),
       linear-gradient(180deg, #16181d, #0e1014);
     box-shadow:
-      inset 0 1px 0 hsl(var(--arc-hue) 100% 90% / .22),
-      inset 0 -10px 22px hsl(var(--arc-hue) 100% 55% / .16),
+      inset 0 1px 0 hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 90% / .22),
+      inset 0 -10px 22px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 55% / .16),
       0 8px 24px rgba(0,0,0,.5);
   }
   .btn-primary:hover {
-    border-color: hsl(var(--arc-hue) 75% 66% / .5);
+    border-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 75%) 66% / .5);
     box-shadow:
-      inset 0 1px 0 hsl(var(--arc-hue) 100% 92% / .3),
-      inset 0 -10px 24px hsl(var(--arc-hue) 100% 58% / .24),
+      inset 0 1px 0 hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 92% / .3),
+      inset 0 -10px 24px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 58% / .24),
       0 12px 30px rgba(0,0,0,.55);
   }
   .btn-primary:active {
     box-shadow:
       inset 0 2px 8px rgba(0,0,0,.5),
-      inset 0 -6px 16px hsl(var(--arc-hue) 100% 50% / .14);
+      inset 0 -6px 16px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 50% / .14);
   }
 ──────────────────────────────────────────────────────────────────────────── */
 

@@ -65,7 +65,7 @@ const isActive = (href: string) => href.startsWith('/') && path === href;
     <div class="nav__right">
       {/* Går till #boka (Contact-sektionen), inte till någon av de fyra
           404-sidorna — nav:en får en CTA som faktiskt fungerar i dag. */}
-      <a class="btn btn-comet nav-cta nav-desktop" href="#boka">
+      <a class="btn btn-glass nav-cta nav-desktop" href="#boka">
         Boka kartläggning <Arrow class="arrow" />
       </a>
       <button
@@ -99,7 +99,7 @@ const isActive = (href: string) => href.startsWith('/') && path === href;
   </nav>
   {/* CTA:n döljs i nav-raden på mobil (ingen plats bredvid hamburgaren) → den
       bor här i stället, så bokningen finns kvar på små skärmar. */}
-  <a class="btn btn-comet drawer__cta" href="#boka" data-menu-close>
+  <a class="btn btn-glass drawer__cta" href="#boka" data-menu-close>
     Boka kartläggning <Arrow class="arrow" />
   </a>
 </aside>

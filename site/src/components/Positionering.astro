@@ -9,25 +9,42 @@
 // CTA:erna är FLYTTADE HIT FRÅN HERON (heron är nu ren, utan knappar). Löser
 // CTA-dubbleringen och ger sektionen syfte.
 //
-// KNAPPARNA (2026-07-17, efter fundamental.bg-referensen Björn valde): båda är
-// MÖRKA med lysande azur-kant. "Boka kartläggning" = `.btn-glow` (statiskt sken,
-// kanten ljus till vänster och uttonad åt höger). "Mer om oss" = `.btn-comet`
-// (azur blob som orbiterar kanten, ~4 s/varv). Bägge definierade i global.css.
-// Ersatte `.btn-azur` (nu oanvänd, kvar i global.css för enkel revert) och vit
-// `.btn-primary`.
+// KNAPPARNA (sept 2026): båda är `.btn-glass` — den enhetliga frostade grå
+// glasknappen (samma som nav-CTA:n och "Till SEOS Design"), definierad i
+// global.css. Ersatte de mörka `.btn-glow`/`.btn-comet` (fundamental.bg-ref),
+// som syntes för lite förutom kanten. Dessa ligger kvar i global.css för revert.
 //
-// Accentvarianterna ligger i EGNA klasser, aldrig på .btn-primary: den är
+// Varianterna ligger i EGNA klasser, aldrig på .btn-primary: den är
 // centraliserad och hade färgat om StartFlow, Team och Contact också.
 import Arrow from './Arrow.astro';
 ---
 
 <section id="positionering" class="pos" aria-labelledby="pos-stmt">
-  {/* Partikelnätet, FLYTTAT HIT FRÅN HERON 2026-07-17 (heron har bakgrundsbild nu).
-      Lutad vågyta i perspektiv. Ligger bakom innehållet med en slöja emellan som
-      skyddar läsbarheten — nätet ritar vita punkter upp till 0.75 alpha.
-      OBS: det ritar COLS×ROWS fyrkanter per bildruta på HUVUDTRÅDEN (~12 400 vid
-      full bredd). Scriptet pausar när sektionen är ur bild. */}
-  <canvas class="mesh-canvas" aria-hidden="true"></canvas>
+  {/* Bakgrund: punktrutnät-video (Wannathis "Wall", sömlös loop, skarv 1,67) som
+      ERSÄTTER partikelnätet sept 2026. Skäl, uppmätt: nätet ritade ~12 400 rutor/
+      bildruta på huvudtråden och körde redan i heron → hero 42/107 och
+      Positionering 63/88 tappade rutor; utan nätet 0/150 i båda. Bara mp4: webm
+      blev STÖRRE här (fina prickar), och H.264 stöds överallt. Poster = ruta 0, så
+      inget hopp när videon startar. Spelas bara i vy (inview-video.ts). */}
+  <div class="pos-bg" aria-hidden="true"></div>
+  <video
+    class="pos-video"
+    data-inview-video
+    preload="none"
+    muted
+    loop
+    playsinline
+    poster="/pos-wall-poster.webp"
+    aria-hidden="true"
+  >
+    <source src="/pos-wall.mp4" type="video/mp4" />
+  </video>
+
+  {/* PARTIKELNÄTET — PAUSAT sept 2026, ej borttaget (Björns val). Återställ: ta bort
+      kommentaren runt <canvas> nedan (och ta bort .pos-bg + <video> ovan). Scriptet
+      längst ner no-op:ar på `if (!canvas) return;` så länge canvasen saknas; dess CSS
+      ligger kvar. OBS vid återställning: det kostade 40–70 % tappade rutor. */}
+  {/* <canvas class="mesh-canvas" aria-hidden="true"></canvas> */}
   <div class="mesh-veil" aria-hidden="true"></div>
 
   <div class="container">
@@ -42,8 +59,8 @@ import Arrow from './Arrow.astro';
     </p>
 
     <div class="pos__cta">
-      <a class="btn btn-glow" href="#boka">Boka kartläggning <Arrow class="arrow" /></a>
-      <a class="btn btn-comet" href="/om-oss">Mer om oss <Arrow class="arrow" /></a>
+      <a class="btn btn-glass" href="#boka">Boka kartläggning <Arrow class="arrow" /></a>
+      <a class="btn btn-glass" href="/om-oss">Mer om oss <Arrow class="arrow" /></a>
     </div>
   </div>
 </section>
@@ -78,6 +95,29 @@ import Arrow from './Arrow.astro';
       linear-gradient(to bottom, var(--bg) 0%, rgba(10, 10, 10, 0) 22%, rgba(10, 10, 10, 0) 78%, var(--bg) 100%);
   }
   .pos .container { position: relative; z-index: 2; }
+
+  /* ══════════ BAKGRUNDSVIDEO (ersätter partikelnätet, sept 2026) ══════════
+     Poster och video båda på z0 — videon ligger efter i DOM:en och målas ovanpå.
+     Slöjan (.mesh-veil, z1) behålls: den var gjord för vita prickar, och det är
+     precis vad videon också är. */
+  .pos-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: url("/pos-wall-poster.webp") center / cover no-repeat;
+  }
+  .pos-video {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pos-video { display: none; }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .mesh-canvas { opacity: 0.5; }
@@ -310,4 +350,8 @@ import Arrow from './Arrow.astro';
       io?.disconnect();
     }, { once: true });
   })();
+</script>
+
+<script>
+  import '../scripts/inview-video';
 </script>

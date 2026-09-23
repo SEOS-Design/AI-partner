@@ -313,7 +313,7 @@ const agents: Agent[] = [
     background: radial-gradient(
       55% 55% at 50% 45%,
       rgba(255, 255, 255, 0.09),
-      hsl(var(--arc-hue) 100% 60% / 0.054) 45%,
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 60% / 0.054) 45%,
       transparent 72%
     );
   }
@@ -365,7 +365,7 @@ const agents: Agent[] = [
     transition: opacity 0.3s var(--ease);
     background: radial-gradient(
       50% 50% at 50% 50%,
-      hsl(var(--arc-hue) 100% 58% / 0.24),
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 58% / 0.24),
       transparent 70%
     );
   }
@@ -380,7 +380,7 @@ const agents: Agent[] = [
     transition: opacity 0.35s var(--ease);
   }
   .agent-card:not(.agent-card--soon):hover {
-    border-color: hsl(var(--arc-hue) 70% 66% / 0.4);
+    border-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 70%) 66% / 0.4);
   }
   .agent-card:not(.agent-card--soon):hover::after { opacity: 1; }
   /* azur-bloom bakom kortet vid hover/fokus */
@@ -474,11 +474,14 @@ const agents: Agent[] = [
     padding: 26px;
   }
   .lb.is-open { display: grid; }
+  /* INGEN backdrop-filter, medvetet: en blur över hela vyn (med Departments-
+     videon spelande bakom) gav ett uppmätt 67ms-glapp (4 tappade rutor) i samma
+     ögonblick som lightboxen öppnades — utan den: 0 tappade. 3px blur syntes
+     ändå knappt bakom 72% mörker; lite mer mörker kompenserar. Tonas in i JS. */
   .lb__backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(6, 6, 6, 0.72);
-    backdrop-filter: blur(3px);
+    background: rgba(6, 6, 6, 0.78);
     cursor: pointer;
   }
   .lb__panel {
@@ -488,12 +491,15 @@ const agents: Agent[] = [
     display: flex;
     flex-direction: column;
   }
+  /* Ytan morfar från kortets ruta till panelens via top/left/width/height (se
+     JS) — INTE via transform: scale(). En olikformig scale drog ut rundningen och
+     1px-kanten under morfen. Ytan är ett tomt element i ett fixed lager, så
+     layout per ruta kostar i princip inget (uppmätt 0 tappade rutor). */
   .lb__surface {
     position: absolute;
     inset: 0;
     z-index: 0;
     border-radius: 24px;
-    will-change: transform;
     background: linear-gradient(158deg, #191919 0%, #121212 52%, #0b0b0b 100%);
     border: 1px solid rgba(255, 255, 255, 0.07);
     box-shadow:
@@ -670,7 +676,8 @@ const agents: Agent[] = [
     const panel = lb?.querySelector<HTMLElement>('.lb__panel') ?? null;
     const surface = lb?.querySelector<HTMLElement>('.lb__surface') ?? null;
     const content = lb?.querySelector<HTMLElement>('.lb__content') ?? null;
-    if (!dataEl || !lb || !panel || !surface || !content) return;
+    const backdrop = lb?.querySelector<HTMLElement>('.lb__backdrop') ?? null;
+    if (!dataEl || !lb || !panel || !surface || !content || !backdrop) return;
 
     interface Example { txt: string; cite?: string }
     interface Agent { num: string; name: string; lead: string; does: string; build: string; ex: Example | null }
@@ -728,24 +735,39 @@ const agents: Agent[] = [
       selectTab(0);
     };
 
-    const flip = (cardRect: DOMRect): void => {
-      if (reduce) return;
-      const p = panel.getBoundingClientRect();
-      const sx = cardRect.width / p.width;
-      const sy = cardRect.height / p.height;
-      const tx = cardRect.left - p.left;
-      const ty = cardRect.top - p.top;
-      surface.style.transformOrigin = 'top left';
-      surface.style.transition = 'none';
-      surface.style.transform = `translate(${tx}px, ${ty}px) scale(${sx}, ${sy})`;
-      void surface.offsetWidth; // reflow
-      surface.style.transition = 'transform 0.44s var(--ease)';
-      surface.style.transform = 'translate(0, 0) scale(1, 1)';
+    // ── Morfen (Web Animations API — ingen GSAP behövs) ─────────────────────
+    // Tidigare: bara ytan skalades (transform: scale, olikformigt) medan
+    // innehållet tonades in i sin SLUTstorlek → text, flikar och ×-knapp svävade
+    // utanför den växande boxen (fångat i frysta rutor vid 80/160 ms), och
+    // rundningen drogs ut. Nu: ytan animerar sin faktiska ruta (top/left/width/
+    // height + radie) från kortet till panelen, och innehållet tonas in först
+    // när boxen nästan är framme. Stängning = samma morf baklänges.
+    const EASE =
+      getComputedStyle(document.documentElement).getPropertyValue('--ease').trim() ||
+      'cubic-bezier(.2,.7,.2,1)';
+    const OPEN_MS = 420;
+    const CLOSE_MS = 300;
 
-      content.style.opacity = '0';
-      void content.offsetWidth;
-      content.style.transition = 'opacity 0.4s var(--ease) 0.06s';
-      content.style.opacity = '1';
+    let anims: Animation[] = [];
+    const stopAnims = (): void => {
+      anims.forEach((an) => an.cancel());
+      anims = [];
+    };
+
+    // Kortets ruta uttryckt relativt panelen (ytan är absolut positionerad i den).
+    const boxes = (card: HTMLElement) => {
+      const c = card.getBoundingClientRect();
+      const p = panel.getBoundingClientRect();
+      return {
+        card: {
+          top: `${c.top - p.top}px`,
+          left: `${c.left - p.left}px`,
+          width: `${c.width}px`,
+          height: `${c.height}px`,
+          borderRadius: getComputedStyle(card).borderRadius,
+        },
+        full: { top: '0px', left: '0px', width: `${p.width}px`, height: `${p.height}px`, borderRadius: '24px' },
+      };
     };
 
     const open = (card: HTMLElement): void => {
@@ -757,22 +779,60 @@ const agents: Agent[] = [
       lb.hidden = false;
       lb.classList.add('is-open');
       document.body.style.overflow = 'hidden';
-      flip(card.getBoundingClientRect());
-      closeBtn.focus();
+      closeBtn.focus({ preventScroll: true });
+      if (reduce) return;
+
+      stopAnims();
+      const b = boxes(card);
+      anims = [
+        backdrop.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, easing: 'ease-out' }),
+        surface.animate([b.card, b.full], { duration: OPEN_MS, easing: EASE }),
+        // fill:'backwards' → osynligt under fördröjningen, så inget svävar ute.
+        content.animate(
+          [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }],
+          { duration: 240, delay: OPEN_MS * 0.62, easing: 'ease-out', fill: 'backwards' },
+        ),
+      ];
+    };
+
+    let closing = false;
+    const finishClose = (): void => {
+      // Dölj FÖRST, avbryt animationerna SEN — annars återgår allt till CSS-
+      // läget (full panel) en ruta innan lightboxen försvinner = blink.
+      lb.classList.remove('is-open');
+      lb.hidden = true;
+      stopAnims();
+      document.body.style.overflow = '';
+      closing = false;
+      if (lastFocused) {
+        lastFocused.focus({ preventScroll: true });
+        lastFocused = null;
+      }
     };
 
     const close = (): void => {
-      lb.classList.remove('is-open');
-      lb.hidden = true;
-      document.body.style.overflow = '';
-      surface.style.transition = 'none';
-      surface.style.transform = 'none';
-      content.style.transition = '';
-      content.style.opacity = '';
-      if (lastFocused) {
-        lastFocused.focus();
-        lastFocused = null;
+      if (!lb.classList.contains('is-open') || closing) return;
+      if (reduce || !lastFocused) {
+        finishClose();
+        return;
       }
+      closing = true;
+      stopAnims();
+      const b = boxes(lastFocused);
+      const shrink = surface.animate(
+        [
+          { ...b.full, opacity: 1 },
+          { offset: 0.7, opacity: 1 },
+          { ...b.card, opacity: 0 }, // tonar ut sista biten → kortet tar över
+        ],
+        { duration: CLOSE_MS, easing: EASE, fill: 'forwards' },
+      );
+      anims = [
+        content.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 120, easing: 'ease-in', fill: 'forwards' }),
+        shrink,
+        backdrop.animate([{ opacity: 1 }, { opacity: 0 }], { duration: CLOSE_MS, easing: 'ease-in', fill: 'forwards' }),
+      ];
+      shrink.finished.then(finishClose, () => {});
     };
 
     const onKey = (e: KeyboardEvent): void => {

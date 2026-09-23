@@ -27,12 +27,14 @@
     top: 50%;
     height: 1px;
     transform: translateY(-50%);
+    /* Ljushet 76–80% (var 64–68% vid azur): se Stats.astro — tunn linje i lila
+       behöver högre ljushet för samma synlighet som azur hade. */
     background: linear-gradient(
       90deg,
       transparent,
-      hsl(var(--arc-hue) 100% 64% / 0.7) 20%,
-      hsl(var(--arc-hue) 100% 68% / 0.85) 50%,
-      hsl(var(--arc-hue) 100% 64% / 0.7) 80%,
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 76% / 0.7) 20%,
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 80% / 0.85) 50%,
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 76% / 0.7) 80%,
       transparent
     );
   }
@@ -49,7 +51,7 @@
     background: linear-gradient(
       180deg,
       transparent,
-      hsl(var(--arc-hue) 100% 56% / 0.13) 50%,
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 56% / 0.13) 50%,
       transparent
     );
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);

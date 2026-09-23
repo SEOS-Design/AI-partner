@@ -1,7 +1,6 @@
 ---
-// BeamCta.astro – vit CTA med azur-komet längs kanten.
-// Var frostat glas t.o.m. 2026-07-17; då flyttade azur-behandlingen till
-// .btn-primary (global.css) och den här blev den vita av paret.
+// BeamCta.astro – frostad glas-CTA ("Till SEOS Design" i Team) med en (pausad)
+// komet längs kanten. Glas-looken = den delade .btn-glass i global.css.
 //
 // Kometen = flera tunna stroke-segment med fallande opacitet + fas-förskjutning
 // som bildar EN uttonande strimma; banan ritas i JS efter knappens exakta mått
@@ -28,7 +27,7 @@ const COMET = [
 ];
 ---
 
-<a class:list={['btn', 'beam-cta', className]} href={href} target={target} rel={rel}>
+<a class:list={['btn', 'btn-glass', 'beam-cta', className]} href={href} target={target} rel={rel}>
   <slot />
   {/* KOMET PAUSAD 2026-07-17 — fungerar inte mot den vita ytan. Mot svart var den
       en ljus strimma som lyste ut i mörkret; mot vitt finns inget mörker att lysa i,
@@ -47,31 +46,12 @@ const COMET = [
 </a>
 
 <style>
-  /* Frostad vit glaskant. Var kortvarigt vit fylld 2026-07-17 — men den här delas
-     med Team, där den är SEOS-sidan av ett per-brand-par (vit .btn-primary för AI
-     Partner + glas för SEOS). Vit här gav Team två identiska knappar och raderade
-     den distinktionen, så glaset är återställt. */
+  /* Glas-looken (bakgrund, blur, kant, skuggor, hover) ligger i den delade
+     .btn-glass i global.css sedan sept 2026 — samma knapp används nu även för
+     nav-CTA:n och Positioneringens CTA:er. Här bara det kometen behöver. */
   .beam-cta {
     position: relative;
     isolation: isolate;
-    color: var(--fg-1);
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03) 42%, transparent 72%),
-      rgba(255, 255, 255, 0.05);
-    -webkit-backdrop-filter: blur(18px) saturate(1.1);
-    backdrop-filter: blur(18px) saturate(1.1);
-    border-color: rgba(255, 255, 255, 0.22);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.38),
-      inset 0 0 20px rgba(255, 255, 255, 0.04),
-      0 8px 26px rgba(0, 0, 0, 0.4);
-  }
-  .beam-cta:hover {
-    border-color: rgba(255, 255, 255, 0.34);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.5),
-      inset 0 0 24px rgba(255, 255, 255, 0.06),
-      0 12px 32px rgba(0, 0, 0, 0.5);
   }
 
   /* Komet: flera tunna stroke-segment (front ljus → bakre transparent). */
@@ -99,15 +79,15 @@ const COMET = [
      Renderas inte just nu — segmenten är bortkommenterade i markupen. */
   .beam-cta__seg {
     fill: none;
-    stroke: hsl(var(--arc-hue) 100% 88%);
+    stroke: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 88%);
     stroke-width: 1.2;
     stroke-linecap: round;
     stroke-dasharray: 2.6 97.4;
     stroke-dashoffset: 0;
     opacity: var(--op, 0.5);
     filter:
-      drop-shadow(0 0 3px hsl(var(--arc-hue) 100% 70% / 0.85))
-      drop-shadow(0 0 9px hsl(var(--arc-hue) 100% 58% / 0.5));
+      drop-shadow(0 0 3px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 70% / 0.85))
+      drop-shadow(0 0 9px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 58% / 0.5));
     animation: beamComet 5.5s linear infinite;
     animation-delay: var(--delay, 0s);
   }

@@ -9,7 +9,7 @@ import Team from '../components/Team.astro';
 import StackFlow from '../components/StackFlow.astro';
 // FAQ parkerad: flyttas till /om-oss när den sidan byggs (komponenten är kvar).
 import Contact from '../components/Contact.astro';
-import ArcBand from '../components/ArcBand.astro';
+// import ArcBand from '../components/ArcBand.astro'; // pausad, se nedan
 import Footer from '../components/Footer.astro';
 import Layout from '../layouts/Layout.astro';
 ---
@@ -31,6 +31,7 @@ import Layout from '../layouts/Layout.astro';
     <Team slot="two" />
     <Contact slot="three" />
   </StackFlow>
-  <ArcBand />
+  {/* ArcBand (azurlinjen ovanför footern) BORTTAGEN 2026-09-24 — Björn: för mycket mot
+      sektionen ovanför. Ersatt av footerns hårlinje + sken. Filen finns kvar. */}
   <Footer />
 </Layout>

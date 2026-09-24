@@ -1,168 +1,300 @@
 ---
-// Footer.astro – minimalistisk footer. Stora ordmärket som avslutande signatur
-// allra längst ner (stil oförändrad, bara placering).
+// Footer.astro – variant A (Björns val 2026-09-24, SeaPattern-referensen):
+// märke + kort rad till vänster, två länkkolumner till höger, och det stora
+// ordmärket som STIGER UR bottenradens hårlinje.
 //
-// LÄNKARNA speglar nu Nav exakt (Björns beslut 2026-07-17): fyra egna sidor, alla
-// 404 tills de byggs. Borttagna för att de aldrig funnits som sidor:
-// /ai-per-avdelning, /sa-borjar-ni, /radgivning (de var sektionsankare på
-// startsidan förklädda till undersidor) och /kunskapsbank (bor på seosdesign.se
-// enligt kannibaliseringskartan i docs/seo-soktermer.md — vi länkar dit,
-// dubblerar inte). Kontakt ligger kvar i "Mer" så kolumnerna blir 3+2 i stället
-// för 4+1; alla fyra nav-sidorna nås ändå härifrån.
-// Slugarna är förslag — sidstruktur ska spikas mot Douglas/SEOS efter SERP-analys.
+// ORDMÄRKET (mekaniken uppmätt på seapattern.com/sv): ligger i en wrapper med
+// overflow:hidden och negativ nedermarginal → nedre biten klipps alltid av vid
+// bottenradens linje, så det "sticker upp". När footern syns glider det upp från
+// translateY(80%) + opacity 0 på 1,5 s (opacity 1,1 s) med --ease. Engångs, inte
+// scroll-scrubbat. Synligt som bas (repo-konvention): JS "armar" det först, så
+// utan JS eller vid reduced-motion står det bara stilla i slutläget.
+//
+// LÄNKAR: "Blogg" → Kunskapsbank (/kunskapsbank/ krävs av innehållsöverlämningen,
+// se docs/innehall-utan-cms.md). Alla undersidor 404 tills de byggs.
+// "Mer": SEOS Design + cookie-platshållare (Björn 2026-09-24). Bottenraden:
+// "Sida av SEOS Design" (ersatte Integritetspolicy — en sådan sida behövs ändå
+// före lansering, kontaktformuläret samlar personuppgifter). Ingen LinkedIn:
+// AI Partner har ingen egen sida (bara SEOS).
+// Ovanför footern låg tidigare ArcBand (färgad linje) — ersatt av neutral
+// topplinje + sken (Conversion-referensen).
 
-const sections: [string, string][] = [
+const pages: [string, string][] = [
   ['Tjänster', '/tjanster'],
   ['Om oss', '/om-oss'],
-  ['Blogg', '/blogg'],
+  ['Kunskapsbank', '/kunskapsbank'],
+  ['Kontakt', '/kontakt'],
 ];
 ---
 
-<footer class="foot2">
-  <div class="container">
-    <div class="foot2__top">
-      <div class="foot2__brand">
-        <span class="mark">AI<span class="mid">·</span>PARTNER</span>
-        <p class="foot2__tag">
-          AI-automatisering, RPA, agenter och RAG-system. Vi bygger AI som gör jobbet —
-          och tar ansvar från strategi till driftsatt lösning.
-        </p>
-      </div>
+<footer class="foot">
+  {/* "Soluppgång" på footerns topplinje (Conversion-referensen): ett runt klot bakom
+      sidan, ljust ovanför linjen, dämpat under den. Tre suddiga radiella lager. */}
+  <div class="foot__orb" aria-hidden="true">
+    <span class="foot__orb-outer"></span>
+    <span class="foot__orb-inner"></span>
+    <span class="foot__orb-inner foot__orb-inner--overlay"></span>
+  </div>
 
-      <nav class="foot2__col" aria-label="Sidan">
-        <span class="meta foot2__colhd">Sidan</span>
-        {sections.map(([label, href]) => <a href={href}>{label}</a>)}
-      </nav>
-
-      <nav class="foot2__col" aria-label="Mer">
-        <span class="meta foot2__colhd">Mer</span>
-        <a href="/kontakt">Kontakt</a>
-        <a href="https://seosdesign.se" target="_blank" rel="noopener noreferrer">Systerbolag: SEOS ↗</a>
-      </nav>
+  <div class="container foot__top">
+    <div class="foot__brand">
+      <span class="foot__mark">AI PARTNER</span>
+      <p class="foot__lead">AI-agenter och automation för svenska företag.</p>
     </div>
 
-    <div class="foot2__bottom">
-      <span class="foot2__status meta"><span class="dot"></span> Bygger i Sverige — aipartner.se</span>
-      <span class="meta">© 2026 AI Partner · Systerbolag till SEOS Design</span>
-    </div>
+    <nav class="foot__col" aria-label="Sidan">
+      <span class="foot__hd">Sidan</span>
+      {pages.map(([label, href]) => <a href={href}>{label}</a>)}
+    </nav>
 
-    <div class="foot2__wordmark" aria-hidden="true">AIPARTNER</div>
+    <nav class="foot__col" aria-label="Mer">
+      <span class="foot__hd">Mer</span>
+      <a href="https://seosdesign.se" target="_blank" rel="noopener noreferrer">SEOS Design <span aria-hidden="true">↗</span></a>
+      {/* PLATSHÅLLARE tills cookie-lösningen finns: knappen ska öppna
+          samtyckesbannerns inställningar, /cookiepolicy är en framtida sida (404). */}
+      <button type="button" class="foot__linkbtn" data-cookie-settings>Cookieinställningar</button>
+      <a href="/cookiepolicy">Cookiepolicy</a>
+    </nav>
+  </div>
+
+  <div class="foot__wm-wrap" aria-hidden="true">
+    <div class="foot__wm" data-foot-wm>AI PARTNER</div>
+  </div>
+
+  <div class="foot__bottom">
+    <div class="container foot__bottom-in">
+      <span>© 2026 AI Partner</span>
+      <a href="https://seosdesign.se" target="_blank" rel="noopener noreferrer">Sida av SEOS Design</a>
+    </div>
   </div>
 </footer>
 
 <style>
-  /* ingen topplinje mot ljusbågen (friare avslut) */
-  .foot2 {
-    background: var(--bg);
-    padding: var(--space-6) 0 var(--space-5);
+  /* overflow-x: clip (inte hidden) → klotet får sticka upp OVANFÖR footern men
+     klipps i sidled. Ordmärket har sin egen overflow-wrapper.
+     Footern skapar INGEN staplingskontext (ingen isolation/z-index) — annars
+     hamnar klotets z-index:-1 inuti footern i stället för bakom sidan. */
+  .foot {
     position: relative;
-    overflow: hidden;
+    overflow-x: clip;
+    /* HALVGENOMSKINLIG: dämpar klotets nedre halva → horisontsteget vid linjen
+       (ljust ovanför, dovt under — som hos Conversion). Opak hade dolt det helt. */
+    background: rgba(10, 10, 10, 0.62);
+    border-top: 1px solid var(--border);
   }
 
-  .foot2__top {
-    display: grid;
-    grid-template-columns: 1.7fr 1fr 1fr;
-    gap: 40px;
-  }
-  .foot2__brand .mark {
-    font-family: var(--font-mono);
-    font-size: 22px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #fff;
-  }
-  .foot2__brand .mark .mid {
-    color: var(--accent);
-  }
-  .foot2__tag {
-    margin-top: 16px;
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--fg-3);
-    max-width: 300px;
-  }
-  .foot2__col {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .foot2__colhd {
-    font-size: 18px;
-    margin-bottom: 4px;
-  }
-  .foot2__col a {
-    font-size: 16px;
-    color: var(--fg-3);
-    transition: color var(--dur-fast) var(--ease);
-    width: fit-content;
-  }
-  .foot2__col a:hover {
-    color: #fff;
-  }
-
-  /* meta-raden (status + copyright) ovanför den sista linjen */
-  .foot2__bottom {
-    margin-top: var(--space-6);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .foot2__status {
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-  }
-  .dot {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--fg-2);
-    position: relative;
-  }
-  .dot::after {
-    content: "";
+  /* ── Klotet (mätt på conversion.framer.media: 400px blur 70 + 300px blur 32,
+     varav ett i mix-blend overlay; statiskt, konisk gradient) ──
+     z-index:-1 i rotens staplingskontext → bakom kortet ovanför (kortets kant
+     skär rent genom ljuset) men ovanför sidans canvas. Toppen ljus/ljuslila,
+     botten djupare blå. Färgerna är LÅSTA lokalt (se .foot__orb). */
+  .foot__orb {
+    /* LÅSTA färger (Björn gillade klotet 2026-09-24): oberoende av sidans accent,
+       så ett accentbyte inte ändrar klotet. Uppmätt på skärm: nyans 206–222,
+       mättnad 45–70 % (overlay + −30°-lagret drar det stålblått). */
+    --arc-hue: 232;
+    --arc-sat: 0.85;
     position: absolute;
-    inset: -3px;
+    top: 0;
+    left: 50%;
+    z-index: -1;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+  .foot__orb span {
+    position: absolute;
     border-radius: 50%;
-    border: 1px solid var(--border-strong);
+    transform: translate(-50%, -50%);
+  }
+  .foot__orb-outer {
+    width: 440px;
+    height: 440px;
+    filter: blur(28px);
+    opacity: 0.85;
+    /* RADIELL, inte konisk: en konisk gradient runt varvet gav en sned droppform —
+       samma HSL-ljushet är olika ljust för ögat per nyans (blått ~206° lyser mer än
+       indigo ~232°), så en sektor blev ljusare. Radiellt = rund oavsett nyans.
+       Färgspelet ligger inifrån och ut: stålblå mitt → indigo kant. */
+    background: radial-gradient(
+      circle,
+      hsl(calc(var(--arc-hue) - 26) calc(var(--arc-sat) * 85%) 52%) 0%,
+      hsl(calc(var(--arc-hue) - 14) calc(var(--arc-sat) * 85%) 48%) 42%,
+      hsl(calc(var(--arc-hue) + 8) calc(var(--arc-sat) * 70%) 44%) 70%
+    );
+  }
+  .foot__orb-inner {
+    width: 300px;
+    height: 300px;
+    filter: blur(16px);
+    /* RADIELL (inte konisk som hos Conversion): koniska sektorer strålar ut från
+       mitten och gav klotet en kil-/droppform. Radiellt = rund kärna; ljus topp
+       via förskjutet centrum. */
+    background: radial-gradient(
+      circle at 50% 38%,
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 35%) 88%) 0%,
+      hsl(calc(var(--arc-hue) - 22) calc(var(--arc-sat) * 80%) 55%) 45%,
+      hsl(calc(var(--arc-hue) - 26) calc(var(--arc-sat) * 85%) 40%) 70%
+    );
+    opacity: 0.7;
+  }
+  .foot__orb-inner--overlay {
+    mix-blend-mode: overlay;
+    opacity: 1;
+  }
+  @media (max-width: 560px) {
+    .foot__orb-outer { width: 300px; height: 300px; }
+    .foot__orb-inner { width: 200px; height: 200px; }
   }
 
-  /* stora ordmärket — avslutande signatur allra längst ner, enda elementet under
-     den sista linjen. Stilen är oförändrad; bara placeringen. */
-  .foot2__wordmark {
+  .foot__top {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr;
+    gap: var(--space-7);
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-7);
+  }
+  .foot__mark {
     font-family: var(--font-sans);
     font-weight: 700;
-    font-size: clamp(76px, 19vw, 290px);
-    line-height: 0.82;
+    font-size: 24px;
+    letter-spacing: -0.03em;
+    color: var(--fg-1);
+  }
+  .foot__lead {
+    margin-top: var(--space-4);
+    max-width: 32ch;
+    font-size: var(--fs-body);
+    line-height: 1.55;
+    color: var(--fg-3);
+  }
+
+  .foot__col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .foot__hd {
+    margin-bottom: var(--space-2);
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+    color: var(--fg-4);
+  }
+  .foot__col a,
+  .foot__linkbtn {
+    width: fit-content;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--fg-3);
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .foot__linkbtn {
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: left;
+  }
+  .foot__col a:hover,
+  .foot__linkbtn:hover {
+    color: var(--fg-1);
+  }
+
+  /* ── Ordmärket ── */
+  .foot__wm-wrap {
+    position: relative;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .foot__wm {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(76px, 17vw, 250px);
+    line-height: 0.9;
     letter-spacing: -0.045em;
     white-space: nowrap;
     text-align: center;
     user-select: none;
-    pointer-events: none;
-    margin: var(--space-5) 0 -0.06em;
-    border-top: 1px solid var(--border);
-    padding-top: var(--space-5);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.085) 0%, rgba(255, 255, 255, 0.02) 100%);
+    /* nedre biten klipps av wrapperns overflow → "sticker upp" ur bottenlinjen */
+    margin-bottom: -0.13em;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.015) 88%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
+  @media (prefers-reduced-motion: no-preference) {
+    .foot__wm {
+      transition:
+        transform 1.5s var(--ease),
+        opacity 1.1s var(--ease);
+    }
+    /* armat av JS (utanför vy) → glider upp när .is-in läggs på */
+    .foot__wm.is-armed:not(.is-in) {
+      transform: translateY(80%);
+      opacity: 0;
+    }
+  }
+
+  .foot__bottom {
+    position: relative;
+    border-top: 1px solid var(--border);
+  }
+  .foot__bottom-in {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    padding-top: 22px;
+    padding-bottom: var(--space-5);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--fg-4);
+  }
+  .foot__bottom-in a {
+    color: var(--fg-3);
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .foot__bottom-in a:hover {
+    color: var(--fg-1);
+  }
 
   @media (max-width: 900px) {
-    .foot2__top {
+    .foot__top {
       grid-template-columns: 1fr 1fr;
-      gap: 32px;
+      gap: var(--space-6);
     }
-    .foot2__brand {
+    .foot__brand {
       grid-column: 1 / -1;
     }
   }
   @media (max-width: 560px) {
-    .foot2__top {
+    .foot__top {
       grid-template-columns: 1fr;
     }
   }
 </style>
+
+<script>
+  // Ordmärket glider upp ur bottenlinjen när footern syns (engångs).
+  (function () {
+    const wm = document.querySelector<HTMLElement>('[data-foot-wm]');
+    if (!wm || !('IntersectionObserver' in window)) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    wm.classList.add('is-armed');
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          wm.classList.add('is-in');
+          io.disconnect();
+        }
+      },
+      // wrappern observeras (ordmärket självt ligger nedflyttat/klippt när det är armat)
+      { threshold: 0.15 },
+    );
+    io.observe(wm.parentElement as Element);
+    document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
+  })();
+</script>

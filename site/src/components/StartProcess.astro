@@ -10,9 +10,9 @@
 // CTA:n ligger därför i sista steget.
 //
 // Bilden = Wannathis "Glass abstract animated shapes" → Cube (dark theme), samma
-// paket som heron. Spolas med scrollen: de första 8 s av 16 (långsammare rotation),
+// paket som heron. Spolas med scrollen: de första 4 s av 16 (långsam rotation; 8 s var för snabbt),
 // kvadrat runt kuben (crop=2160:2160:840:0) → 1080 px, crf 23, nyckelbild var 10:e
-// ruta (mjuk spolning), 2,8 MB, bara mp4 (webm blev lika stor). Svart bakgrund →
+// ruta (mjuk spolning), ~1,4 MB, bara mp4 (webm blev lika stor). Svart bakgrund →
 // mix-blend-mode: lighten mot scenens egen bakgrund + ett indigo-sken bakom kuben
 // som skiftar nyans med scrollen.
 //
@@ -485,6 +485,91 @@ const total = String(STEPS.length).padStart(2, '0');
     near.observe(section);
     observers.push(near);
 
+    // --- Dämpad scroll inne i den låsta sektionen ---
+    // Hjul/styrplatta flyttar sidan långsammare här (WHEEL_FACTOR) och glider mot
+    // målet med en maxfart (MAX_STEP px per bildruta), så en snabb flick inte kan
+    // slunga en genom stegen och tvinga kubvideon att hoppa (= "kaos" vid snabb
+    // scroll). Bara wheel-händelser; tangentbord och scrollist är orörda. Vid
+    // första/sista gränsen släpps händelsen igenom → man fastnar aldrig.
+    const WHEEL_FACTOR = 0.45;
+    const EASE = 0.1;
+    const MAX_STEP = 20;
+    let damped = false;
+    let scrollTarget = 0;
+    let scrollRaf = 0;
+    let lastSet = 0; // där VI senast ställde sidan
+
+    const stopGlide = () => {
+      if (scrollRaf) cancelAnimationFrame(scrollRaf);
+      scrollRaf = 0;
+      damped = false;
+    };
+
+    const range = () => {
+      const top = section.getBoundingClientRect().top + window.scrollY;
+      return { start: top, end: top + section.offsetHeight - window.innerHeight };
+    };
+
+    // Glidningen avbryts så fort NÅGOT ANNAT har flyttat sidan (vanlig scroll
+    // förbi gränsen, länk, scrollist, tangentbord). Utan det fortsatte den mot
+    // sitt gamla mål och drog tillbaka en till kubsektionen var man än var.
+    // Avbryts också om sidan inte kan flytta sig (avrundning vid skärmskalning).
+    const glide = () => {
+      scrollRaf = 0;
+      const y = window.scrollY;
+      if (Math.abs(y - lastSet) > 2) {
+        damped = false;
+        return;
+      }
+      const diff = scrollTarget - y;
+      if (Math.abs(diff) < 1) {
+        // Landa exakt på målet, annars kan sidan bli stående en bråkdelspixel
+        // innanför gränsen och fånga nästa hjulhack igen (man fastnade vid starten).
+        window.scrollTo({ top: scrollTarget, behavior: 'instant' });
+        damped = false;
+        return;
+      }
+      const step = Math.sign(diff) * Math.min(Math.abs(diff) * EASE + 0.5, MAX_STEP);
+      window.scrollTo({ top: y + step, behavior: 'instant' });
+      const moved = window.scrollY;
+      if (Math.abs(moved - y) < 0.01) {
+        damped = false;
+        return;
+      }
+      lastSet = moved;
+      scrollRaf = requestAnimationFrame(glide);
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (!pinned || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      const { start, end } = range();
+      const px = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1);
+      // Pågående glidning: räkna från dess mål (så hjulhack adderas); annars från sidan.
+      if (damped && Math.abs(window.scrollY - lastSet) > 2) stopGlide();
+      const from = damped ? scrollTarget : window.scrollY;
+      const dir = Math.sign(px);
+      // Aktiv bara när rörelsen sker i, eller korsar in i, sektionens låsta sträcka.
+      const inside =
+        (dir > 0 && from >= start - 1 && from < end - 2) ||
+        (dir < 0 && from > start + 2 && from <= end + 1) ||
+        (dir > 0 && from < start && from + px > start) ||
+        (dir < 0 && from > end && from + px < end);
+      if (!inside) {
+        // Hjulet går vanligt härifrån (t.ex. förbi sista steget) → släpp målet.
+        if (damped) stopGlide();
+        return;
+      }
+      e.preventDefault();
+      // Korsar man in utifrån börjar dämpningen vid gränsen.
+      const base = dir > 0 ? Math.max(from, Math.min(start, from + px)) : Math.min(from, Math.max(end, from + px));
+      const rest = px - (base - from);
+      scrollTarget = Math.min(end, Math.max(start, base + rest * WHEEL_FACTOR));
+      if (!damped) lastSet = window.scrollY;
+      damped = true;
+      if (!scrollRaf) scrollRaf = requestAnimationFrame(glide);
+    };
+    window.addEventListener('wheel', onWheel, { passive: false });
+
     const onScroll = () => kick();
     const onResize = () => {
       if (!pinned) return;
@@ -503,6 +588,8 @@ const total = String(STEPS.length).padStart(2, '0');
       () => {
         observers.forEach((o) => o.disconnect());
         window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('wheel', onWheel);
+        stopGlide();
         window.removeEventListener('resize', onResize);
         wide.removeEventListener('change', applyMode);
         if (raf) cancelAnimationFrame(raf);

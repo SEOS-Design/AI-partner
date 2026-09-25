@@ -22,6 +22,9 @@ dist
 /boliviainteligente-*.jpg
 /AI Partner - *.html
 *.bak
+# Bildunderlag till Wannathis Motion Grid (tjänsterutorna) — exporterade mp4:or
+# hamnar i site/public/ när de används
+/motion-grid-bilder/
 
 # Oanvända/trasiga assets i public (källa resp. död demo)
 site/public/hero-bg.jpg

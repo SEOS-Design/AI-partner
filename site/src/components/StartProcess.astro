@@ -1,0 +1,513 @@
+---
+// StartProcess.astro – "Var börjar ni med AI?" i Consolidator-stil (2026-09-25).
+// Referens: consolidator.aero → "Our process".
+//
+// LÅST BILDRUTA: hela vyn (rubrik + steg + bild) låses som EN enhet (.proc__pin,
+// sticky, 100svh) medan sektionen scrollas. Stegen flyttas inne i den med
+// scrollen och tonas/suddas ut ju längre från mitten de är. Allt släpper
+// samtidigt efter sista steget. (Första versionen hade två separata sticky-kolumner
+// som släppte vid olika tidpunkter, med en CTA som hängde efter → "konstigt bryt".)
+// CTA:n ligger därför i sista steget.
+//
+// Bilden = Wannathis "Glass abstract animated shapes" → Cube (dark theme), samma
+// paket som heron. Spolas med scrollen: de första 8 s av 16 (långsammare rotation),
+// kvadrat runt kuben (crop=2160:2160:840:0) → 1080 px, crf 23, nyckelbild var 10:e
+// ruta (mjuk spolning), 2,8 MB, bara mp4 (webm blev lika stor). Svart bakgrund →
+// mix-blend-mode: lighten mot scenens egen bakgrund + ett indigo-sken bakom kuben
+// som skiftar nyans med scrollen.
+//
+// Låst läge slås på av scriptet (.is-pinned) bara på breda skärmar utan reduced
+// motion. Annars (och utan JS): vanligt flöde, stegen under varandra, bilden
+// loopar på mobil och står still vid reduced motion.
+//
+// Tidigare varianter finns kvar: StartFlowRail.astro, StartFlow.astro (vågen),
+// StartFlow.cascade.astro.bak. Växla i index.astro.
+import Arrow from './Arrow.astro';
+
+const BOOK = '#boka';
+const STEPS = [
+  { h: 'Kartläggning på plats', t: 'Vi går igenom era processer på plats. Vad tar tid i dag, och vad återkommer varje vecka?' },
+  { h: 'Prioritering', t: 'Var ger AI och automation störst effekt, och var gör den det inte? Vi är ärliga med båda.' },
+  { h: 'Åtgärdsplan', t: 'Konkret och prioriterad. Inget köptvång, ni bestämmer själva om ni går vidare.' },
+];
+const total = String(STEPS.length).padStart(2, '0');
+---
+
+<section id="sa-borjar-ni" class="proc" aria-labelledby="proc-title" style={`--n: ${STEPS.length}`}>
+  <div class="proc__pin">
+    <div class="proc__grid">
+      <div class="proc__text">
+        <div class="proc__head">
+          <h2 id="proc-title" class="proc__h2">Var börjar ni med AI?</h2>
+          <p class="proc__lead">Med en kostnadsfri kartläggning.</p>
+        </div>
+
+        <div class="proc__viewport">
+          <ol class="proc__steps">
+            {STEPS.map((s, i) => (
+              <li class="pstep" data-step={i}>
+                <div class="pstep__inner">
+                  <span class="pstep__n">
+                    {String(i + 1).padStart(2, '0')}<span class="pstep__of">({total})</span>
+                  </span>
+                  <h3 class="pstep__h">{s.h}</h3>
+                  <p class="pstep__t">{s.t}</p>
+                  {i === STEPS.length - 1 && (
+                    <div class="pstep__cta">
+                      <a class="btn btn-primary" href={BOOK}>Boka en tid <Arrow class="arrow" /></a>
+                      <p class="pstep__note">Vill ni förstå AI först? Vi kan också komma ut och föreläsa för ert team.</p>
+                    </div>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+
+      <div class="proc__visual" aria-hidden="true">
+        <div class="proc__stage">
+          <span class="proc__glow"></span>
+          {/* preload="none": laddas först när sektionen närmar sig (scriptet). */}
+          <video
+            class="proc__video"
+            muted
+            playsinline
+            preload="none"
+            disablepictureinpicture
+            poster="/proc-cube-poster.webp"
+          >
+            <source src="/proc-cube.mp4" type="video/mp4" />
+          </video>
+        </div>
+      </div>
+    </div>
+
+    {/* Diskret scroll-indikator vid vänsterkanten (Consolidator), bara i låst läge. */}
+    <div class="proc__rail" aria-hidden="true">
+      {STEPS.map(() => <span class="proc__seg"></span>)}
+    </div>
+  </div>
+</section>
+
+<style>
+  .proc {
+    --lock: 94px; /* under den flytande nav-pillen (samma som StackFlow) */
+    --p: 0; /* scroll-progress 0–1, sätts av scriptet */
+    position: relative;
+    padding: var(--section-py) 0;
+  }
+  .proc__grid {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: clamp(24px, 4vw, 64px);
+  }
+
+  /* ---- typografi ---- */
+  .proc__h2 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: var(--fs-h2);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-tight);
+    color: var(--fg-1);
+  }
+  .proc__lead {
+    margin-top: var(--space-4);
+    color: var(--fg-3);
+    font-size: var(--fs-lead);
+    line-height: 1.6;
+  }
+  .proc__steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .pstep__n {
+    display: block;
+    font-size: var(--fs-small);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    color: var(--fg-2);
+  }
+  .pstep__of {
+    margin-left: 0.3em;
+    color: var(--fg-4);
+  }
+  .pstep__h {
+    margin-top: var(--space-5);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: var(--fs-h3);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-tight);
+    color: var(--fg-1);
+  }
+  .pstep__t {
+    margin-top: var(--space-3);
+    max-width: 30em;
+    font-size: var(--fs-lead);
+    line-height: 1.6;
+    color: var(--fg-3);
+  }
+  .pstep__cta {
+    margin-top: var(--space-6);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4) var(--space-5);
+  }
+  .pstep__note {
+    font-size: var(--fs-small);
+    color: var(--fg-3);
+  }
+
+  /* ---- scen: kub + sken ---- */
+  /* background: scenen är en egen stapelkontext (isolation), och videons blend-
+     läge blandar bara mot det som finns INNE i den → egen bakgrund krävs, annars
+     syns videons svarta ruta mot sidans #0a0a0a. */
+  .proc__stage {
+    position: relative;
+    isolation: isolate;
+    background: var(--bg);
+    display: grid;
+    place-items: center;
+  }
+  .proc__glow {
+    position: absolute;
+    inset: 12%;
+    border-radius: 50%;
+    pointer-events: none;
+    /* Nyansen glider ~40° med scrollen (indigo → violett), Consolidators färgskifte. */
+    background: radial-gradient(
+      closest-side,
+      hsl(calc(var(--arc-hue) + var(--p) * 40) calc(var(--arc-sat) * 70%) 42% / 0.3),
+      transparent 72%
+    );
+    opacity: calc(0.55 + var(--p) * 0.45);
+  }
+  .proc__video {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: contain;
+    display: block;
+    mix-blend-mode: lighten;
+    /* Kanten tonas ut: kantpixeln hamnar på en bråkdelskoordinat och blandades
+       annars till en mörk hårlinje (uppmätt 7 mot 10). Kuben når aldrig ut hit. */
+    -webkit-mask-image:
+      linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent),
+      linear-gradient(180deg, transparent, #000 4%, #000 96%, transparent);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent),
+      linear-gradient(180deg, transparent, #000 4%, #000 96%, transparent);
+    mask-composite: intersect;
+  }
+
+  .proc__rail { display: none; }
+
+  /* ============================================================
+     VANLIGT FLÖDE (standard: utan JS, mobil, reduced motion)
+     ============================================================ */
+  .pstep {
+    padding-block: var(--space-6);
+    border-top: 1px solid var(--border);
+  }
+  .proc__viewport { margin-top: var(--space-6); }
+  @media (max-width: 859px) {
+    .proc__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+    .proc__text { display: contents; }
+    .proc__head { order: 1; }
+    .proc__visual { order: 2; }
+    .proc__viewport { order: 3; margin-top: 0; }
+    .proc__stage { margin-block: var(--space-5); }
+    .proc__video { max-width: 420px; }
+  }
+
+  /* ============================================================
+     LÅST LÄGE (.is-pinned, satt av scriptet)
+     ============================================================ */
+  .proc.is-pinned {
+    padding: 0;
+    /* 100svh låst ruta + scrollsträckan för stegen */
+    height: calc(100svh + (var(--n) - 1) * 70svh + 40svh);
+  }
+  .is-pinned .proc__pin {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+    padding-top: var(--lock);
+    display: flex;
+  }
+  .is-pinned .proc__grid {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    padding-bottom: var(--space-5);
+  }
+  .is-pinned .proc__text {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .is-pinned .proc__viewport {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    margin-top: 0;
+    overflow: hidden;
+    /* Stegen tonas ut uppåt (in under rubriken) och nedåt. */
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 22%, #000 78%, transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 0, #000 22%, #000 78%, transparent 100%);
+  }
+  .is-pinned .proc__steps {
+    position: absolute;
+    inset: 0 0 auto 0;
+    will-change: transform;
+  }
+  .is-pinned .pstep {
+    height: var(--slot, 50vh);
+    padding: 0;
+    border: 0;
+    display: flex;
+    align-items: center;
+  }
+  .is-pinned .pstep__inner {
+    will-change: opacity, filter;
+  }
+  /* Scenen = kvadrat, det minsta av kolumnens bredd och höjd (container query).
+     Med height:100% blev kuben ~780 px i en ~600 px bred kolumn och klipptes. */
+  .is-pinned .proc__visual {
+    min-height: 0;
+    container-type: size;
+    display: grid;
+    place-items: center;
+  }
+  .is-pinned .proc__stage {
+    width: min(100cqw, 100cqh);
+    height: min(100cqw, 100cqh);
+  }
+  .is-pinned .proc__video {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Scroll-indikator: smal kapsel med ett segment per steg. Segmentet för det
+     steg som står i mitten lyser, grannarna tonas med avståndet (scriptet sätter
+     opacity, samma utjämnade progress som stegen). Consolidator-inspirerad men
+     egen: lika långa segment i stället för deras långa streck + prickar. */
+  .is-pinned .proc__rail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    position: absolute;
+    left: var(--space-4);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    padding: 6px 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .proc__seg {
+    width: 2px;
+    height: 12px;
+    border-radius: 1px;
+    background: var(--fg-1);
+    opacity: 0.22;
+  }
+</style>
+
+<script>
+  // Låst läge: scroll-progressen genom sektionen (0–1) styr tre saker, alla via
+  // samma utjämnade värde så de följs åt: stegens läge, videons tid och --p
+  // (skenets nyans + scroll-indikatorn). Utjämningen (lerp) gör att hackig
+  // hjulscroll ändå ger mjuk rörelse. Videon söks bara när förra sökningen är
+  // klar (seeking=false), annars köar webbläsaren sökningar och bilden släpar.
+  const section = document.querySelector<HTMLElement>('.proc');
+  const video = section?.querySelector<HTMLVideoElement>('.proc__video');
+  const viewport = section?.querySelector<HTMLElement>('.proc__viewport');
+  const list = section?.querySelector<HTMLElement>('.proc__steps');
+
+  if (section && video && viewport && list) {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const wide = window.matchMedia('(min-width: 860px)');
+    const steps = Array.from(section.querySelectorAll<HTMLElement>('.pstep'));
+    const inners = steps.map((s) => s.querySelector<HTMLElement>('.pstep__inner')!);
+    const segs = Array.from(section.querySelectorAll<HTMLElement>('.proc__seg'));
+    const n = steps.length;
+    // Små dödzoner i början och slutet: första steget står still en stund när
+    // rutan låses, och sista steget likaså innan den släpper.
+    const LEAD = 0.08;
+    const TAIL = 0.1;
+
+    let pinned = false;
+    let inView = false;
+    let target = 0;
+    let shown = 0;
+    let raf = 0;
+    let slot = 0;
+    let vpH = 0;
+
+    const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+
+    const measure = () => {
+      vpH = viewport.clientHeight;
+      slot = Math.round(vpH * 0.62);
+      section.style.setProperty('--slot', `${slot}px`);
+    };
+
+    const readProgress = () => {
+      const r = section.getBoundingClientRect();
+      const run = r.height - window.innerHeight;
+      const raw = run > 0 ? -r.top / run : 0;
+      return clamp((raw - LEAD) / (1 - LEAD - TAIL));
+    };
+
+    // Viloläge: varje steg står STILLA och skarpt en del av sin scrollsträcka
+    // (HOLD på var sida om mitten) och byter sedan till nästa med en mjuk kurva.
+    // Utan detta var stegen alltid på väg → nästan inget läge där en rubrik stod
+    // helt skarp (Björns feedback). Kuben följer däremot den jämna progressen.
+    const HOLD = 0.28;
+    const smooth = (x: number) => x * x * (3 - 2 * x);
+    const settle = (pos: number) => {
+      const i = Math.floor(pos);
+      const f = pos - i;
+      return i + smooth(clamp((f - HOLD) / (1 - 2 * HOLD)));
+    };
+
+    const render = (p: number) => {
+      section.style.setProperty('--p', p.toFixed(4));
+      const pos = settle(p * (n - 1)); // stegläge 0…n−1 med vila vid heltalen
+      segs.forEach((el, i) => {
+        const d = Math.abs(i - pos);
+        el.style.opacity = (0.22 + 0.78 * clamp(1 - d * 1.6)).toFixed(3);
+      });
+      // Steg i (0-baserat) står i mitten när pos = i.
+      const offset = vpH / 2 - slot / 2 - pos * slot;
+      list.style.transform = `translate3d(0, ${offset.toFixed(1)}px, 0)`;
+      inners.forEach((el, i) => {
+        const d = Math.abs(i - pos); // avstånd i steg från mitten
+        // Helt skarpt nära mitten; tonas och suddas först när steget lämnar den.
+        const away = clamp((d - 0.12) / 0.88);
+        el.style.opacity = clamp(1 - away * 0.9, 0.08).toFixed(3);
+        const blur = away * 3;
+        el.style.filter = blur > 0.15 ? `blur(${blur.toFixed(1)}px)` : 'none';
+        el.style.transform = `translate3d(0, ${(Math.sign(i - pos) * away * 10).toFixed(1)}px, 0)`;
+      });
+      if (video.duration && !video.seeking) {
+        const t = p * (video.duration - 0.05);
+        if (Math.abs(video.currentTime - t) > 1 / 60) video.currentTime = t;
+      }
+    };
+
+    const tick = () => {
+      raf = 0;
+      if (!pinned) return;
+      target = readProgress();
+      shown += (target - shown) * 0.14;
+      if (Math.abs(target - shown) < 0.0005) shown = target;
+      render(shown);
+      if (shown !== target || video.seeking) raf = requestAnimationFrame(tick);
+    };
+    const kick = () => {
+      if (pinned && inView && !raf) raf = requestAnimationFrame(tick);
+    };
+
+    const clearInline = () => {
+      list.style.transform = '';
+      inners.forEach((el) => {
+        el.style.opacity = '';
+        el.style.filter = '';
+        el.style.transform = '';
+      });
+      section.style.removeProperty('--p');
+      segs.forEach((el) => (el.style.opacity = ''));
+    };
+
+    const applyMode = () => {
+      const next = wide.matches && !reduced;
+      if (next !== pinned) {
+        pinned = next;
+        section.classList.toggle('is-pinned', pinned);
+        if (!pinned) clearInline();
+      }
+      video.loop = !pinned;
+      if (pinned) {
+        video.pause();
+        measure();
+        shown = target = readProgress();
+        render(shown);
+      } else if (inView && !reduced) {
+        video.play().catch(() => {});
+      }
+    };
+
+    const observers: IntersectionObserver[] = [];
+
+    if (!reduced) {
+      // Ladda videon först när sektionen närmar sig.
+      const loader = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((e) => e.isIntersecting)) return;
+          loader.disconnect();
+          video.preload = 'auto';
+          video.load();
+        },
+        { rootMargin: '800px 0px' },
+      );
+      loader.observe(section);
+      observers.push(loader);
+    }
+
+    // Lyssna bara på scroll när sektionen är i närheten.
+    const near = new IntersectionObserver(
+      (entries) => {
+        inView = entries.some((e) => e.isIntersecting);
+        if (pinned) {
+          kick();
+        } else if (!reduced) {
+          if (inView) video.play().catch(() => {});
+          else video.pause();
+        }
+      },
+      { rootMargin: '200px 0px' },
+    );
+    near.observe(section);
+    observers.push(near);
+
+    const onScroll = () => kick();
+    const onResize = () => {
+      if (!pinned) return;
+      measure();
+      render(shown);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    video.addEventListener('loadedmetadata', () => pinned && render(shown));
+    video.addEventListener('seeked', kick);
+    wide.addEventListener('change', applyMode);
+    applyMode();
+
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        observers.forEach((o) => o.disconnect());
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', onResize);
+        wide.removeEventListener('change', applyMode);
+        if (raf) cancelAnimationFrame(raf);
+      },
+      { once: true },
+    );
+  }
+</script>

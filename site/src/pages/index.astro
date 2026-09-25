@@ -2,8 +2,17 @@
 import Hero from '../components/Hero.astro';
 import Positionering from '../components/Positionering.astro';
 import Stats from '../components/Stats.astro';
-import Departments from '../components/Departments.astro';
-import StartFlow from '../components/StartFlow.astro';
+// Tjänsterutorna (Services) ersätter Departments sedan 2026-09-25. Departments.astro
+// (agentkort + lightbox) finns kvar: återställ genom att avkommentera importen och
+// byta <Services /> mot <Departments /> nedan.
+// import Departments from '../components/Departments.astro';
+import Services from '../components/Services.astro';
+// StartFlow-VARIANTER: StartProcess = Consolidator-stil, fastlåst med scrollstyrd glaskub
+// (2026-09-25, aktiv). StartFlowRail = rak rad. Vågen = StartFlow.astro. Gamla diagonala
+// kaskaden = StartFlow.cascade.astro.bak (döp om till .astro för att visa).
+// import StartFlow from '../components/StartFlow.astro';
+// import StartFlow from '../components/StartFlowRail.astro';
+import StartFlow from '../components/StartProcess.astro';
 import Advisory from '../components/Advisory.astro';
 import Team from '../components/Team.astro';
 import StackFlow from '../components/StackFlow.astro';
@@ -18,10 +27,10 @@ import Layout from '../layouts/Layout.astro';
   <Hero />
   <Positionering />
   <Stats />
-  {/* Departments är en katalog (6 kort man skannar samtidigt) → egen obunden
+  {/* Tjänsterutorna är en katalog (5 rutor man skannar samtidigt) → egen obunden
       sektion, INTE i stacken. Bygg-läget i flödet: Ingång → Bygg → avslutande
-      stack-berättelse. */}
-  <Departments />
+      stack-berättelse. (Tidigare: <Departments />, se importen.) */}
+  <Services />
   <StartFlow />
   {/* Kortstack: tre stack-vänliga en-budskaps-paneler (förvaltning → vilka vi är
       → boka). Revertera genom att ta bort <StackFlow> och lägga tillbaka de tre

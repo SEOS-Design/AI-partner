@@ -496,6 +496,19 @@ button {
   color: #fff;
 }
 
+/* Visuellt dold men läsbar för skärmläsare (t.ex. rubriker som bara finns för struktur). */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ---------------------------------------------------------------
    Typografi-hjälpklasser (opt-in)
    Sätt klassen på ett element för att ärva design-systemets typografi

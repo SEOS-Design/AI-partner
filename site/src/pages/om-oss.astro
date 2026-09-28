@@ -1,0 +1,51 @@
+---
+// /om-oss – Om AI Partner (2026-09-28). Hit leder "Mer om oss" under startsidans hero
+// och "Om oss" i navigationen. Flöde (Björns val): Hero → Historia → Från första
+// samtal till AI i drift → Verktygen (Robot.astro) → Citat → FAQ → Footer. Ingen avslutande CTA-sektion här.
+// Copy = utkast (Douglas granskar). Citatet i AboutQuote är en platshållare.
+import Layout from '../layouts/Layout.astro';
+import AboutHero from '../components/AboutHero.astro';
+import AboutStory from '../components/AboutStory.astro';
+import AboutOffer from '../components/AboutOffer.astro';
+import AboutQuote from '../components/AboutQuote.astro';
+import Robot from '../components/Robot.astro';
+import FAQ from '../components/FAQ.astro';
+import Footer from '../components/Footer.astro';
+
+// Frågor om bolaget (startsidans gamla FAQ handlade om tjänsterna). Blir FAQPage-schema.
+const FAQS = [
+  {
+    q: 'Vad gör AI Partner?',
+    a: 'AI Partner är en AI-byrå som bygger AI-agenter och automation åt små och medelstora företag. Vi kartlägger var AI lönar sig, bygger lösningen och förvaltar den efter lansering.',
+  },
+  {
+    q: 'Hur hänger AI Partner och SEOS Design ihop?',
+    a: 'AI Partner är systerbolag till webbyrån SEOS Design och drivs av samma team. SEOS bygger hemsidor och arbetar med SEO och AEO. AI Partner bygger AI-lösningarna. Behöver ni båda delarna samordnar vi dem.',
+  },
+  {
+    q: 'Vilka företag jobbar ni med?',
+    a: 'Små och medelstora företag i alla branscher. Både de som redan vet vilken process de vill automatisera och de som inte vet var de ska börja.',
+  },
+  {
+    q: 'Vem äger det ni bygger åt oss?',
+    a: 'Ni gör. Kod, prompts och flöden tillhör er, och er data stannar hos er. Vi kan förvalta lösningen, men ni är aldrig inlåsta hos oss.',
+  },
+  {
+    q: 'Var finns ni?',
+    a: 'Vi finns i Stockholm. Kartläggningar och föreläsningar på plats gör vi hos företag i Stockholmsområdet.',
+  },
+];
+---
+
+<Layout
+  title="Om oss – AI Partner"
+  description="AI Partner är AI-byrån som bygger AI-agenter och automation åt små och medelstora företag. Systerbolag till webbyrån SEOS Design, baserat i Stockholm."
+>
+  <AboutHero />
+  <AboutStory />
+  <AboutOffer />
+  <Robot />
+  <AboutQuote />
+  <FAQ heading="Vanliga frågor om AI Partner" items={FAQS} />
+  <Footer />
+</Layout>

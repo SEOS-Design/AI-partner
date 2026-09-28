@@ -36,11 +36,19 @@ const FAQS = [
   },
 ];
 
+// Återanvändbar (2026-09-28): /om-oss skickar in egen rubrik + egna frågor. Utan props
+// visas de ursprungliga frågorna (startsidans parkerade version).
+interface Props {
+  heading?: string;
+  items?: { q: string; a: string }[];
+}
+const { heading = 'Det ni undrar, rakt på sak.', items = FAQS } = Astro.props;
+
 // FAQPage-strukturdata (schema.org) — AEO: maskinläsbart för sök + AI-modeller.
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: FAQS.map((f) => ({
+  mainEntity: items.map((f) => ({
     '@type': 'Question',
     name: f.q,
     acceptedAnswer: { '@type': 'Answer', text: f.a },
@@ -51,11 +59,11 @@ const faqSchema = {
 <section id="faq" class="section faq" aria-labelledby="faq-heading">
   <div class="container">
     <div class="faq-head">
-      <h2 id="faq-heading" class="h2">Det ni undrar, rakt på sak.</h2>
+      <h2 id="faq-heading" class="h2">{heading}</h2>
     </div>
 
     <div class="faq-list">
-      {FAQS.map((f, i) => (
+      {items.map((f, i) => (
         <div class={`faq-item${i === 0 ? ' open' : ''}`}>
           <h3 class="faq-q-wrap">
             <button
@@ -82,9 +90,15 @@ const faqSchema = {
 </section>
 
 <style>
+  /* Ligger direkt före footern (på /om-oss): extra luft nedtill så att footerns klot
+     (lyser ~250 px upp) inte hamnar bakom de sista frågorna. Samma mått som /kontakt. */
+  .faq {
+    padding-bottom: clamp(200px, 20vw, 280px);
+  }
+
   /* ---- centrerat sektionshuvud ---- */
+  /* Ingen max-width: en fristående rubrik ska inte tvingas att bryta (Björns regel). */
   .faq-head {
-    max-width: 640px;
     margin: 0 auto 40px;
     text-align: center;
     display: flex;
@@ -180,8 +194,8 @@ const faqSchema = {
   .faq-a {
     padding-bottom: 24px;
     max-width: 640px;
-    font-size: 15.5px;
-    line-height: 1.7;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
     color: var(--fg-3);
   }
 

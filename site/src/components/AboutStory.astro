@@ -1,0 +1,142 @@
+---
+// AboutStory.astro – "Vår historia" på /om-oss (2026-09-28).
+// En catchphrase som stor h2 + längre beskrivande text under, CENTRERAT som
+// seosdesign.se/om-oss (Björn 2026-09-28: tvåkolumnsvarianten lämnade ett tomrum
+// under rubriken). Rubrikens ord glider upp ur en mask, som
+// Story.astro/seosdesign.se. (Linjen AI PARTNER ━ SEOS DESIGN borttagen 2026-09-28.)
+// Brödtexten animeras inte (läsbarhet), den tonas bara in.
+//
+// Progressiv förbättring: utan JS och vid reduced motion syns allt direkt.
+// Copy = utkast (Douglas granskar).
+
+const HEAD = ['Vi automatiserar', 'det som tar tid.'];
+let wi = 0;
+const lines = HEAD.map((line) => line.split(' ').map((w) => ({ w, i: wi++ })));
+---
+
+<section class="astory" aria-labelledby="astory-title">
+  <div class="container astory__grid">
+    <h2 id="astory-title" class="astory__h">
+      {lines.map((words, li) => (
+        <span class:list={['astory__line', li > 0 && 'astory__line--dim']}>
+          {words.map(({ w, i }, k) => (
+            <>
+              <span class="astory__mask"><span class="astory__word" style={`--i: ${i}`}>{w}</span></span>
+              {k < words.length - 1 && ' '}
+            </>
+          ))}
+        </span>
+      ))}
+    </h2>
+
+    <div class="astory__body">
+      <p>
+        AI Partner startade inne i webbyrån SEOS Design. När vi byggde hemsidor och
+        synlighet åt våra kunder såg vi samma mönster gång på gång: timmar som försvann
+        i manuellt arbete som borde sköta sig självt.
+      </p>
+      <p>
+        I dag bygger vi AI-agenter och automation som tar över de momenten. Samma team,
+        samma tekniska grund och samma krav på att resultatet ska gå att mäta.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .astory {
+    padding: var(--section-py) 0;
+  }
+  .container {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+  }
+  .astory__grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* ---- rubrik ---- */
+  .astory__h {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--fs-h2);
+    line-height: var(--lh-display);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+  }
+  .astory__line {
+    display: block;
+  }
+  .astory__line--dim {
+    color: #666; /* samma dämpade andra rad som Story (3,45:1, AA stor text) */
+  }
+  .astory__mask {
+    display: inline-block;
+    overflow: clip;
+    vertical-align: top;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+  .astory__word {
+    display: inline-block;
+  }
+
+  /* ---- text ---- */
+  .astory__body {
+    max-width: 40em;
+    margin-top: clamp(32px, 4vw, 56px);
+  }
+  .astory__body p {
+    margin: 0;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+  }
+  .astory__body p + p {
+    margin-top: var(--space-4);
+  }
+
+  /* ---- animation (bara när scriptet satt .will-reveal) ---- */
+  .astory.will-reveal .astory__word {
+    transform: translateY(125%);
+    transition: transform 0.9s var(--ease);
+    transition-delay: calc(0.1s + var(--i) * 0.1s);
+  }
+  .astory.will-reveal .astory__body {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.8s var(--ease) 0.7s, transform 0.8s var(--ease) 0.7s;
+  }
+  .astory.will-reveal.is-in .astory__word,
+  .astory.will-reveal.is-in .astory__body {
+    transform: none;
+    opacity: 1;
+  }
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('.astory');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (sec && !reduced && 'IntersectionObserver' in window) {
+    const r = sec.getBoundingClientRect();
+    // Redan i bild vid laddning → visa direkt utan animation.
+    if (r.top > window.innerHeight * 0.85) {
+      sec.classList.add('will-reveal');
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((e) => e.isIntersecting)) return;
+          sec.classList.add('is-in');
+          io.disconnect();
+        },
+        { rootMargin: '0px 0px -20% 0px' },
+      );
+      io.observe(sec);
+      document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
+    }
+  }
+</script>

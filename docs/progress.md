@@ -6,7 +6,7 @@
 
 ## Var vi är nu
 
-**Startsidan är klar i sin helhet** och **kontaktsidan `/kontakt` är byggd**. Övriga undersidor är inte påbörjade. Inget är driftsatt — det sker i Fas 4 efter Douglas granskning.
+**Startsidan är klar i sin helhet**, **kontaktsidan `/kontakt`** och **Om oss `/om-oss`** är byggda (Om oss ej committad 2026-09-28). Övriga undersidor är inte påbörjade. Inget är driftsatt — det sker i Fas 4 efter Douglas granskning.
 
 - **Driftsatt:** Nej. Det finns **ingen deploy-pipeline** (ingen netlify/vercel/actions-config) — push till `master` är bara backup till GitHub och går inte live.
 - **Repo:** github.com/SEOS-Design/AI-partner, branch `master`
@@ -14,7 +14,13 @@
 - **Senast pushat:** `d4a02b6` (2026-09-23). **Committat lokalt, EJ pushat:** `3244b47` (footer) · `b5a18de` (tjänsterutor + StartProcess) · `a2d887e` · `23a40bf` (avslutning, typografi, knappar, canvas-kub) · `533a26e` (/kontakt). Björn vill ofta vänta med push.
 - **Medvetet utanför git:** `CLAUDE.md` (Douglas fil, ändrad), `AI-Partner-strategi-brief-2026-07.md` (committas inte utan avstämning), `pexels-…jpg` (testbild).
 
-### NÄSTA STEG: sidan Om oss (`/om-oss`)
+### Om oss /om-oss (2026-09-28, byggd, EJ committad)
+
+`src/pages/om-oss.astro`. Flöde (Björns val efter två skissrundor): **AboutHero** (glaslåda som startsidans hero, jättestort "OM OSS" som seosdesign.se/om-oss, litet ord ovanför som byts var 3:e s, video = Wannathis Glass "Ripples on water" dark → `public/about-ripples.{mp4,webm}` 400/120 KB + poster, skarvkvot 2,19) → **AboutStory** (catchphrase-h2 med ord ur mask + längre text, centrerat) → **AboutOffer** ("Från första samtal till AI i drift.": tre löften = de tre tjänstelagren kartlägger/bygger/förvaltar; accentlinje växer med scrollen och tänder raderna; aktiv rad visar 3D-ikon lamp/pencil/column från `public/tjanster/*-slut.webp`) → **AboutQuote** (ett stort citat från Douglas, orden tänds grått→vitt med scrollen; h2 bara för skärmläsare) → **FAQ** (nu props `heading`/`items`; 6 nya frågor om bolaget, FAQPage-schema, extra luft nedtill för footerns klot) → Footer. **Ingen CTA-sektion** (Björn). Björn förkastade: tre grundare i egen sektion, "Hur vi tänker"-principer (lät som interna copy-regler), "Varför vi gör det här" som rubrik, gamla FAQ-frågorna. Kontrast i heron mätt mot rörlig video: rubrik 12,7 · ingress 4,7 (desktop) / 6,2 (mobil). `.sr-only` tillagd i global.css.
+**Justeringar samma kväll (Björn):** ordet ovanför OM OSS borttaget · historien centrerad (som SEOS) · löftesradernas ikoner bytta till egna Blender-stillbilder `public/om-oss/{magnifier,cleaning,arrow}.webp` (Wannathis Charts 49/23/14, pilen i 14 omfärgad till NEW BLUE, pil ned-objektet `Cylinder.029` dolt; skript `motion-grid-bilder/verktyg/blender/still_about.py`) · nytt citat (fortfarande platshållare), större namn/titel · **Robot.astro (verktygen) monterad mellan löftena och citatet**: centrerad rubrik "Rätt verktyg för jobbet. / Ingen inlåsning.", chipsen är inte länkar (ordlistan finns inte), knappen i mitten borttagen, 60 fps · FAQ-frågan om AI-leverantör struken (5 frågor kvar). · Historiens rubrik → "Vi automatiserar / det som tar tid.", linjen AI PARTNER ━ SEOS DESIGN borttagen · ingressen under verktygsrubriken borttagen och flyttad IN i cirkelns mitt ("Vi väljer modell och verktyg efter uppgiften, inte efter leverantör. Här är några av dem vi bygger med."), luft ovanför cirkeln, texten 15–28 px inom 56 % bredd så den håller sig innanför de inre chipsens bana
+**Öppet:** CITATET ÄR EN PLATSHÅLLARE skriven av Claude — byt mot Douglas riktiga ord. Douglas copy-granskning av hela sidan. FAQ "Var finns ni?": Stockholm, besök bara i Stockholmsområdet (Björn) — digitala möten för övriga Sverige ej bekräftat.
+
+### (Historik) NÄSTA STEG var: sidan Om oss (`/om-oss`)
 
 Björns val 2026-09-28. Den behövs redan: "Mer om oss" under heron och "Om oss" i navigationen ger 404. Arbetssätt som fungerat: **inspiration först** (Playwright-skärmdumpar av referenssajter) → **skisser** (visualize-widget, flera varianter) → Björn väljer → bygg → verifiera i Playwright.
 
@@ -239,7 +245,7 @@ Sparade som SVG i `site/public/logos/`. Leonardo.Ai saknar öppen SVG — visas 
 - [ ] Riktiga kontaktuppgifter (t.ex. kontakt@aipartner.se) i `CONTACT` i `Contact.astro`.
 - [ ] Formulärets backend (beror på deploy: Netlify Forms, e-posttjänst e.d.). Idag demo-kvitto.
 
-**Undersidor (planerad ordning):** ~~Kontakt/bokning~~ (klar) → **Om oss (nästa)** → Tjänster (kräver Douglas produktbeslut: vilka agentprodukter får egna sidor) → Rådgivning & förvaltning (Advisory) → Kunskapsbank (kräver innehåll + stackbeslut, se `docs/innehall-utan-cms.md`).
+**Undersidor (planerad ordning):** ~~Kontakt/bokning~~ (klar) → ~~Om oss~~ (byggd) → Tjänster (kräver Douglas produktbeslut: vilka agentprodukter får egna sidor) → Rådgivning & förvaltning (Advisory) → Kunskapsbank (kräver innehåll + stackbeslut, se `docs/innehall-utan-cms.md`).
 
 **Infrastruktur:**
 - [ ] CMS-beslut — Sanity troligen struken för Astro content collections (`docs/innehall-utan-cms.md`); Douglas beslut.

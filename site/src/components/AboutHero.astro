@@ -1,0 +1,171 @@
+---
+// AboutHero.astro – heron på /om-oss (2026-09-28).
+// Samma glas-box som startsidans Hero (måtten speglar seosdesign.se: 10px marginal,
+// 32px radie), men med ett jättestort "Om oss" som på seosdesign.se/om-oss.
+// (Ett roterande ord ovanför rubriken provades och togs bort 2026-09-28, Björn.)
+//
+// Video: Wannathis "Ripples on water" (dark theme), 4K-källa → 1920 mp4+webm i
+// public/about-ripples.*. Skarvkvot mätt 2,19 (sömlös nog; ~1 = perfekt).
+// Postern = första rutan, visas innan videon laddat och vid reduced motion.
+
+---
+
+<section class="ahero" aria-labelledby="ahero-title">
+  <div class="ahero__box">
+    <video
+      class="ahero__video"
+      data-inview-video
+      preload="auto"
+      muted
+      loop
+      playsinline
+      poster="/about-ripples-poster.webp"
+      aria-hidden="true"
+    >
+      <source src="/about-ripples.webm" type="video/webm" />
+      <source src="/about-ripples.mp4" type="video/mp4" />
+    </video>
+    <div class="ahero__bg" aria-hidden="true"></div>
+    <div class="ahero__tint" aria-hidden="true"></div>
+
+    <div class="ahero__center">
+      <h1 id="ahero-title" class="ahero__title">
+        <span class="ahero__mask"><span class="ahero__in">Om oss</span></span>
+      </h1>
+
+      <p class="ahero__lead">
+        AI Partner är AI-byrån som bygger agenter och automation åt små och medelstora
+        företag. Ett systerbolag till webbyrån SEOS Design.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ahero {
+    --edge: 10px;
+    --radius: 32px;
+    position: relative;
+    min-height: 100svh;
+    padding: var(--edge);
+    background: var(--bg);
+    isolation: isolate;
+  }
+
+  .ahero__box {
+    position: relative;
+    min-height: calc(100svh - var(--edge) * 2);
+    display: grid;
+    place-items: center;
+    padding: clamp(96px, 14vh, 140px) clamp(24px, 5vw, 72px) clamp(48px, 8vh, 96px);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #06070a;
+  }
+  /* Kanten = design-systemets hårstreck, ovanpå video och tint. */
+  .ahero__box::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    border-radius: inherit;
+    pointer-events: none;
+    border: 1px solid var(--border-strong);
+  }
+
+  .ahero__bg,
+  .ahero__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+  }
+  .ahero__bg {
+    z-index: 0;
+    background: url("/about-ripples-poster.webp") center / cover no-repeat;
+  }
+  .ahero__video {
+    z-index: 1;
+    object-fit: cover;
+    display: block;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ahero__video { display: none; }
+  }
+
+  /* Tinten dämpar videon bakom texten. Uppmätt mot den rörliga videon (Playwright,
+     12 rutor över loopen, 1440×900, 2026-09-28), värsta pixel bakom texten:
+     rubrik 13,2 · ingress 9,8 (mobil 6,2; krav 4,5; bindande = ljusa reflexer i ringarna). Lättas tinten måste ingressen mätas om. */
+  .ahero__tint {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 64% 58% at 50% 56%, rgba(6, 7, 10, 0.7) 0%, rgba(6, 7, 10, 0) 78%),
+      radial-gradient(120% 100% at 50% 50%, transparent 52%, rgba(4, 5, 7, 0.5) 100%),
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 24%) 7% / 0.2);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  }
+
+  .ahero__center {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* ---- jätterubriken ---- */
+  .ahero__title {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(88px, 17vw, 240px);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    color: var(--fg-1);
+  }
+  .ahero__mask {
+    display: inline-block;
+    overflow: clip;
+    padding-bottom: 0.04em;
+  }
+  .ahero__in {
+    display: inline-block;
+  }
+
+  .ahero__lead {
+    max-width: 34em;
+    margin: var(--space-6) 0 0;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .ahero__in {
+      transform: translateY(105%);
+      animation: aheroRise 1.1s cubic-bezier(0.16, 0.84, 0.32, 1) 0.3s forwards;
+    }
+    .ahero__lead {
+      opacity: 0;
+      animation: aheroFade 0.9s var(--ease) 0.9s forwards;
+    }
+  }
+  @keyframes aheroRise {
+    to { transform: none; }
+  }
+  @keyframes aheroFade {
+    to { opacity: 1; }
+  }
+</style>
+
+<script>
+  import '../scripts/inview-video';
+
+</script>

@@ -1,0 +1,261 @@
+---
+// AboutOffer.astro – "Från första samtal till AI i drift." på /om-oss (2026-09-28).
+// Tre löften kopplade till de tre tjänstelagren i strategi-briefen:
+// kartläggning (gratis ingång) → bygg (agenter per avdelning) → förvaltning.
+//
+// Rörelse: en accentlinje växer nedåt längs vänsterkanten i takt med scrollen. När
+// linjen når en rad tänds dess nummer och radens 3D-ikon tonas in till höger
+// (Wannathis Charts: 49 magnifier, 23 cleaning, 14 arrow up with columns med pilen
+// omfärgad till blå — egna stillbilder, så de inte krockar med startsidans tjänsterutor.
+// Renderade i Blender med motion-grid-bilder/verktyg/blender/still_about.py). Hover/fokus gör
+// samma sak. Utan JS / reduced motion: linjen fylld, alla rader tända, inga ikoner.
+//
+// Copy = utkast (Douglas granskar).
+
+const ROWS = [
+  {
+    title: 'Vi kartlägger.',
+    dim: 'Kostnadsfritt.',
+    text: 'Vi går igenom era processer tillsammans med er och visar var AI lönar sig, och var den inte gör det. Ni får en prioriterad åtgärdsplan.',
+    img: '/om-oss/magnifier.webp',
+  },
+  {
+    title: 'Vi bygger.',
+    dim: 'Per avdelning.',
+    text: 'Agenter för kundtjänst, sälj, ekonomi och kvalitetskontroll, och assistenter som svarar ur er egen data. Byggt mot en bestämd process, inte som allmän chatt.',
+    img: '/om-oss/cleaning.webp',
+  },
+  {
+    title: 'Vi förvaltar.',
+    dim: 'Efter lansering.',
+    text: 'Rådgivning, AI-policy och löpande drift. Vi följer upp att lösningen fortsätter leverera och justerar när era processer ändras.',
+    img: '/om-oss/arrow.webp',
+  },
+];
+---
+
+<section class="aoffer" aria-labelledby="aoffer-title">
+  <div class="container">
+    <h2 id="aoffer-title" class="aoffer__h">
+      Från första samtal<br /><span class="aoffer__dim">till AI i drift.</span>
+    </h2>
+
+    <div class="aoffer__list">
+      <span class="aoffer__track" aria-hidden="true"><span class="aoffer__fill"></span></span>
+      <ol class="aoffer__rows">
+      {ROWS.map((r, i) => (
+        <li class="aoffer__row">
+          <span class="aoffer__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <div class="aoffer__text">
+            <h3 class="aoffer__title">
+              {r.title} <span class="aoffer__dim">{r.dim}</span>
+            </h3>
+            <p>{r.text}</p>
+          </div>
+          <img class="aoffer__img" src={r.img} alt="" width="540" height="540" loading="lazy" decoding="async" />
+        </li>
+      ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .aoffer {
+    padding: var(--section-py) 0;
+  }
+  .container {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+  }
+
+  .aoffer__h {
+    margin: 0 0 clamp(40px, 5vw, 64px);
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--fs-h2);
+    line-height: var(--lh-display);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+  }
+  .aoffer__dim {
+    color: #666;
+  }
+
+  /* ---- listan med scroll-linjen ---- */
+  .aoffer__list {
+    --p: 1; /* 0–1, sätts av scriptet. Utan JS: full linje. */
+    --num-w: clamp(48px, 6vw, 80px);
+    position: relative;
+  }
+  .aoffer__rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .aoffer__track {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+  .aoffer__fill {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 78% / 0.2),
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 78%)
+    );
+    box-shadow: 0 0 10px hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 60% / 0.6);
+    transform-origin: top;
+    transform: scaleY(var(--p));
+  }
+
+  .aoffer__row {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--num-w) minmax(0, 1fr) clamp(140px, 17vw, 220px);
+    gap: var(--space-5);
+    align-items: start;
+    padding: clamp(28px, 3.5vw, 44px) 0;
+    border-top: 1px solid var(--border);
+    outline: none;
+  }
+  .aoffer__row:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .aoffer__num {
+    padding-left: var(--space-5);
+    /* Numret i höjd med rubrikens första rad (h3: line-height 1.1). */
+    padding-top: calc(var(--fs-h3) * 0.55 - 0.6em);
+    font-stretch: 75%;
+    font-size: var(--fs-small);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--fg-4);
+    transition: color 0.4s var(--ease);
+  }
+
+  .aoffer__title {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--fs-h3);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+  }
+  .aoffer__text p {
+    margin: var(--space-3) 0 0;
+    max-width: 38em;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-3);
+    transition: color 0.4s var(--ease);
+  }
+
+  /* 3D-ikonen: transparent webp. */
+  .aoffer__img {
+    align-self: center;
+    width: 100%;
+    height: auto;
+    opacity: 0;
+    transform: translateY(14px) scale(0.94);
+    transition: opacity 0.6s var(--ease), transform 0.8s var(--ease);
+    pointer-events: none;
+  }
+
+  /* Tänd rad: numret tar accenten, texten ljusnar. */
+  .aoffer__row.is-lit .aoffer__num {
+    color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 78%);
+  }
+  .aoffer__row.is-lit .aoffer__text p {
+    color: var(--fg-2);
+  }
+  /* Aktiv rad (där linjen är nu) eller hover/fokus: ikonen syns. */
+  .aoffer__row.is-active .aoffer__img,
+  .aoffer__row:hover .aoffer__img,
+  .aoffer__row:focus-within .aoffer__img {
+    opacity: 1;
+    transform: none;
+  }
+  /* Utan JS: alla rader tända (ikonerna förblir en förstärkning). */
+  .aoffer__list:not(.is-js) .aoffer__row .aoffer__num {
+    color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 78%);
+  }
+
+  @media (max-width: 719px) {
+    .aoffer__row {
+      grid-template-columns: var(--num-w) minmax(0, 1fr);
+    }
+    .aoffer__img { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .aoffer__img,
+    .aoffer__num,
+    .aoffer__text p { transition: none; }
+  }
+</style>
+
+<script>
+  // Scroll-linjen: progress = hur långt listan har passerat en läslinje vid 60 % av
+  // vyns höjd. Uppdateras i rAF bara när sektionen är nära vyn.
+  const list = document.querySelector<HTMLElement>('.aoffer__list');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (list && !reduced && 'IntersectionObserver' in window) {
+    list.classList.add('is-js');
+    const rows = Array.from(list.querySelectorAll<HTMLElement>('.aoffer__row'));
+    let raf = 0;
+    let near = false;
+
+    const update = () => {
+      raf = 0;
+      const r = list.getBoundingClientRect();
+      const lineY = window.innerHeight * 0.6;
+      const p = Math.min(1, Math.max(0, (lineY - r.top) / r.height));
+      list.style.setProperty('--p', p.toFixed(4));
+
+      let active = -1;
+      rows.forEach((row, i) => {
+        const top = row.offsetTop / r.height;
+        const lit = p > top + 0.02;
+        row.classList.toggle('is-lit', lit);
+        if (lit) active = i;
+      });
+      // Sista raden släpper inte när linjen är full.
+      rows.forEach((row, i) => row.classList.toggle('is-active', i === active));
+    };
+    const onScroll = () => {
+      if (near && !raf) raf = requestAnimationFrame(update);
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        near = entries.some((e) => e.isIntersecting);
+        if (near) onScroll();
+      },
+      { rootMargin: '200px 0px' },
+    );
+    io.observe(list);
+    list.style.setProperty('--p', '0');
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        io.disconnect();
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', onScroll);
+      },
+      { once: true },
+    );
+  }
+</script>

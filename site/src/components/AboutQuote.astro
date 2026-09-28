@@ -1,0 +1,140 @@
+---
+// AboutQuote.astro – den personliga sektionen på /om-oss (2026-09-28).
+// En person (Douglas), ett stort citat, inga foton. Björn: personligt men inte en kopia
+// av seosdesign.se (där står tre grundare med foto och ett gemensamt kundlöfte).
+// Rubriken finns bara för skärmläsare.
+//
+// Rörelse: orden tänds från grått till vitt i takt med scrollen. Utan JS / reduced
+// motion: hela citatet vitt.
+//
+// !! CITATET ÄR EN TILLFÄLLIG PLATSHÅLLARE skriven av Claude (2026-09-28, version 2), INTE
+// Douglas ord. Byt mot ett riktigt citat som Douglas godkänt innan publicering.
+
+const QUOTE =
+  'Vi mäter inte vårt arbete i hur mycket AI vi levererar. Vi mäter det i hur mycket tid våra kunder får tillbaka. Finns det inget att vinna säger vi det från början.';
+const words = QUOTE.split(' ');
+---
+
+<section class="aquote" aria-labelledby="aquote-title">
+  <h2 id="aquote-title" class="sr-only">Bakom AI Partner</h2>
+  <figure class="container aquote__fig">
+    <blockquote class="aquote__q">
+      <p>
+        <span aria-hidden="true">”</span>{words.map((w, i) => (
+          <>
+            <span class="aquote__w" style={`--i: ${i}`}>{w}</span>{i < words.length - 1 && ' '}
+          </>
+        ))}<span aria-hidden="true">”</span>
+      </p>
+    </blockquote>
+    <figcaption class="aquote__cap">
+      <span class="aquote__name">Douglas Ekman</span>
+      <span class="aquote__role">VD och medgrundare, AI Partner och SEOS Design</span>
+    </figcaption>
+  </figure>
+</section>
+
+<style>
+  .aquote {
+    padding: var(--section-py) 0;
+  }
+  .container {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+  }
+  .aquote__fig {
+    margin: 0 auto;
+    text-align: center;
+  }
+  .aquote__q {
+    margin: 0;
+  }
+  /* Citatet är display-typografi, inte brödtext → smal bredd som rubrikerna. */
+  .aquote__q p {
+    margin: 0 auto;
+    max-width: 22em;
+    font-stretch: 75%;
+    font-weight: 700;
+    font-size: var(--fs-h3);
+    line-height: 1.2;
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+    text-wrap: balance;
+  }
+  .aquote__w {
+    transition: color 0.35s var(--ease);
+  }
+  .aquote.is-js .aquote__w {
+    color: #3a3a3a;
+  }
+  .aquote.is-js .aquote__w.is-lit {
+    color: var(--fg-1);
+  }
+
+  .aquote__cap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-7);
+  }
+  /* Namn och titel i större storlek (Björn 2026-09-28): namnet ~60 % av citatets storlek. */
+  .aquote__name {
+    font-stretch: 75%;
+    font-size: calc(var(--fs-h3) * 0.6);
+    line-height: var(--lh-heading);
+    font-weight: 700;
+    color: var(--fg-1);
+  }
+  .aquote__role {
+    font-size: var(--fs-lead);
+    color: var(--fg-3);
+  }
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('.aquote');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (sec && !reduced && 'IntersectionObserver' in window) {
+    const q = sec.querySelector<HTMLElement>('.aquote__q')!;
+    const words = Array.from(sec.querySelectorAll<HTMLElement>('.aquote__w'));
+    sec.classList.add('is-js');
+    let raf = 0;
+    let near = false;
+
+    // Tänds från att citatets topp når 80 % av vyn tills dess botten når 45 %.
+    const update = () => {
+      raf = 0;
+      const r = q.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const start = vh * 0.8;
+      const end = vh * 0.45;
+      const p = Math.min(1, Math.max(0, (start - r.top) / (start - end + r.height)));
+      const n = Math.round(p * words.length);
+      words.forEach((w, i) => w.classList.toggle('is-lit', i < n));
+    };
+    const onScroll = () => {
+      if (near && !raf) raf = requestAnimationFrame(update);
+    };
+    const io = new IntersectionObserver(
+      (entries) => {
+        near = entries.some((e) => e.isIntersecting);
+        if (near) onScroll();
+      },
+      { rootMargin: '200px 0px' },
+    );
+    io.observe(sec);
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        io.disconnect();
+        window.removeEventListener('scroll', onScroll);
+      },
+      { once: true },
+    );
+  }
+</script>

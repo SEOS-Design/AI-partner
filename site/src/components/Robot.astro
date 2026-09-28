@@ -4,19 +4,17 @@
 // Budskap: vi väljer modell efter uppgiften, ingen inlåsning — inte en tech-flex.
 // Spline-roboten borttagen (endast ljusskenet). CTA nedgraderad till sekundär
 // (ghost) så den inte konkurrerar med #boka-flödet.
-import Arrow from './Arrow.astro';
+// 2026-09-28: flyttad till /om-oss (Björn). Rubriken i nya stilen och centrerad,
+// chipsen är inte länkar längre (/ordlista finns inte), knappen i mitten borttagen
+// (pekade på /om-oss, alltså sidan själv).
 ---
 
 <section id="verktyg" class="orbit" aria-labelledby="orbit-heading">
   <!-- Sektionsrubrik (övre del) -->
   <div class="container orbit-head">
     <h2 id="orbit-heading" class="orbit-title">
-      Rätt verktyg för jobbet<br />— ingen inlåsning
+      Rätt verktyg för jobbet.<br /><span class="orbit-dim">Ingen inlåsning.</span>
     </h2>
-    <p class="orbit-sub">
-      Vi väljer modell efter uppgiften, inte tvärtom. Hovra för att se verktygen
-      vi bygger med.
-    </p>
   </div>
 
   <!-- Orbit-scen: ringar + gubbe + logotyper + CTA -->
@@ -33,14 +31,14 @@ import Arrow from './Arrow.astro';
          data-a = startvinkel i grader
          data-g = grupp: 0 = medsols, 1 = motsols -->
     <div class="orbit-chips" role="list" aria-label="Verktyg">
-      <a
+      <div
         class="orbit-chip"
-        href="/ordlista#openai"
+        tabindex="0"
         data-r="0.31"
         data-a="-58"
         data-g="0"
         role="listitem"
-        aria-label="OpenAI – läs mer i ordlistan"
+        aria-label="OpenAI"
       >
         <span class="orbit-chip__badge">
           <img
@@ -52,16 +50,16 @@ import Arrow from './Arrow.astro';
           />
         </span>
         <span class="orbit-chip__name">OpenAI</span>
-      </a>
+      </div>
 
-      <a
+      <div
         class="orbit-chip"
-        href="/ordlista#claude"
+        tabindex="0"
         data-r="0.49"
         data-a="16"
         data-g="0"
         role="listitem"
-        aria-label="Claude – läs mer i ordlistan"
+        aria-label="Claude"
       >
         <span class="orbit-chip__badge">
           <img
@@ -73,16 +71,16 @@ import Arrow from './Arrow.astro';
           />
         </span>
         <span class="orbit-chip__name">Claude</span>
-      </a>
+      </div>
 
-      <a
+      <div
         class="orbit-chip"
-        href="/ordlista#gemini"
+        tabindex="0"
         data-r="0.42"
         data-a="128"
         data-g="0"
         role="listitem"
-        aria-label="Gemini – läs mer i ordlistan"
+        aria-label="Gemini"
       >
         <span class="orbit-chip__badge">
           <img
@@ -94,16 +92,16 @@ import Arrow from './Arrow.astro';
           />
         </span>
         <span class="orbit-chip__name">Gemini</span>
-      </a>
+      </div>
 
-      <a
+      <div
         class="orbit-chip"
-        href="/ordlista#deepseek"
+        tabindex="0"
         data-r="0.49"
         data-a="230"
         data-g="0"
         role="listitem"
-        aria-label="DeepSeek – läs mer i ordlistan"
+        aria-label="DeepSeek"
       >
         <span class="orbit-chip__badge">
           <img
@@ -115,16 +113,16 @@ import Arrow from './Arrow.astro';
           />
         </span>
         <span class="orbit-chip__name">DeepSeek</span>
-      </a>
+      </div>
 
-      <a
+      <div
         class="orbit-chip"
-        href="/ordlista#grok"
+        tabindex="0"
         data-r="0.31"
         data-a="150"
         data-g="1"
         role="listitem"
-        aria-label="Grok – läs mer i ordlistan"
+        aria-label="Grok"
       >
         <span class="orbit-chip__badge">
           <img
@@ -136,16 +134,16 @@ import Arrow from './Arrow.astro';
           />
         </span>
         <span class="orbit-chip__name">Grok</span>
-      </a>
+      </div>
 
-      <a
+      <div
         class="orbit-chip"
-        href="/ordlista#deepl"
+        tabindex="0"
         data-r="0.49"
         data-a="80"
         data-g="1"
         role="listitem"
-        aria-label="DeepL – läs mer i ordlistan"
+        aria-label="DeepL"
       >
         <span class="orbit-chip__badge">
           <img
@@ -157,16 +155,16 @@ import Arrow from './Arrow.astro';
           />
         </span>
         <span class="orbit-chip__name">DeepL</span>
-      </a>
+      </div>
 
-      <a
+      <div
         class="orbit-chip"
-        href="/ordlista#adobe-firefly"
+        tabindex="0"
         data-r="0.42"
         data-a="-36"
         data-g="1"
         role="listitem"
-        aria-label="Adobe Firefly – läs mer i ordlistan"
+        aria-label="Adobe Firefly"
       >
         <span class="orbit-chip__badge">
           <img
@@ -178,31 +176,28 @@ import Arrow from './Arrow.astro';
           />
         </span>
         <span class="orbit-chip__name">Adobe Firefly</span>
-      </a>
+      </div>
 
       <!-- Leonardo.Ai: ingen öppen SVG tillgänglig – visas som lettermark -->
-      <a
+      <div
         class="orbit-chip"
-        href="/ordlista#leonardo-ai"
+        tabindex="0"
         data-r="0.49"
         data-a="300"
         data-g="1"
         role="listitem"
-        aria-label="Leonardo.Ai – läs mer i ordlistan"
+        aria-label="Leonardo.Ai"
       >
         <span class="orbit-chip__badge">
           <span class="orbit-chip__word">Le</span>
         </span>
         <span class="orbit-chip__name">Leonardo.Ai</span>
-      </a>
+      </div>
     </div>
 
     <!-- Floating text + knapp i mitten av scenen -->
     <div class="orbit-cta">
-      <p class="orbit-cta__txt">Ni binds inte vid en enda leverantör</p>
-      <a class="btn btn-ghost orbit-cta__btn" href="/om-oss">
-        Om oss <Arrow class="arrow" />
-      </a>
+      <p class="orbit-cta__txt">Vi väljer modell och verktyg efter uppgiften, inte efter leverantör. Här är några av dem vi bygger med.</p>
     </div>
   </div>
 </section>
@@ -227,42 +222,19 @@ import Arrow from './Arrow.astro';
   .orbit-head {
     position: relative;
     z-index: 6;
-  }
-
-  .eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-mono);
-    font-size: var(--fs-eyebrow);
-    font-weight: 600;
-    letter-spacing: var(--tracking-eyebrow);
-    text-transform: uppercase;
-    color: var(--fg-3);
-    margin-bottom: 18px;
-  }
-  .eyebrow .num {
-    color: var(--fg-2);
-  }
-  .eyebrow .sep {
-    color: var(--border-strong);
+    text-align: center;
   }
 
   .orbit-title {
     font-family: var(--font-sans);
     font-size: var(--fs-h2);
-    font-weight: 600;
-    line-height: var(--lh-heading);
-    letter-spacing: var(--tracking-tight);
+    font-weight: 700;
+    line-height: var(--lh-display);
+    letter-spacing: var(--tracking-display);
     color: var(--fg-1);
   }
-
-  .orbit-sub {
-    margin-top: 14px;
-    font-size: var(--fs-lead);
-    color: var(--fg-3);
-    max-width: 380px;
-    line-height: 1.6;
+  .orbit-dim {
+    color: #666; /* samma dämpade andra rad som övriga rubriker på /om-oss */
   }
 
   /* ---- Orbit-scen ---- */
@@ -270,7 +242,7 @@ import Arrow from './Arrow.astro';
     position: relative;
     width: min(720px, 92vw);
     aspect-ratio: 1 / 1;
-    margin: 12px auto 0;
+    margin: clamp(56px, 7vw, 112px) auto 0; /* luft under rubriken (ingressen flyttad in i cirkeln) */
   }
 
   /* Center-sken — ger sektionen liv. JUSTERA HÄR:
@@ -424,7 +396,7 @@ import Arrow from './Arrow.astro';
     align-items: center;
     gap: 20px;
     text-align: center;
-    width: min(360px, 80%);
+    width: min(440px, 56%); /* innanför de inre chipsens bana (radie 31 %) */
     pointer-events: none;
   }
   .orbit-cta > * {
@@ -435,9 +407,10 @@ import Arrow from './Arrow.astro';
      läsbarhet över center-skenet/ringarna). */
   .orbit-cta__txt {
     font-family: var(--font-sans);
-    font-weight: 600;
-    font-size: clamp(21px, 2.5vw, 30px);
-    line-height: 1.2;
+    font-stretch: 75%; /* statement, inte brödtext */
+    font-weight: 700;
+    font-size: clamp(15px, 2.2vw, 28px);
+    line-height: 1.45; /* luftigare radavstånd (Björn 2026-09-28) */
     letter-spacing: var(--tracking-display);
     color: var(--fg-1);
     text-wrap: balance;

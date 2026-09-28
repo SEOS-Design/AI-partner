@@ -5,6 +5,8 @@
 > seos-web). Själva innehållsfilerna (13 st .md) + `AI-Partner-produktsidor-briefar-2026-08.md`
 > finns ännu inte i repot — Björn har dem / ett delat Google Drive-dokument.
 >
+> **OBS (Björn 2026-09-28): `/ai-konsult`-landningssidan hör INTE hemma på aipartner.se** — AI-konsult är inte samma sak som AI Partner och ska inte kopplas till seosdesign.se. Bygg bara de 12 artiklarna. Allt nedan om `/ai-konsult` gäller alltså inte här.
+>
 > **Status:** Sanity ifrågasatt — troligen Astro content collections i stället (stackbeslut → Douglas).
 
 ---

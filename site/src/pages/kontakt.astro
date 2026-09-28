@@ -1,0 +1,15 @@
+---
+// /kontakt – kontakt- och bokningssidan. Hit leder alla "Boka"- och "Kontakta"-
+// knappar på startsidan. Innehållet ligger i Contact.astro.
+import Layout from '../layouts/Layout.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout
+  title="Kontakt – AI Partner"
+  description="Kontakta AI Partner eller boka en kostnadsfri kartläggning. Berätta om en process som tar för mycket tid, så återkommer vi med vad som går att automatisera."
+>
+  <Contact />
+  <Footer />
+</Layout>

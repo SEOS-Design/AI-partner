@@ -29,6 +29,10 @@ Björns val: consolidator.aero "Our process". `StartProcess.astro`, v2 efter Bj�
 - Lärdomar: sticky/isolation → egen `background` krävs för att `mix-blend-mode: lighten` ska dölja videons svarta ruta. Videokanten tonas ut med en mask (annars en hårlinje på 7 mot 10). Fps-mätningen är brusig: en ny webbläsare per körning, jämfört mot en baslinje med sektionen dold (5–14 mot 4–5 tappade av ~235).
 - Gamla varianterna (StartFlowRail, vågen, kaskaden) ligger kvar.
 
+### Kontaktsidan /kontakt (2026-09-28, ocommittat)
+
+Björns val "B" (SEOS /kontakt utan "klotter"): `src/pages/kontakt.astro` + `Contact.astro` (ombyggd). Rubrik (h1, samma som startsidans CTA), en mening, tre kontaktvägar (klickbar e-post och telefon), formulär till höger (demo-kvitto, ingen backend), tre korta steg "Ni hör av er → Kartläggning → Åtgärdsplan" under. Kontaktuppgifter = PLATSHÅLLARE från SEOS: kontakt@seosdesign.se (troligen kontakt@aipartner.se senare), +46 8 490 096 20, Fridhemsgatan 45 Stockholm — ändra i `CONTACT` i Contact.astro. Nav-CTA:n, Positioneringens "Boka kartläggning" och steg 3 i kubsektionen pekar nu på /kontakt (var #boka). Extra luft nedtill så footerns klot inte lyser bakom stegtexten (uppmätt 7,5:1 vid 1440/1280/390).
+
 ### Avslutningen omgjord (2026-09-27, ocommittat)
 
 - **Advisory + kortstapeln (StackFlow) borttagna från startsidan** (Björn: Advisory överflödig här, ingen ersättningsrad). Filerna kvar; Advisory sparas till en kommande sida om rådgivning & förvaltning.

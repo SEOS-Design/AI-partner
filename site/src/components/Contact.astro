@@ -1,45 +1,73 @@
 ---
-// Contact.astro – avslutande sektion "Kontakt" (sidans konverteringspunkt).
-// Split: budskap vänster, kontaktformulär höger (trust-punkterna borttagna 2026-09-27).
-// Landningsmål för "#boka"-CTA:erna i StartFlow (anchor nedan) samt Nav "#kontakt".
+// Contact.astro – innehållet på kontaktsidan /kontakt (2026-09-28, Björns val "B").
+// SEOS-upplägget (seosdesign.se/kontakt) utan "klotter": rubrik, en mening och tre
+// kontaktvägar till vänster, formulär till höger, och under dem tre korta steg om
+// vad som händer sedan (strategibriefen: bokningssidan ska beskriva processen).
+// Rubriken är samma som startsidans avslutning (ContactCta) så att man känner igen sig.
 //
-// Sitter som TREDJE (sista) panelen i <StackFlow> → pinnas där tillsammans med
-// Advisory + Team (StackFlow äger sticky-logiken; sektionen själv är orörd och
-// neutraliseras via :global i wrappern). Formuläret saknar backend ännu —
-// submit visar ett demo-kvitto.
+// KONTAKTUPPGIFTER = PLATSHÅLLARE från SEOS (Björn): e-post kontakt@seosdesign.se
+// (troligen kontakt@aipartner.se senare), telefon och kontor som SEOS. Ändra i
+// CONTACT nedan.
+//
+// Formuläret saknar backend ännu — submit visar ett demo-kvitto.
 import Arrow from './Arrow.astro';
+
+const CONTACT = {
+  email: 'kontakt@seosdesign.se',
+  phone: '+46 8 490 096 20',
+  phoneHref: 'tel:+46849009620',
+  office: 'Fridhemsgatan 45, Stockholm',
+};
+
+const STEPS = [
+  { h: 'Ni hör av er', t: 'Via formuläret, mejl eller telefon.' },
+  { h: 'Kartläggning', t: 'Vi går igenom era processer på plats.' },
+  { h: 'Åtgärdsplan', t: 'Konkret och prioriterad. Inget köptvång.' },
+];
 ---
 
-<section id="kontakt" class="section cta-contact" aria-labelledby="cta-heading">
-  <span id="boka" class="cta-anchor" aria-hidden="true"></span>
-  <div class="container cta2">
-    <div class="cta2__grid">
-      <div class="cta2__head">
-        <h2 id="cta-heading" class="cta2__big">Börja med er största tidstjuv.</h2>
-        <p class="cta2__sub">
-          Berätta om en process som tar för mycket tid. Vi återkommer med vad som går att
-          automatisera — och vad det skulle ge.
+<section id="kontakt" class="contact" aria-labelledby="contact-title">
+  <div class="container">
+    <div class="contact__grid">
+      <div class="contact__intro">
+        <h1 id="contact-title" class="contact__h">Börja med er största tidstjuv.</h1>
+        <p class="contact__lead">
+          Berätta om en process som tar för mycket tid, eller boka en kostnadsfri
+          kartläggning. Vi återkommer med vad som går att automatisera.
         </p>
+
+        <dl class="contact__info">
+          <div class="contact__row">
+            <dt>E-post</dt>
+            <dd><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></dd>
+          </div>
+          <div class="contact__row">
+            <dt>Telefon</dt>
+            <dd><a href={CONTACT.phoneHref}>{CONTACT.phone}</a></dd>
+          </div>
+          <div class="contact__row">
+            <dt>Kontor</dt>
+            <dd>{CONTACT.office}</dd>
+          </div>
+        </dl>
       </div>
 
-      <div class="cta2__aside">
+      <div class="contact__aside">
         <form class="form-panel" id="contact-form" novalidate>
           <div class="form-row">
-            <div class="form-2col">
-              <div class="fld">
-                <label for="c-namn">Namn</label>
-                <input id="c-namn" name="namn" placeholder="Förnamn Efternamn" autocomplete="name" required />
-              </div>
-              <div class="fld">
-                <label for="c-epost">E-post</label>
-                <input id="c-epost" name="epost" type="email" placeholder="namn@företag.se" autocomplete="email" required />
-              </div>
+            <div class="fld">
+              <label for="c-namn">Namn</label>
+              <input id="c-namn" name="namn" placeholder="Förnamn Efternamn" autocomplete="name" required />
+            </div>
+            <div class="fld">
+              <label for="c-epost">E-post</label>
+              <input id="c-epost" name="epost" type="email" placeholder="namn@företag.se" autocomplete="email" required />
             </div>
             <div class="fld">
               <label for="c-process">Vad vill ni automatisera?</label>
-              <textarea id="c-process" name="process" rows="3" placeholder="Beskriv processen kort — vad tar tid idag?"></textarea>
+              <textarea id="c-process" name="process" rows="4" placeholder="Beskriv processen kort. Vad tar tid i dag?"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary cta2__submit">
+            <button type="submit" class="btn btn-primary contact__submit">
               Skicka förfrågan <Arrow class="arrow" />
             </button>
           </div>
@@ -47,113 +75,113 @@ import Arrow from './Arrow.astro';
 
         <!-- Demo-kvitto (visas efter submit tills backend är kopplad) -->
         <div class="form-panel form-sent" id="contact-sent" hidden>
-          <div class="form-panel__hd">
-            <span class="umono"><span class="dot"></span> Mottaget</span>
-            <span class="umono">01 / 01</span>
-          </div>
-          <p class="form-sent__txt">Tack — vi återkommer inom kort.</p>
-          <p class="form-sent__note">Det här är en demo — inget skickades ännu.</p>
+          <p class="form-sent__txt">Tack, vi återkommer inom kort.</p>
+          <p class="form-sent__note">Det här är en demo, inget skickades ännu.</p>
         </div>
       </div>
     </div>
+
+    <ol class="contact__steps" aria-label="Vad händer sedan?">
+      {STEPS.map((s, i) => (
+        <li class="cstep">
+          <span class="cstep__n">({String(i + 1).padStart(2, '0')})</span>
+          <h2 class="cstep__h">{s.h}</h2>
+          <p class="cstep__t">{s.t}</p>
+        </li>
+      ))}
+    </ol>
   </div>
 </section>
 
 <style>
-  .cta-contact {
-    scroll-margin-top: 80px;
+  .contact {
+    /* Överst: luft för den flytande nav-pillen. Nederst: luft så att footerns klot
+       (lyser ~250 px upp över footerns linje) inte hamnar bakom stegens text. */
+    padding: clamp(140px, 13vw, 190px) 0 clamp(200px, 20vw, 280px);
   }
-  .cta-anchor {
-    position: absolute;
-    top: -80px;
+  .container {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
   }
-  .cta2 {
-    width: 100%;
+  .contact__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: clamp(32px, 5vw, 64px);
+    align-items: start;
   }
 
-  .cta2__grid {
-    display: grid;
-    grid-template-columns: 1.05fr 0.95fr;
-    gap: 56px;
-    align-items: start;
-    position: relative;
-  }
-  .cta2__head {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .cta2__head .eyebrow {
-    margin-bottom: 18px;
-  }
-  .cta2__big {
+  /* ---- vänster: rubrik, text, kontaktvägar ---- */
+  .contact__h {
+    margin: 0;
+    text-wrap: balance;
     font-family: var(--font-sans);
     font-weight: 700;
     font-size: var(--fs-h2);
-    line-height: 1.02;
-    letter-spacing: -0.03em;
-    color: #fff;
-    margin-bottom: 16px;
+    line-height: var(--lh-display);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
   }
-  .cta2__sub {
-    margin-top: 4px;
+  .contact__lead {
+    margin-top: var(--space-5);
+    max-width: 30em;
     font-size: var(--fs-lead);
-    line-height: 1.6;
-    color: var(--fg-3);
-    max-width: 440px;
+    line-height: var(--lh-body);
+    color: var(--fg-2);
   }
-
-  /* ---- mono meta + status-prick ---- */
-  .umono {
-    font-family: var(--font-mono);
+  .contact__info {
+    margin: var(--space-7) 0 0;
+    display: grid;
+    gap: var(--space-3);
+  }
+  .contact__row {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    align-items: baseline;
+    gap: var(--space-4);
+  }
+  .contact__row dt {
     font-size: var(--fs-micro);
-    letter-spacing: 0.14em;
+    letter-spacing: var(--tracking-eyebrow);
     text-transform: uppercase;
     color: var(--fg-3);
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
   }
-  .dot {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--fg-2);
-    position: relative;
+  .contact__row dd {
+    margin: 0;
+    font-stretch: 100%;
+    font-size: var(--fs-body);
+    color: var(--fg-1);
   }
-  .dot::after {
-    content: "";
-    position: absolute;
-    inset: -3px;
-    border-radius: 50%;
-    border: 1px solid var(--border-strong);
+  .contact__row a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-strong);
+    transition: border-color var(--dur-fast) var(--ease);
+  }
+  .contact__row a:hover {
+    border-color: var(--fg-1);
+  }
+  .contact__row a:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-radius: 2px;
   }
 
-  /* ---- form-panel ---- */
+  /* ---- höger: formulär ---- */
   .form-panel {
     background: var(--bg-raised);
     border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 28px;
-    position: relative;
+    border-radius: 22px;
+    padding: clamp(20px, 2.4vw, 32px);
   }
-  
   .form-row {
     display: flex;
     flex-direction: column;
     gap: 18px;
   }
-  .form-2col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-  }
   .fld label {
     display: block;
     margin-bottom: 7px;
-    font-family: var(--font-mono);
     font-size: var(--fs-micro);
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -167,8 +195,8 @@ import Arrow from './Arrow.astro';
     border-radius: var(--radius-xs);
     padding: 12px 14px;
     font-family: var(--font-sans);
-    font-size: 14.5px;
-    color: #fff;
+    font-size: var(--fs-body);
+    color: var(--fg-1);
     outline: none;
     transition: border-color 0.18s, box-shadow 0.18s;
   }
@@ -183,44 +211,70 @@ import Arrow from './Arrow.astro';
   }
   .fld textarea {
     resize: vertical;
-    min-height: 84px;
+    min-height: 110px;
   }
-
-  .cta2__submit {
+  .contact__submit {
     align-self: flex-start;
   }
-
-  /* demo-kvitto */
   .form-sent__txt {
-    font-size: 15px;
-    color: var(--fg-2);
-    line-height: 1.6;
+    font-size: var(--fs-lead);
+    color: var(--fg-1);
   }
   .form-sent__note {
-    margin-top: 10px;
-    font-size: 12.5px;
-    color: var(--fg-4);
+    margin-top: var(--space-2);
+    font-size: var(--fs-small);
+    color: var(--fg-3);
   }
 
-  /* ---- knapp ---- */
-  /* .btn / .btn-primary är nu centraliserade i global.css */
+  /* ---- vad händer sedan: tre korta steg ---- */
+  .contact__steps {
+    list-style: none;
+    margin: clamp(64px, 8vw, 112px) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(20px, 3vw, 40px);
+  }
+  .cstep {
+    border-top: 1px solid var(--border-strong);
+    padding-top: var(--space-5);
+  }
+  .cstep__n {
+    font-size: var(--fs-small);
+    font-variant-numeric: tabular-nums;
+    color: var(--fg-3);
+  }
+  .cstep__h {
+    margin: var(--space-3) 0 var(--space-2);
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--fs-h3);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-tight);
+    color: var(--fg-1);
+  }
+  .cstep__t {
+    font-size: var(--fs-body);
+    line-height: 1.55;
+    color: var(--fg-3);
+  }
 
   /* ---- responsivt ---- */
   @media (max-width: 900px) {
-    .cta2__grid {
-      grid-template-columns: 1fr;
+    .contact__grid {
+      grid-template-columns: minmax(0, 1fr);
       gap: 40px;
     }
   }
-  @media (max-width: 560px) {
-    .form-2col {
-      grid-template-columns: 1fr;
+  @media (max-width: 700px) {
+    .contact__steps {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 </style>
 
 <script>
-  // Demo-submit: inget backend ännu — visa ett kvitto istället för att posta.
+  // Demo-submit: inget backend ännu — visa ett kvitto i stället för att posta.
   (function () {
     const form = document.getElementById('contact-form') as HTMLFormElement | null;
     const sent = document.getElementById('contact-sent');

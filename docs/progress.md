@@ -97,6 +97,22 @@ Ej i index men kvar som filer: `Departments`, `StackFlow`, `Advisory`, `Team`, `
 
 ---
 
+## Designreferenser (vad som togs varifrån)
+
+Samlad stil: mörkt och avskalat, stora feta smala rubriker + brödtext i full bredd, dämpad indigo-accent använd sparsamt, glasmaterial, hårlinjer, lugn scrollkopplad rörelse. SEOS-DNA men egen identitet.
+
+| Referens | Använd till |
+|---|---|
+| seosdesign.se | Typografin (smala rubriker, brödtext full bredd). /om-oss: tvåfärgade rubriker där orden glider upp → Story; utgångspunkt för Om oss-sidan. /kontakt → kontaktsidan (variant B). |
+| fundamental.bg/en ("Our Services") | Tjänsterutorna (grid 5+7 / 4+3+5, hover-illustration). |
+| consolidator.aero ("Our process") | "Var börjar ni med AI?" (låst vy, steg under rubriken, glasobjekt, scroll-indikator). |
+| conversion.framer.media | Footerns klot under CTA:n → ContactCta. |
+| seapattern.com | Footerns ordmärke som stiger ur bottenlinjen. |
+| Linear, Resend | Minimal centrerad avslutning. |
+| anduril.com/lattice | Animationsreferens i CLAUDE.md; visad, ej använd direkt. |
+
+Bortvalt: mockups (laptop/telefon), egna UI-kort som illustration, scroll-snap/trög scroll, kortstapel, trust-punktlistor, scrollanimerad brödtext, accentfyllda knappar.
+
 ## Tekniska beslut
 
 ### Stack

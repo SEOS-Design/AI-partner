@@ -36,7 +36,8 @@
   --accent-faint: rgba(255, 255, 255, 0.1); /* tintfyllning, fokusringar */
 
   /* --- Accent-sken (för Douglas-granskning) ---
-     232 × 0.85 = dämpad indigo (Björns val 2026-09-23, "tillsvidare").
+     232 × 0.85 = dämpad indigo (Björns val 2026-09-23, "tillsvidare"). Testat och
+     förkastat 2026-09-24: 210 × 0.65 (stålblå, klotets färg) — Björn föredrog indigo.
      Historik: 204 (azur, Framer #0099ff) → 245 (lila-blå, matchade glas-videornas
      244–246°) → 232/0.85 eftersom 245 i full mättnad kändes "disco". Videornas
      belysta pixlar har medianmättnad ~0,53 — accenten i 100% var ~2× mättare.
@@ -78,9 +79,9 @@
      mot mobil av sig självt. */
   --fs-display: clamp(46px, 7.8vw, 88px); /* hero H1 */
   --fs-h1: clamp(38px, 5.2vw, 64px);
-  --fs-h2: clamp(32px, 4.4vw, 52px); /* sektionsrubriker — ganska stora, konsekventa */
-  --fs-h3: clamp(24px, 2.8vw, 34px);
-  --fs-lead: clamp(18px, 1.9vw, 20px); /* ingress */
+  --fs-h2: clamp(42px, 6.7vw, 96px); /* sektionsrubriker — ALLA h2:or (Björn 2026-09-27: större, i riktning mot seosdesign.se som har 115–192 px; var 72) */
+  --fs-h3: clamp(26px, 3.4vw, 48px); /* mellanrubriker, t.ex. stegen i kubsektionen (SEOS: 48 px; var 34) */
+  --fs-lead: clamp(18px, 1.6vw, 22px); /* ingress/brödtext i sektionerna (var 18–20 px, Björn 2026-09-27: för liten) */
   --fs-body: 17px;
   --fs-small: 14px;
   --fs-eyebrow: 11px; /* eyebrow-etiketter */
@@ -151,7 +152,10 @@
   padding: 0;
 }
 
-/* Pinnar Mona Sans till Narrow-bredden för hela sajten */
+/* Pinnar Mona Sans till Narrow-bredden för rubriker, knappar och etiketter.
+   BRÖDTEXT (p) har full bredd — samma uppdelning som seosdesign.se (rubriker
+   "Mona Sans Narrow", brödtext "Mona Sans" normal; uppmätt 2026-09-27). Den smala
+   brödtexten upplevdes som för liten trots 22 px. */
 html {
   font-stretch: 75%;
   scroll-behavior: smooth;
@@ -286,9 +290,12 @@ button {
    sept 2026: knapparna var spretiga, och de mörka komet-/glow-knapparna syntes
    knappt förutom kanten). Samma värden som "Till SEOS Design" hade — BeamCta.astro
    använder nu DENNA klass, så alla glasknappar delar en definition. Ändra här.
-   Används av: nav-CTA:n (desktop + drawer), Positioneringens båda CTA:er, BeamCta.
+   Används av: nav-CTA:n (desktop + drawer), "Boka kartläggning", BeamCta.
    backdrop-filter är OK här (litet område) — till skillnad från helskärms-blur. */
 .btn-glass {
+  /* GRÅTT GLAS på alla glasknappar (nav-CTA:n, "Boka kartläggning", "Kontakta oss"),
+     neutral ljus kant i vila — accenten syns BARA i hover-kanten (Björn 2026-09-27).
+     (Ett försök samma dag med indigotonad fyllning var ett missförstånd.) */
   color: var(--fg-1);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03) 42%, transparent 72%),
@@ -301,13 +308,17 @@ button {
     inset 0 0 20px rgba(255, 255, 255, 0.04),
     0 8px 26px rgba(0, 0, 0, 0.4);
 }
+/* Samma hover på alla glasknappar: kanten tar accentfärgen. */
 .btn-glass:hover {
-  border-color: rgba(255, 255, 255, 0.34);
+  border-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 70% / 1);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.5),
     inset 0 0 24px rgba(255, 255, 255, 0.06),
     0 12px 32px rgba(0, 0, 0, 0.5);
 }
+/* .btn-glass--accent (nav-CTA:n, "Boka kartläggning") hade tidigare en egen indigo
+   kant i vila. Numera identisk med .btn-glass — klassen ligger kvar i markupen men
+   har inga egna regler. */
 
 /* ── Fundamental-referensen (fundamental.bg, Björns val 2026-07-17) ──────────
    OANVÄNDA sedan sept 2026 (ersatta av .btn-glass ovan) — kvar för enkel revert:
@@ -509,7 +520,7 @@ button {
 }
 .h2 {
   font-family: var(--font-sans);
-  font-weight: 600;
+  font-weight: 700; /* samma vikt på alla sektionsrubriker (var 600/700/800 blandat) */
   font-size: var(--fs-h2);
   line-height: var(--lh-heading);
   letter-spacing: var(--tracking-tight);
@@ -517,7 +528,7 @@ button {
 }
 .h3 {
   font-family: var(--font-sans);
-  font-weight: 600;
+  font-weight: 700;
   font-size: var(--fs-h3);
   line-height: 1.25;
   letter-spacing: var(--tracking-tight);
@@ -572,6 +583,14 @@ button {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--fg-4);
+}
+
+/* Brödtext i full bredd (se html-regeln ovan). Undantag som ska vara smala
+   (versala etiketter o.d.) sätter font-stretch: 75% lokalt. */
+p,
+input,
+textarea {
+  font-stretch: 100%;
 }
 
 /* Inline-kod/data — enda stället äkta monospace används */

@@ -1,0 +1,77 @@
+---
+// ContactCta.astro – sidans sista ord (2026-09-27, Björns val "alternativ 1").
+// Centrerad rubrik + kort text + två knappar, placerad så att footerns "soluppgång"
+// (klotet på footerns överkant, Footer.astro .foot__orb) lyser upp BAKOM knapparna.
+// Klotet kommer från conversion.framer.media där det sitter just under en CTA.
+// Tidigare (Contact.astro) krockade skenet med formulärets brödtext.
+//
+// Formuläret flyttar till den kommande kontakt-/bokningssidan: Contact.astro finns
+// kvar orörd för att återanvändas där. Båda knapparna pekar på /kontakt tills
+// vidare (404 tills sidan byggs, som navigationens länkar). Ingen e-post/telefon
+// finns i projektet – "Kontakta oss" kan bli mailto: när adressen är bekräftad.
+//
+// #boka-ankaret ligger kvar här så att navigationens och Positioneringens
+// "Boka"-knappar landar på avslutningen tills /kontakt finns.
+import Arrow from './Arrow.astro';
+---
+
+<section id="kontakt" class="cta" aria-labelledby="cta-title">
+  <span id="boka" class="cta__anchor" aria-hidden="true"></span>
+  <div class="cta__inner">
+    <h2 id="cta-title" class="cta__h">Börja med er största tidstjuv.</h2>
+    <p class="cta__p">
+      Berätta om en process som tar för mycket tid. Vi återkommer med vad som går att
+      automatisera och vad det skulle ge.
+    </p>
+    <div class="cta__actions">
+      <a class="btn btn-primary" href="/kontakt">Boka kartläggning <Arrow class="arrow" /></a>
+      <a class="btn btn-glass" href="/kontakt">Kontakta oss <Arrow class="arrow" /></a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    position: relative;
+    padding-top: var(--section-py);
+    /* Luft ned till footerns linje: knapparna ska stå i klotets sken, rubriken och
+       texten ovanför det (klotet lyser ~250 px upp över linjen). */
+    padding-bottom: clamp(140px, 13vw, 190px);
+    text-align: center;
+  }
+  .cta__anchor {
+    position: absolute;
+    top: -80px;
+  }
+  .cta__inner {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+  }
+  .cta__h {
+    margin: 0 auto;
+    max-width: 14ch;
+    text-wrap: balance;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--fs-h2);
+    line-height: var(--lh-display);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+  }
+  .cta__p {
+    margin: var(--space-5) auto 0;
+    max-width: 32em;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+    text-wrap: pretty;
+  }
+  .cta__actions {
+    margin-top: var(--space-6);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+  }
+</style>

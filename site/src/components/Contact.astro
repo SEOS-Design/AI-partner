@@ -1,6 +1,6 @@
 ---
 // Contact.astro – avslutande sektion "Kontakt" (sidans konverteringspunkt).
-// Split: budskap + trust-punkter vänster, kontaktformulär höger.
+// Split: budskap vänster, kontaktformulär höger (trust-punkterna borttagna 2026-09-27).
 // Landningsmål för "#boka"-CTA:erna i StartFlow (anchor nedan) samt Nav "#kontakt".
 //
 // Sitter som TREDJE (sista) panelen i <StackFlow> → pinnas där tillsammans med
@@ -20,11 +20,6 @@ import Arrow from './Arrow.astro';
           Berätta om en process som tar för mycket tid. Vi återkommer med vad som går att
           automatisera — och vad det skulle ge.
         </p>
-        <div class="cta2__points">
-          <span>Svar inom två arbetsdagar</span>
-          <span>Konkret förslag — inte säljsamtal</span>
-          <span>Avgränsad pilot innan ni skalar</span>
-        </div>
       </div>
 
       <div class="cta2__aside">
@@ -106,26 +101,6 @@ import Arrow from './Arrow.astro';
     line-height: 1.6;
     color: var(--fg-3);
     max-width: 440px;
-  }
-  .cta2__points {
-    margin-top: 28px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .cta2__points span {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 14.5px;
-    color: var(--fg-2);
-  }
-  .cta2__points span::before {
-    content: "";
-    width: 16px;
-    height: 1px;
-    background: var(--border-strong);
-    flex-shrink: 0;
   }
 
   /* ---- mono meta + status-prick ---- */

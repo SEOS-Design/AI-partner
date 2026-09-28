@@ -9,12 +9,12 @@
 // CTA:erna är FLYTTADE HIT FRÅN HERON (heron är nu ren, utan knappar). Löser
 // CTA-dubbleringen och ger sektionen syfte.
 //
-// KNAPPARNA (sept 2026): båda är `.btn-glass` — den enhetliga frostade grå
-// glasknappen (samma som nav-CTA:n och "Till SEOS Design"), definierad i
-// global.css. Ersatte de mörka `.btn-glow`/`.btn-comet` (fundamental.bg-ref),
-// som syntes för lite förutom kanten. Dessa ligger kvar i global.css för revert.
+// KNAPPARNA (2026-09-23): "Boka kartläggning" = `.btn-glass.btn-glass--accent`
+// (glasknappen med accentkant + accentsken vid hover, samma som nav-CTA:n);
+// "Mer om oss" = vit `.btn-primary` så de två separeras tydligt. Tidigare båda
+// `.btn-glass`; före det mörka `.btn-glow`/`.btn-comet` (kvar i global.css för revert).
 //
-// Varianterna ligger i EGNA klasser, aldrig på .btn-primary: den är
+// Accentvarianter ligger i EGNA klasser, aldrig på .btn-primary: den är
 // centraliserad och hade färgat om StartFlow, Team och Contact också.
 import Arrow from './Arrow.astro';
 ---
@@ -59,8 +59,8 @@ import Arrow from './Arrow.astro';
     </p>
 
     <div class="pos__cta">
-      <a class="btn btn-glass" href="#boka">Boka kartläggning <Arrow class="arrow" /></a>
-      <a class="btn btn-glass" href="/om-oss">Mer om oss <Arrow class="arrow" /></a>
+      <a class="btn btn-glass btn-glass--accent" href="#boka">Boka kartläggning <Arrow class="arrow" /></a>
+      <a class="btn btn-primary" href="/om-oss">Mer om oss <Arrow class="arrow" /></a>
     </div>
   </div>
 </section>
@@ -125,9 +125,9 @@ import Arrow from './Arrow.astro';
 
   .stmt {
     max-width: 20ch;
-    font-weight: 800;
+    font-weight: 700; /* samma vikt som alla h2:or (var 800) */
     font-stretch: 78%;
-    font-size: clamp(36px, 5.6vw, 72px);
+    font-size: var(--fs-h2); /* = token (samma värde som förut, 36–72 px) */
     line-height: 1.02;
     letter-spacing: -0.03em;
     color: var(--fg-1);
@@ -151,7 +151,7 @@ import Arrow from './Arrow.astro';
     text-wrap: pretty;
   }
 
-  /* CTA-rad (flyttad från heron): azur primär + vit sekundär */
+  /* CTA-rad (flyttad från heron): glas med accentkant + vit */
   .pos__cta {
     display: flex;
     flex-wrap: wrap;

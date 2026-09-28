@@ -13,11 +13,21 @@ import Services from '../components/Services.astro';
 // import StartFlow from '../components/StartFlow.astro';
 // import StartFlow from '../components/StartFlowRail.astro';
 import StartFlow from '../components/StartProcess.astro';
-import Advisory from '../components/Advisory.astro';
-import Team from '../components/Team.astro';
-import StackFlow from '../components/StackFlow.astro';
+// Advisory ("Vi släpper inte taget vid lansering") + kortstapeln (StackFlow) togs bort
+// från startsidan 2026-09-27 (Björn: överflödig här). Advisory sparas till en kommande
+// sida om rådgivning & förvaltning. Återställ: avkommentera och lägg tillbaka
+// <StackFlow> med de tre korten som slots (se git-historiken).
+// import Advisory from '../components/Advisory.astro';
+// import StackFlow from '../components/StackFlow.astro';
+// Team ("Ett team. Två varumärken." med två brand-kolumner) ersatt av Story
+// 2026-09-27 (vår historia + bio om Douglas). Team.astro finns kvar.
+// import Team from '../components/Team.astro';
+import Story from '../components/Story.astro';
 // FAQ parkerad: flyttas till /om-oss när den sidan byggs (komponenten är kvar).
-import Contact from '../components/Contact.astro';
+// Contact (rubrik + formulär) ersatt av ContactCta 2026-09-27: centrerad avslutning
+// ovanför footerns klot. Contact.astro sparas till den kommande kontaktsidan.
+// import Contact from '../components/Contact.astro';
+import ContactCta from '../components/ContactCta.astro';
 // import ArcBand from '../components/ArcBand.astro'; // pausad, se nedan
 import Footer from '../components/Footer.astro';
 import Layout from '../layouts/Layout.astro';
@@ -32,14 +42,10 @@ import Layout from '../layouts/Layout.astro';
       stack-berättelse. (Tidigare: <Departments />, se importen.) */}
   <Services />
   <StartFlow />
-  {/* Kortstack: tre stack-vänliga en-budskaps-paneler (förvaltning → vilka vi är
-      → boka). Revertera genom att ta bort <StackFlow> och lägga tillbaka de tre
-      som vanliga syskon. FAQ är parkerad (flyttas till /om-oss). */}
-  <StackFlow>
-    <Advisory slot="one" />
-    <Team slot="two" />
-    <Contact slot="three" />
-  </StackFlow>
+  {/* Story och avslutningen som fristående sektioner (ingen kortstapel). FAQ är
+      parkerad (flyttas till /om-oss). */}
+  <Story />
+  <ContactCta />
   {/* ArcBand (azurlinjen ovanför footern) BORTTAGEN 2026-09-24 — Björn: för mycket mot
       sektionen ovanför. Ersatt av footerns hårlinje + sken. Filen finns kvar. */}
   <Footer />

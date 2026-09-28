@@ -145,7 +145,10 @@
     color: var(--fg-3);
     font-variant-numeric: tabular-nums;
   }
+  /* Smal bredd: siffrorna och statement-meningen är <p> men fungerar som rubriker
+     (brödtextens fulla bredd gäller inte dem). */
   .num {
+    font-stretch: 75%;
     display: block;
     font-weight: 700;
     font-size: clamp(60px, 8.6vw, 132px);
@@ -161,7 +164,10 @@
     color: var(--fg-3);
     font-weight: 500;
   }
+  /* Smal bredd (undantag från brödtextens fulla bredd): korta påståenden bredvid
+     siffrorna, blev fem rader i full bredd. */
   .claim {
+    font-stretch: 75%;
     max-width: 28ch;
     font-size: var(--fs-lead);
     font-weight: 500;
@@ -170,6 +176,7 @@
     text-wrap: pretty;
   }
   .src {
+    font-stretch: 75%;
     margin-top: 14px;
     font-size: var(--fs-small);
     letter-spacing: 0.1em;
@@ -195,8 +202,9 @@
 
   /* ---- Statement (punchline efter siffrorna) ---- */
   .statement {
+    font-stretch: 75%;
     margin-top: clamp(40px, 5vw, 72px);
-    font-weight: 600;
+    font-weight: 700;
     font-size: var(--fs-h2);
     line-height: var(--lh-heading);
     letter-spacing: var(--tracking-display);

@@ -10,15 +10,17 @@
 // CTA:n ligger därför i sista steget.
 //
 // Bilden = Wannathis "Glass abstract animated shapes" → Cube (dark theme), samma
-// paket som heron. Spolas med scrollen: de första 4 s av 16 (långsam rotation; 8 s var för snabbt),
-// kvadrat runt kuben (crop=2160:2160:840:0) → 1080 px, crf 23, nyckelbild var 10:e
-// ruta (mjuk spolning), ~1,4 MB, bara mp4 (webm blev lika stor). Svart bakgrund →
-// mix-blend-mode: lighten mot scenens egen bakgrund + ett indigo-sken bakom kuben
-// som skiftar nyans med scrollen.
+// paket som heron: de första 4 s av 16 (långsam rotation), kvadrat runt kuben
+// (crop=2160:2160:840:0). RITAS PÅ CANVAS ur en bildsekvens (public/proc-cube/
+// f001–f120.webp, 900 px, q75, 2,7 MB), inte som spolad video: videosökningen gav
+// bara ~25 uppdateringar/s med glapp upp till 200 ms (uppmätt 2026-09-27, Björn:
+// "laggigt"). Bilderna ritas direkt och tonas över mellan grannbilder → flytande
+// rörelse i skärmens takt. Svart bakgrund → mix-blend-mode: lighten mot scenens
+// egen bakgrund + ett indigo-sken bakom kuben som skiftar nyans med scrollen.
 //
 // Låst läge slås på av scriptet (.is-pinned) bara på breda skärmar utan reduced
-// motion. Annars (och utan JS): vanligt flöde, stegen under varandra, bilden
-// loopar på mobil och står still vid reduced motion.
+// motion. Annars (och utan JS): vanligt flöde, stegen under varandra, kuben som
+// stillbild (sekvensen laddas bara i låst läge).
 //
 // Tidigare varianter finns kvar: StartFlowRail.astro, StartFlow.astro (vågen),
 // StartFlow.cascade.astro.bak. Växla i index.astro.
@@ -68,17 +70,10 @@ const total = String(STEPS.length).padStart(2, '0');
       <div class="proc__visual" aria-hidden="true">
         <div class="proc__stage">
           <span class="proc__glow"></span>
-          {/* preload="none": laddas först när sektionen närmar sig (scriptet). */}
-          <video
-            class="proc__video"
-            muted
-            playsinline
-            preload="none"
-            disablepictureinpicture
-            poster="/proc-cube-poster.webp"
-          >
-            <source src="/proc-cube.mp4" type="video/mp4" />
-          </video>
+          {/* Stillbild (första bildrutan): visas på mobil, vid reduced motion, utan JS
+              och tills bildsekvensen laddats. Canvasen ritar kuben i låst läge. */}
+          <img class="proc__video proc__poster" src="/proc-cube-poster.webp" alt="" width="720" height="720" loading="lazy" decoding="async" />
+          <canvas class="proc__video proc__canvas"></canvas>
         </div>
       </div>
     </div>
@@ -108,8 +103,9 @@ const total = String(STEPS.length).padStart(2, '0');
 
   /* ---- typografi ---- */
   .proc__h2 {
+    text-wrap: balance; /* jämna rader i den smala spalten (annars ensamt "AI?") */
     font-family: var(--font-sans);
-    font-weight: 600;
+    font-weight: 700;
     font-size: var(--fs-h2);
     line-height: var(--lh-heading);
     letter-spacing: var(--tracking-tight);
@@ -140,7 +136,7 @@ const total = String(STEPS.length).padStart(2, '0');
   .pstep__h {
     margin-top: var(--space-5);
     font-family: var(--font-sans);
-    font-weight: 600;
+    font-weight: 700;
     font-size: var(--fs-h3);
     line-height: var(--lh-heading);
     letter-spacing: var(--tracking-tight);
@@ -188,6 +184,21 @@ const total = String(STEPS.length).padStart(2, '0');
       transparent 72%
     );
     opacity: calc(0.55 + var(--p) * 0.45);
+  }
+  /* Stillbild och canvas i samma rutnätscell (ovanpå varandra). */
+  .proc__poster,
+  .proc__canvas {
+    grid-area: 1 / 1;
+  }
+  .proc__canvas {
+    display: none;
+  }
+  .is-pinned .proc__canvas {
+    display: block;
+  }
+  /* Stillbilden göms först när canvasen ritat sin första bild (scriptet). */
+  .proc.has-frames .proc__poster {
+    visibility: hidden;
   }
   .proc__video {
     position: relative;
@@ -265,8 +276,9 @@ const total = String(STEPS.length).padStart(2, '0');
     margin-top: 0;
     overflow: hidden;
     /* Stegen tonas ut uppåt (in under rubriken) och nedåt. */
-    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 22%, #000 78%, transparent 100%);
-    mask-image: linear-gradient(180deg, transparent 0, #000 22%, #000 78%, transparent 100%);
+    /* 10 % (var 22 %): större typografi → steg 3 med knappen behöver nästan hela höjden. */
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 10%, #000 90%, transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 0, #000 10%, #000 90%, transparent 100%);
   }
   .is-pinned .proc__steps {
     position: absolute;
@@ -300,6 +312,14 @@ const total = String(STEPS.length).padStart(2, '0');
     height: 100%;
   }
 
+  /* Låga skärmar (1366×768, 1280×720): stramare avstånd i steget så att steg 3
+     (med knappen) ryms i det skarpa området mellan uttoningarna. */
+  @media (max-height: 800px) {
+    .is-pinned .pstep__h { margin-top: var(--space-3); }
+    .is-pinned .pstep__t { margin-top: var(--space-2); }
+    .is-pinned .pstep__cta { margin-top: var(--space-4); }
+  }
+
   /* Scroll-indikator: smal kapsel med ett segment per steg. Segmentet för det
      steg som står i mitten lyser, grannarna tonas med avståndet (scriptet sätter
      opacity, samma utjämnade progress som stegen). Consolidator-inspirerad men
@@ -328,17 +348,17 @@ const total = String(STEPS.length).padStart(2, '0');
 </style>
 
 <script>
-  // Låst läge: scroll-progressen genom sektionen (0–1) styr tre saker, alla via
-  // samma utjämnade värde så de följs åt: stegens läge, videons tid och --p
-  // (skenets nyans + scroll-indikatorn). Utjämningen (lerp) gör att hackig
-  // hjulscroll ändå ger mjuk rörelse. Videon söks bara när förra sökningen är
-  // klar (seeking=false), annars köar webbläsaren sökningar och bilden släpar.
+  // Låst läge: scroll-progressen genom sektionen (0–1) styr stegens läge, kubens
+  // bildruta och --p (skenets nyans + scroll-indikatorn), alla via samma
+  // utjämnade värde så de följs åt. Utjämningen (lerp) gör rörelsen mjuk även med
+  // hackig hjulscroll. Scrollen i sig är VANLIG: en tidigare dämpning av hjulet
+  // gav ett konstigt skifte (trögt i sektionen, snabbt utanför) och är borttagen.
   const section = document.querySelector<HTMLElement>('.proc');
-  const video = section?.querySelector<HTMLVideoElement>('.proc__video');
+  const canvas = section?.querySelector<HTMLCanvasElement>('.proc__canvas');
   const viewport = section?.querySelector<HTMLElement>('.proc__viewport');
   const list = section?.querySelector<HTMLElement>('.proc__steps');
 
-  if (section && video && viewport && list) {
+  if (section && canvas && viewport && list) {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const wide = window.matchMedia('(min-width: 860px)');
     const steps = Array.from(section.querySelectorAll<HTMLElement>('.pstep'));
@@ -350,6 +370,12 @@ const total = String(STEPS.length).padStart(2, '0');
     const LEAD = 0.08;
     const TAIL = 0.1;
 
+    // Kubens bildsekvens (public/proc-cube/f001–f120.webp).
+    const FRAMES = 120;
+    const frameSrc = (i: number) => `/proc-cube/f${String(i + 1).padStart(3, '0')}.webp`;
+    const frames: (HTMLImageElement | null)[] = new Array(FRAMES).fill(null);
+    const ctx = canvas.getContext('2d');
+
     let pinned = false;
     let inView = false;
     let target = 0;
@@ -357,13 +383,25 @@ const total = String(STEPS.length).padStart(2, '0');
     let raf = 0;
     let slot = 0;
     let vpH = 0;
+    let loading = false;
+    let drawnOnce = false;
 
     const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 
     const measure = () => {
       vpH = viewport.clientHeight;
-      slot = Math.round(vpH * 0.62);
+      // Minst det högsta steget + luft: steg 3 (med knappen) blev högre än 62 % av
+      // vyn när typografin växte och spillde in i grannsteget/uttoningen.
+      const tallest = Math.max(...inners.map((el) => el.offsetHeight));
+      slot = Math.max(Math.round(vpH * 0.62), tallest + 48);
       section.style.setProperty('--slot', `${slot}px`);
+      // Canvasens buffert = visad storlek × skärmens pixeltäthet (max bildernas 900 px).
+      const css = canvas.getBoundingClientRect().width;
+      const px = Math.round(Math.min(900, css * (window.devicePixelRatio || 1)));
+      if (px > 0 && canvas.width !== px) {
+        canvas.width = px;
+        canvas.height = px;
+      }
     };
 
     const readProgress = () => {
@@ -375,14 +413,48 @@ const total = String(STEPS.length).padStart(2, '0');
 
     // Viloläge: varje steg står STILLA och skarpt en del av sin scrollsträcka
     // (HOLD på var sida om mitten) och byter sedan till nästa med en mjuk kurva.
-    // Utan detta var stegen alltid på väg → nästan inget läge där en rubrik stod
-    // helt skarp (Björns feedback). Kuben följer däremot den jämna progressen.
+    // Kuben följer däremot den jämna progressen.
     const HOLD = 0.28;
     const smooth = (x: number) => x * x * (3 - 2 * x);
     const settle = (pos: number) => {
       const i = Math.floor(pos);
       const f = pos - i;
       return i + smooth(clamp((f - HOLD) / (1 - 2 * HOLD)));
+    };
+
+    // Närmaste laddade bild (medan sekvensen fortfarande laddas).
+    const nearest = (i: number) => {
+      for (let d = 0; d < FRAMES; d++) {
+        const a = frames[i - d];
+        if (a) return a;
+        const b = frames[i + d];
+        if (b) return b;
+      }
+      return null;
+    };
+
+    // Ritar bildruta f (flyttal): bild floor(f) fullt + nästa bild med alfa =
+    // decimalen. Övertoningen gör rörelsen flytande mellan de 120 lägena.
+    const drawCube = (p: number) => {
+      if (!ctx || !canvas.width) return;
+      const f = p * (FRAMES - 1);
+      const i = Math.floor(f);
+      const t = f - i;
+      const a = frames[i] ?? nearest(i);
+      if (!a) return;
+      const W = canvas.width;
+      ctx.globalAlpha = 1;
+      ctx.drawImage(a, 0, 0, W, W);
+      const b = frames[i + 1];
+      if (b && t > 0.01 && frames[i]) {
+        ctx.globalAlpha = t;
+        ctx.drawImage(b, 0, 0, W, W);
+        ctx.globalAlpha = 1;
+      }
+      if (!drawnOnce) {
+        drawnOnce = true;
+        section.classList.add('has-frames');
+      }
     };
 
     const render = (p: number) => {
@@ -404,10 +476,7 @@ const total = String(STEPS.length).padStart(2, '0');
         el.style.filter = blur > 0.15 ? `blur(${blur.toFixed(1)}px)` : 'none';
         el.style.transform = `translate3d(0, ${(Math.sign(i - pos) * away * 10).toFixed(1)}px, 0)`;
       });
-      if (video.duration && !video.seeking) {
-        const t = p * (video.duration - 0.05);
-        if (Math.abs(video.currentTime - t) > 1 / 60) video.currentTime = t;
-      }
+      drawCube(p);
     };
 
     const tick = () => {
@@ -417,10 +486,37 @@ const total = String(STEPS.length).padStart(2, '0');
       shown += (target - shown) * 0.14;
       if (Math.abs(target - shown) < 0.0005) shown = target;
       render(shown);
-      if (shown !== target || video.seeking) raf = requestAnimationFrame(tick);
+      if (shown !== target) raf = requestAnimationFrame(tick);
     };
     const kick = () => {
       if (pinned && inView && !raf) raf = requestAnimationFrame(tick);
+    };
+
+    // Laddar sekvensen: först var 8:e bild (grovt men snabbt), sedan resten, med
+    // fyra parallella hämtningar. Varje bild avkodas i förväg (decode) så att
+    // första ritningen inte hackar.
+    const loadFrames = () => {
+      if (loading) return;
+      loading = true;
+      const order: number[] = [];
+      for (let i = 0; i < FRAMES; i += 8) order.push(i);
+      for (let i = 0; i < FRAMES; i++) if (i % 8) order.push(i);
+      let next = 0;
+      const worker = async () => {
+        while (next < order.length) {
+          const idx = order[next++];
+          const img = new Image();
+          img.src = frameSrc(idx);
+          try {
+            await img.decode();
+            frames[idx] = img;
+            if (pinned) render(shown);
+          } catch {
+            // Enstaka bild som inte laddar: grannbilden används i stället.
+          }
+        }
+      };
+      for (let k = 0; k < 4; k++) worker();
     };
 
     const clearInline = () => {
@@ -441,134 +537,38 @@ const total = String(STEPS.length).padStart(2, '0');
         section.classList.toggle('is-pinned', pinned);
         if (!pinned) clearInline();
       }
-      video.loop = !pinned;
       if (pinned) {
-        video.pause();
         measure();
         shown = target = readProgress();
         render(shown);
-      } else if (inView && !reduced) {
-        video.play().catch(() => {});
       }
     };
 
     const observers: IntersectionObserver[] = [];
 
-    if (!reduced) {
-      // Ladda videon först när sektionen närmar sig.
-      const loader = new IntersectionObserver(
-        (entries) => {
-          if (!entries.some((e) => e.isIntersecting)) return;
-          loader.disconnect();
-          video.preload = 'auto';
-          video.load();
-        },
-        { rootMargin: '800px 0px' },
-      );
-      loader.observe(section);
-      observers.push(loader);
-    }
+    // Ladda sekvensen först när sektionen närmar sig, och bara i låst läge
+    // (mobil och reduced motion visar stillbilden).
+    const loader = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting) || !pinned) return;
+        loader.disconnect();
+        loadFrames();
+      },
+      { rootMargin: '1000px 0px' },
+    );
+    loader.observe(section);
+    observers.push(loader);
 
     // Lyssna bara på scroll när sektionen är i närheten.
     const near = new IntersectionObserver(
       (entries) => {
         inView = entries.some((e) => e.isIntersecting);
-        if (pinned) {
-          kick();
-        } else if (!reduced) {
-          if (inView) video.play().catch(() => {});
-          else video.pause();
-        }
+        kick();
       },
       { rootMargin: '200px 0px' },
     );
     near.observe(section);
     observers.push(near);
-
-    // --- Dämpad scroll inne i den låsta sektionen ---
-    // Hjul/styrplatta flyttar sidan långsammare här (WHEEL_FACTOR) och glider mot
-    // målet med en maxfart (MAX_STEP px per bildruta), så en snabb flick inte kan
-    // slunga en genom stegen och tvinga kubvideon att hoppa (= "kaos" vid snabb
-    // scroll). Bara wheel-händelser; tangentbord och scrollist är orörda. Vid
-    // första/sista gränsen släpps händelsen igenom → man fastnar aldrig.
-    const WHEEL_FACTOR = 0.45;
-    const EASE = 0.1;
-    const MAX_STEP = 20;
-    let damped = false;
-    let scrollTarget = 0;
-    let scrollRaf = 0;
-    let lastSet = 0; // där VI senast ställde sidan
-
-    const stopGlide = () => {
-      if (scrollRaf) cancelAnimationFrame(scrollRaf);
-      scrollRaf = 0;
-      damped = false;
-    };
-
-    const range = () => {
-      const top = section.getBoundingClientRect().top + window.scrollY;
-      return { start: top, end: top + section.offsetHeight - window.innerHeight };
-    };
-
-    // Glidningen avbryts så fort NÅGOT ANNAT har flyttat sidan (vanlig scroll
-    // förbi gränsen, länk, scrollist, tangentbord). Utan det fortsatte den mot
-    // sitt gamla mål och drog tillbaka en till kubsektionen var man än var.
-    // Avbryts också om sidan inte kan flytta sig (avrundning vid skärmskalning).
-    const glide = () => {
-      scrollRaf = 0;
-      const y = window.scrollY;
-      if (Math.abs(y - lastSet) > 2) {
-        damped = false;
-        return;
-      }
-      const diff = scrollTarget - y;
-      if (Math.abs(diff) < 1) {
-        // Landa exakt på målet, annars kan sidan bli stående en bråkdelspixel
-        // innanför gränsen och fånga nästa hjulhack igen (man fastnade vid starten).
-        window.scrollTo({ top: scrollTarget, behavior: 'instant' });
-        damped = false;
-        return;
-      }
-      const step = Math.sign(diff) * Math.min(Math.abs(diff) * EASE + 0.5, MAX_STEP);
-      window.scrollTo({ top: y + step, behavior: 'instant' });
-      const moved = window.scrollY;
-      if (Math.abs(moved - y) < 0.01) {
-        damped = false;
-        return;
-      }
-      lastSet = moved;
-      scrollRaf = requestAnimationFrame(glide);
-    };
-
-    const onWheel = (e: WheelEvent) => {
-      if (!pinned || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-      const { start, end } = range();
-      const px = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1);
-      // Pågående glidning: räkna från dess mål (så hjulhack adderas); annars från sidan.
-      if (damped && Math.abs(window.scrollY - lastSet) > 2) stopGlide();
-      const from = damped ? scrollTarget : window.scrollY;
-      const dir = Math.sign(px);
-      // Aktiv bara när rörelsen sker i, eller korsar in i, sektionens låsta sträcka.
-      const inside =
-        (dir > 0 && from >= start - 1 && from < end - 2) ||
-        (dir < 0 && from > start + 2 && from <= end + 1) ||
-        (dir > 0 && from < start && from + px > start) ||
-        (dir < 0 && from > end && from + px < end);
-      if (!inside) {
-        // Hjulet går vanligt härifrån (t.ex. förbi sista steget) → släpp målet.
-        if (damped) stopGlide();
-        return;
-      }
-      e.preventDefault();
-      // Korsar man in utifrån börjar dämpningen vid gränsen.
-      const base = dir > 0 ? Math.max(from, Math.min(start, from + px)) : Math.min(from, Math.max(end, from + px));
-      const rest = px - (base - from);
-      scrollTarget = Math.min(end, Math.max(start, base + rest * WHEEL_FACTOR));
-      if (!damped) lastSet = window.scrollY;
-      damped = true;
-      if (!scrollRaf) scrollRaf = requestAnimationFrame(glide);
-    };
-    window.addEventListener('wheel', onWheel, { passive: false });
 
     const onScroll = () => kick();
     const onResize = () => {
@@ -576,11 +576,13 @@ const total = String(STEPS.length).padStart(2, '0');
       measure();
       render(shown);
     };
+    const onModeChange = () => {
+      applyMode();
+      if (pinned && !loading && inView) loadFrames();
+    };
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize);
-    video.addEventListener('loadedmetadata', () => pinned && render(shown));
-    video.addEventListener('seeked', kick);
-    wide.addEventListener('change', applyMode);
+    wide.addEventListener('change', onModeChange);
     applyMode();
 
     document.addEventListener(
@@ -588,10 +590,8 @@ const total = String(STEPS.length).padStart(2, '0');
       () => {
         observers.forEach((o) => o.disconnect());
         window.removeEventListener('scroll', onScroll);
-        window.removeEventListener('wheel', onWheel);
-        stopGlide();
         window.removeEventListener('resize', onResize);
-        wide.removeEventListener('change', applyMode);
+        wide.removeEventListener('change', onModeChange);
         if (raf) cancelAnimationFrame(raf);
       },
       { once: true },

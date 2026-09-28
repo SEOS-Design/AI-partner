@@ -1,0 +1,258 @@
+---
+// Story.astro – "Vår historia." / "Ett team. Två varumärken." (2026-09-27).
+// Ersätter Team-kortet på startsidan (Team.astro finns kvar). Syftet är äkthet:
+// en inblick i vilka som står bakom AI Partner, eftersom resten av startsidan
+// saknar personligt innehåll. Ordning: stora rubriker → berättelse → liten bio.
+//
+// Rubrikanimationen är inspirerad av seosdesign.se/om-oss: varje ord ligger i en
+// egen mask (overflow: clip) och glider upp ur den, ett ord i taget, när rubriken
+// scrollas in. Brödtexten har INGEN scrollanimation (Björn: sämre läsbarhet), den
+// tonas bara in en gång efter rubrikerna.
+//
+// Progressiv förbättring: utan JS och vid reduced motion syns allt direkt. Scriptet
+// sätter .will-reveal (dolt läge) först när det vet att det kan animera.
+//
+// Andra raden är dämpad grå (#666 ≈ 3,4:1 mot bakgrunden, klarar WCAG AA för stor
+// text; skissens #3a3a3a gav bara ~1,7:1).
+//
+// Copy = utkast (Douglas granskar). FOTO: lägg bilden i public/ och sätt PHOTO,
+// t.ex. '/douglas.webp' (porträtt 4:5, ~600×750 px). Tills dess visas initialer.
+// Porträttet står till höger med namn, titel och SEOS-länk under.
+
+// Tre rader: "Ett team. Två varumärken." blev för lång på en rad vid h2-storlek.
+const HEAD = ['Vår historia.', 'Ett team.', 'Två varumärken.'];
+const PHOTO: string | null = null;
+
+// Ord → spans med förskjutning; räknas löpande över båda raderna.
+let wi = 0;
+const lines = HEAD.map((line) => line.split(' ').map((w) => ({ w, i: wi++ })));
+---
+
+<section id="om-oss" class="story" aria-labelledby="story-title">
+  <div class="container story__grid">
+    <div class="story__main">
+      <h2 id="story-title" class="story__h">
+        {lines.map((words, li) => (
+          <span class:list={['story__line', li > 0 && 'story__line--dim']}>
+            {words.map(({ w, i }, k) => (
+              <>
+                <span class="story__mask"><span class="story__word" style={`--i: ${i}`}>{w}</span></span>
+                {k < words.length - 1 && ' '}
+              </>
+            ))}
+          </span>
+        ))}
+      </h2>
+
+      <div class="story__body">
+        <p class="story__p">
+          Med SEOS Design bygger vi hemsidor och mekaniken bakom dem: det som gör att
+          företag syns och att besökare blir kunder. I det arbetet såg vi tidigt samma sak
+          gång på gång. Timmar försvann i manuellt arbete som borde sköta sig självt.
+          Behovet växte snabbare än något annat.
+        </p>
+        <p class="story__p">
+          Därför startade vi AI Partner. Samma team, med fokus på att ta bort det som tar tid.
+        </p>
+      </div>
+    </div>
+
+    {/* Porträtt till höger med namn och titel under (Björn 2026-09-27). */}
+    <figure class="story__person">
+      <div class="story__photo">
+        {PHOTO ? (
+          <img src={PHOTO} alt="Douglas Ekman" width="480" height="600" loading="lazy" decoding="async" />
+        ) : (
+          <span class="story__initials" aria-hidden="true">DE</span>
+        )}
+      </div>
+      <figcaption class="story__caption">
+        <p class="story__name">Douglas Ekman</p>
+        <p class="story__role">VD och medgrundare · SEOS Design och AI Partner</p>
+        <a class="story__link" href="https://www.seosdesign.se" target="_blank" rel="noopener">
+          seosdesign.se <span aria-hidden="true">↗</span>
+        </a>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .story {
+    position: relative;
+    padding: var(--section-py) 0;
+  }
+  .container {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+  }
+
+  /* ---- rubriker ---- */
+  .story__h {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--fs-h2); /* samma som alla sektionsrubriker */
+    line-height: var(--lh-display);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+  }
+  .story__line {
+    display: block;
+  }
+  .story__line--dim {
+    color: #666;
+  }
+  /* Masken klipper ordet; lite luft nedtill så att å/ä/g inte klipps. */
+  .story__mask {
+    display: inline-block;
+    overflow: clip;
+    vertical-align: top;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+  .story__word {
+    display: inline-block;
+  }
+
+  /* ---- layout: text till vänster, porträtt till höger ---- */
+  .story__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+    gap: clamp(32px, 5vw, 80px);
+    align-items: start;
+  }
+
+  /* ---- text ---- */
+  .story__body {
+    max-width: 36em;
+    margin-top: clamp(32px, 4vw, 56px);
+  }
+  .story__p {
+    margin: 0;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+  }
+  .story__p + .story__p {
+    margin-top: var(--space-4);
+  }
+
+  /* ---- porträtt + namn/titel ---- */
+  .story__person {
+    margin: 0;
+  }
+  .story__photo {
+    aspect-ratio: 4 / 5;
+    border-radius: 22px;
+    overflow: hidden;
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    display: grid;
+    place-items: center;
+  }
+  .story__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  /* Tills fotot finns: initialer. */
+  .story__initials {
+    font-size: var(--fs-h3);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--fg-4);
+  }
+  .story__caption {
+    margin-top: var(--space-5);
+  }
+  .story__name {
+    font-stretch: 75%; /* namnet är en liten rubrik, inte brödtext */
+    margin: 0;
+    font-size: var(--fs-lead);
+    font-weight: 600;
+    color: var(--fg-1);
+  }
+  .story__role {
+    margin: var(--space-1) 0 var(--space-4);
+    font-size: var(--fs-small);
+    color: var(--fg-3);
+  }
+  .story__link {
+    display: inline-block;
+    font-size: var(--fs-small);
+    color: var(--fg-2);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-strong);
+    padding-bottom: 2px;
+    transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+  }
+  .story__link:hover {
+    color: var(--fg-1);
+    border-color: var(--fg-1);
+  }
+  .story__link:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-radius: 2px;
+  }
+
+  /* Mobil/smal: porträttet under texten, lagom stort. */
+  @media (max-width: 767px) {
+    .story__grid { grid-template-columns: minmax(0, 1fr); }
+    .story__person { max-width: 320px; }
+  }
+
+  /* ---- animation (bara när scriptet satt .will-reveal) ---- */
+  /* 125 %: vid 105 % kikade ä-prickar och punkter fram i maskens luft nedtill. */
+  .story.will-reveal .story__word {
+    transform: translateY(125%);
+    transition: transform 0.9s var(--ease);
+    transition-delay: calc(0.1s + var(--i) * 0.11s);
+  }
+  .story.will-reveal .story__body,
+  .story.will-reveal .story__person {
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 0.8s var(--ease),
+      transform 0.8s var(--ease);
+    transition-delay: 0.9s;
+  }
+  .story.will-reveal .story__person {
+    transition-delay: 1.05s;
+  }
+  .story.will-reveal.is-in .story__word,
+  .story.will-reveal.is-in .story__body,
+  .story.will-reveal.is-in .story__person {
+    transform: none;
+    opacity: 1;
+  }
+</style>
+
+<script>
+  const story = document.querySelector<HTMLElement>('.story');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (story && !reduced && 'IntersectionObserver' in window) {
+    const head = story.querySelector('.story__h');
+    // Redan i vyn vid laddning (t.ex. länk till #om-oss) → visa direkt, ingen animation.
+    const r = head?.getBoundingClientRect();
+    if (head && r && r.top > window.innerHeight * 0.85) {
+      story.classList.add('will-reveal');
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((e) => e.isIntersecting)) return;
+          story.classList.add('is-in');
+          io.disconnect();
+        },
+        // Startar när rubriken nått ungefär 20 % upp i bild.
+        { rootMargin: '0px 0px -20% 0px' },
+      );
+      io.observe(head);
+      document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
+    }
+  }
+</script>

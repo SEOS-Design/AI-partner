@@ -1,73 +1,63 @@
 # Byggstatus — aipartner.se
 
-> Senast uppdaterad: 2026-09-25
+> Senast uppdaterad: 2026-09-28
 
 ---
 
 ## Var vi är nu
 
-Startsidan är byggd som one-pager med alla sektioner och **finslipas** (video-bakgrunder, enhetliga knappar, prestanda). Undersidorna är inte påbörjade. Inget är driftsatt — det sker i Fas 4 efter Douglas granskning.
+**Startsidan är klar i sin helhet** och **kontaktsidan `/kontakt` är byggd**. Övriga undersidor är inte påbörjade. Inget är driftsatt — det sker i Fas 4 efter Douglas granskning.
 
 - **Driftsatt:** Nej. Det finns **ingen deploy-pipeline** (ingen netlify/vercel/actions-config) — push till `master` är bara backup till GitHub och går inte live.
 - **Repo:** github.com/SEOS-Design/AI-partner, branch `master`
-- **Dev-server:** `cd site && npm run dev` → http://localhost:4321
-- **Senast pushat:** `d4a02b6` (2026-09-23). **Committat lokalt, ej pushat:** `3244b47` (ny footer).
+- **Dev-server:** `cd site && npm run dev` → http://localhost:4321 (Björn kör den själv — starta ingen egen)
+- **Senast pushat:** `d4a02b6` (2026-09-23). **Committat lokalt, EJ pushat:** `3244b47` (footer) · `b5a18de` (tjänsterutor + StartProcess) · `a2d887e` · `23a40bf` (avslutning, typografi, knappar, canvas-kub) · `533a26e` (/kontakt). Björn vill ofta vänta med push.
+- **Medvetet utanför git:** `CLAUDE.md` (Douglas fil, ändrad), `AI-Partner-strategi-brief-2026-07.md` (committas inte utan avstämning), `pexels-…jpg` (testbild).
+
+### NÄSTA STEG: sidan Om oss (`/om-oss`)
+
+Björns val 2026-09-28. Den behövs redan: "Mer om oss" under heron och "Om oss" i navigationen ger 404. Arbetssätt som fungerat: **inspiration först** (Playwright-skärmdumpar av referenssajter) → **skisser** (visualize-widget, flera varianter) → Björn väljer → bygg → verifiera i Playwright.
+
+Referenser att börja med: **seosdesign.se/om-oss** (Björn gillar rubrikanimationen, som redan finns i Story: ord som glider upp ur en mask; har också "Tre grundare" med foto och citat, "Vårt kundlöfte", värderingar i stora rader, "Vår process") + de sajter vi använt tidigare (consolidator.aero, fundamental.bg, anduril.com/lattice).
+
+Material som finns och väntar:
+- `Story.astro` ("Vår historia", Douglas-bio) — kan få mer plats här. **Foto på Douglas saknas** (sätt `PHOTO` i komponenten; bilden kan troligen hämtas från seosdesign.se/om-oss, Björn skickar filen).
+- `Team.astro` ("Ett team. Två varumärken.", två brand-kolumner, länk till SEOS) — ur startsidan, filen kvar.
+- `FAQ.astro` — parkerad sedan juli, planerad för just /om-oss (AEO-värde; stäm av med Douglas).
+- `Robot.astro` (Spline-robot) — pausad, "kan återkomma på /om-oss" (se Spline-avsnittet nedan).
+- `Advisory.astro` hör snarare hemma på en framtida sida om rådgivning & förvaltning.
+Riktlinjer från Björn: enkel och tydlig, äkthet (riktiga människor bakom, inte "fake AI"), inga riktiga foton som krav (utom Douglas), rubriker/typografi enligt de nya tokens, inget "klotter".
 
 ### Tjänsterutorna — IMPLEMENTERADE 2026-09-25 (`Services.astro`, aktiv i index)
 
 `Departments.astro` ligger kvar orörd (återställ via kommentaren i `index.astro`). Media i `site/public/tjanster/`: videorna beskurna 640→540 (`crop=540:540:50:50`, större motiv utan omrendering) + `*-slut.webp` (sista rutan, reduced motion). Avvikelser från prototypen: `mix-blend-mode: lighten` i stället för radiell mask (masken gav stapeldiagrammet en suddig vit gloria), videon når aldrig rutans kant (en uppskalad video åt upp hårlinjen vid 820 px), container query ger smala rutor mer textplats, "AI-assistent" bryts inte vid bindestrecket. Brytpunkter: 12 kol ≥960 · 2 kol (sista full bredd) · 1 kol <640. Touch: rutan aktiveras vid 60 % synlig och ligger kvar. Verifierat i Playwright (Chrome-kanalen — bundlade Chromium startar inte på nya datorn, "spawn UNKNOWN"): alla 5 spelar en gång och stannar på 1,6 s, 0 tappade rutor, återställs efter mouseleave, fokus = hover, 0 konsolfel. Länkarna `/tjanster/<slug>` är platshållare (404).
 **Stäm av med Douglas:** marknadsföring utgår · länkmål/slugar · copy (H2 + ingress återanvända från Departments).
 
-### StartFlow → StartProcess (2026-09-25, aktiv i index, ocommittat)
+### StartFlow → StartProcess (2026-09-25–27, historik)
 
 Björns val: consolidator.aero "Our process". `StartProcess.astro`, v2 efter Björns feedback (långsammare, skarpare, mer finess, inget bryt vid CTA, scroll-indikator):
 - **Hela vyn låses som EN enhet** (`.proc__pin` sticky 100svh, sektionen 100svh + 2×70svh + 40svh). Stegen flyttas med transform inne i en maskad viewport med VILOLÄGE (HOLD 0,28: varje steg står still och skarpt, byter med smoothstep; ett steg är helt skarpt under ~80 % av scrollen), tonas och suddas (max 3 px) först när det lämnar mitten och släpper samtidigt med bilden. v1 hade två sticky-kolumner som släppte vid olika tider, med CTA:n hängande efter → "konstigt bryt". CTA:n ligger nu i steg 3 + "Vill ni förstå AI först? Vi kan också komma ut och föreläsa för ert team." (Björns formulering). Scroll-indikatorn = smal kapsel med ett segment per steg (aktivt lyser). Kubens skärpa: crf 23 → 16 höjer SSIM bara 0,963 → 0,966 (2,8 → 6,4 MB); källan (Wannathis 4K ~2,5 Mbit/s) är taket.
-- **Kuben** (Wannathis Cube, dark) spolas med scrollen via en utjämnad progress. Bara **0–4 s** av klippet (8 s var för snabbt; provat och förkastat: scroll-snap per steg och kuben låst till stegen). `proc-cube.mp4` 1080 px, crf 23, -g 10, **1,4 MB** (v1 var 720 px/crf 28 och såg suddig ut). Scenen = min(kolumnbredd, höjd) via container query. Indigo-sken bakom kuben som skiftar ~40° i nyans med scrollen.
+- **Kuben, v1–v3 (historik, ersatt av canvas nedan)** (Wannathis Cube, dark) spolades med scrollen via en utjämnad progress. Bara **0–4 s** av klippet (8 s var för snabbt; provat och förkastat: scroll-snap per steg och kuben låst till stegen). `proc-cube.mp4` 1080 px, crf 23, -g 10, **1,4 MB** (v1 var 720 px/crf 28 och såg suddig ut). Scenen = min(kolumnbredd, höjd) via container query. Indigo-sken bakom kuben som skiftar ~40° i nyans med scrollen.
 - **Kuben ritas på CANVAS ur en bildsekvens** (2026-09-27, Björn: "laggigt", och den dämpade scrollen gav ett konstigt skifte i kanterna). Uppmätt: videosökningen gav bara ~25 kubuppdateringar/s med glapp upp till 200 ms; all-intra-video (-g 1) hjälpte inte (videon har bara 120 lägen och en sökning tar ≥1 bildruta). Nu: `public/proc-cube/f001–f120.webp` (900 px, q75, 2,7 MB), laddas 1000 px före sektionen (var 8:e bild först), avkodas i förväg, ritas med övertoning mellan grannbilder → kuben ritas i ~80 % av bildrutorna medan den rör sig, sidan ~58–60 fps, ritkostnad ≤0,2 ms. **Dämpningen av hjulet är borttagen** — vanlig scroll överallt. Mobil/reduced motion: stillbild (sekvensen laddas inte). `proc-cube.mp4` borttagen.
 - **Scroll-indikator**: liten kapsel vid vänsterkanten med ett streck som vandrar.
-- Låst läge bara ≥860 px utan reduced motion (JS sätter `.is-pinned`). Annars vanligt flöde; mobilen loopar videon, vid reduced motion visas postern.
+- Låst läge bara ≥860 px utan reduced motion (JS sätter `.is-pinned`). Annars vanligt flöde med kuben som stillbild.
 - Lärdomar: sticky/isolation → egen `background` krävs för att `mix-blend-mode: lighten` ska dölja videons svarta ruta. Videokanten tonas ut med en mask (annars en hårlinje på 7 mot 10). Fps-mätningen är brusig: en ny webbläsare per körning, jämfört mot en baslinje med sektionen dold (5–14 mot 4–5 tappade av ~235).
 - Gamla varianterna (StartFlowRail, vågen, kaskaden) ligger kvar.
 
-### Kontaktsidan /kontakt (2026-09-28, ocommittat)
+### Kontaktsidan /kontakt (2026-09-28, `533a26e`)
 
 Björns val "B" (SEOS /kontakt utan "klotter"): `src/pages/kontakt.astro` + `Contact.astro` (ombyggd). Rubrik (h1, samma som startsidans CTA), en mening, tre kontaktvägar (klickbar e-post och telefon), formulär till höger (demo-kvitto, ingen backend), tre korta steg "Ni hör av er → Kartläggning → Åtgärdsplan" under. Kontaktuppgifter = PLATSHÅLLARE från SEOS: kontakt@seosdesign.se (troligen kontakt@aipartner.se senare), +46 8 490 096 20, Fridhemsgatan 45 Stockholm — ändra i `CONTACT` i Contact.astro. Nav-CTA:n, Positioneringens "Boka kartläggning" och steg 3 i kubsektionen pekar nu på /kontakt (var #boka). Extra luft nedtill så footerns klot inte lyser bakom stegtexten (uppmätt 7,5:1 vid 1440/1280/390).
 
-### Avslutningen omgjord (2026-09-27, ocommittat)
+### Avslutningen, typografi och knappar (2026-09-27, `23a40bf`)
 
 - **Advisory + kortstapeln (StackFlow) borttagna från startsidan** (Björn: Advisory överflödig här, ingen ersättningsrad). Filerna kvar; Advisory sparas till en kommande sida om rådgivning & förvaltning.
 - **Team → `Story.astro`** ("Vår historia." + "Ett team. Två varumärken.", berättelse, bio om Douglas Ekman, VD och medgrundare). Syfte: äkthet, det enda personliga på startsidan. Rubrikerna animeras som seosdesign.se/om-oss (varje ord glider upp ur en mask, ett i taget, när rubriken scrollas in). Brödtexten har ingen scrollanimation, bara en inledande intoning. Andra raden #666 (3,45:1, WCAG AA stor text). **Foto saknas** → initialer "DE"; sätt `PHOTO` i komponenten. Copy = utkast till Douglas. `Team.astro` kvar.
-- **Typografi enhetlig (Björn)**: `--fs-h2` = clamp(36px, 5.6vw, 72px) = Positioneringens statement → ALLA sektionsrubriker 72 px desktop / 36 px mobil (var 52 resp. 88). `--fs-lead` = clamp(18px, 1.6vw, 22px) (var 18–20). Positionering läser nu token. Story-rubriken i tre rader. "Var börjar ni med AI?" har `text-wrap: balance` (annars ensamt "AI?"). Låsta vyn ryms fortfarande vid 1280×720.
+- **Typografi v1 (ERSATT av v2 nedan)**: `--fs-h2` = clamp(36px, 5.6vw, 72px) = Positioneringens statement → ALLA sektionsrubriker 72 px desktop / 36 px mobil (var 52 resp. 88). `--fs-lead` = clamp(18px, 1.6vw, 22px) (var 18–20). Positionering läser nu token. Story-rubriken i tre rader. "Var börjar ni med AI?" har `text-wrap: balance` (annars ensamt "AI?"). Låsta vyn ryms fortfarande vid 1280×720.
 - **Typografi v2 (Björn: större, som SEOS)**: uppmätt att seosdesign.se har rubriker i "Mona Sans Narrow" men BRÖDTEXT i vanlig bredd (vi hade allt smalt). Nu: `p, input, textarea { font-stretch: 100% }` globalt (undantag med 75 %: versala etiketter — Stats .claim/.src, footerns kolumnrubriker — och <p> som fungerar som rubrik — Stats .num/.statement, Story .story__name). `--fs-h2` = clamp(42px, 6.7vw, 96px) (~96 px desktop), `--fs-h3` = clamp(26px, 3.4vw, 48px), alla h2/h3 vikt 700 (var 600/700/800). Tjänsterutornas titlar har egen storlek (≤36 px) så "AI-assistent" ryms. Kubsektionen: steg-slot = max(62 % av vyn, högsta steget + 48), uttoning 22 → 10 %, stramare avstånd vid höjd < 800 px → steg 3 med knappen ryms helt vid 1280×720, 1366×768, 1440×900, 1920×1080 (uppmätt).
 - **Story v2**: porträtt till höger (4:5, initialer tills foto finns) med namn, titel och SEOS-länk under.
-- **Contact → `ContactCta.astro`** (Björns val "alternativ 1"): centrerad rubrik "Börja med er största tidstjuv." + kort text + "Boka kartläggning" (vit) och "Kontakta oss" (glas), placerad så att footerns klot lyser upp BAKOM knapparna (klotet kommer från conversion.framer.media där det sitter under en CTA; förut lyste det bakom formulärets brödtext). Trust-punkterna borttagna. Formuläret flyttar till kontaktsidan: `Contact.astro` sparad orörd. Knapparna → `/kontakt` (404 tills sidan byggs; ingen e-post finns i projektet). `#boka`-ankaret ligger kvar här. Uppmätt kontrast över skenet: brödtext ~19:1, knappar ≥7,3:1 (1440×900, 1280×720).
+- **Contact → `ContactCta.astro`** (Björns val "alternativ 1"): centrerad rubrik "Börja med er största tidstjuv." + kort text + "Boka kartläggning" (vit) och "Kontakta oss" (glas), placerad så att footerns klot lyser upp BAKOM knapparna (klotet kommer från conversion.framer.media där det sitter under en CTA; förut lyste det bakom formulärets brödtext). Trust-punkterna borttagna. Formuläret flyttade till kontaktsidan (Contact.astro är nu /kontakt-innehållet). Knapparna → `/kontakt`. `#boka`-ankaret ligger kvar här. Uppmätt kontrast över skenet: brödtext ~19:1, knappar ≥7,3:1 (1440×900, 1280×720).
 - **Glasknapparna enhetliga**: alla tre (nav-CTA:n, "Boka kartläggning" under heron, "Kontakta oss") = samma GRÅA glas som "Kontakta oss" med neutral ljus kant i vila; HOVER = kanten tar accentfärgen (bara kanten). `.btn-glass--accent` har inga egna regler längre (klassen kvar i Nav/Positionering). "Kontakta oss" ser blåare ut enbart för att footerns klot lyser igenom glaset. (Ett försök med indigotonad fyllning samma dag var ett missförstånd och är återställt.) De tidigare pausade knappändringarna är därmed avgjorda. "Mer om oss" förblir vit.
-- **Stäm av med Douglas**: berättelsen i Story, CTA-texten, e-postadress/telefon till "Kontakta oss", och att formuläret flyttar från startsidan.
-
-#### (Ursprunglig spec för tjänsterutorna)
-
-Bygg en **ny komponent** (t.ex. `Services.astro`) och byt in den i `index.astro` — **radera INTE `Departments.astro`** (behåll den gamla sektionen och lightboxen; byt bara importen/användningen, med kommentar hur man återställer).
-
-Underlag (allt i den gitignorerade mappen `motion-grid-bilder/`):
-- `animationer/prototyp.html` — klickbar hover-prototyp (öppna i webbläsaren). Stilen/strukturen att porta.
-- `animationer/{mobile,column,funnel,lamp,pencil}.{mp4,webm}` — 1,6 s, 30 fps, 640×640 mot bakgrund #050505, 20–67 kB. `slutbild-*.png` = sista bildrutan (genomskinlig) → stillbild/poster.
-- `verktyg/` — Blender- och ffmpeg-skript + README (hur man renderar om).
-
-Design (Fundamental-referensen, fundamental.bg/en "Our Services"): 12-kolumnsgrid **5+7 / 4+3+5**, hårlinjer mellan rutor, ring uppe till vänster, rubrik nere till vänster. Vid hover: videon tonas in och spelar EN gång (stannar på sista rutan), ringen fylls, beskrivning + pil glider upp, svagt indigo-sken; mouseleave tonar ut. Videons kanter tonas ut med radiell mask.
-
-| Ruta | Illustration (Blender-objekt) | Beskrivning (utkast) |
-|---|---|---|
-| Kundtjänst | Mobile dashboard | Besvarar kundärenden direkt och lämnar över till er när det behövs. |
-| Ekonomi & administration | Column chart | Fakturor tolkas, konteras och går vidare till attest. |
-| Sälj & offert | Funnel | Leads poängsätts och offerten skrivs fram. |
-| Er egen AI-assistent | Lamp | Svarar med källa i era egna dokument. |
-| Kvalitet & projekt | Pencil and Grid | Avvikelser flaggas och veckorapporten skriver sig själv. |
-
-Att bygga in: lazy-laddning (videor laddas när sektionen närmar sig), mobil/touch (en kolumn, spela en gång när rutan syns), tangentbordsfokus = hover, reduced motion = slutbilden som stillbild, verifiering i Playwright. Uppskattning ~2–3 h.
-Valfritt först: rendera om med tätare inramning (`camera_for(margin≈1.15)`) — illustrationerna blev små i rutorna (~1 h renderingstid, CPU).
-**Stäm av med Douglas:** marknadsföring utgår (finns ej i strategin) · vilka tjänstesidor rutorna länkar till (platshållare tills vidare) · slutlig copy.
-
-**Ocommittat (2026-09-25):** knapparna (`.btn-glass--accent` på nav-CTA + "Boka kartläggning", "Mer om oss" vit) — PAUSADE, Björn ej nöjd · `StartFlowRail.astro` (rak rad + ljusskena, aktiv i index; vågen `StartFlow.astro` och kaskaden `.bak` kvar) — PAUSAD, Björn ej nöjd · `.gitignore` (+`/motion-grid-bilder/`) · `docs/innehall-utan-cms.md` · denna fil. `CLAUDE.md` (Douglas) och strategi-briefen committas inte utan avstämning.
+- **Stäm av med Douglas**: berättelsen i Story, CTA-texten, att formuläret flyttat från startsidan, kontaktuppgifterna (platshållare).
 
 ---
 
@@ -77,16 +67,19 @@ Valfritt först: rendera om med tätare inramning (`camera_for(margin≈1.15)`) 
 
 | Sektion | Komponent | Kort |
 |---|---|---|
-| Nav | `Nav.astro` | Tre zoner: statiskt ordmärke · fast glas-pill i mitten (bara länkar, det enda som följer med vid scroll) · boknings-CTA. Länkar: Tjänster/Om oss/Blogg/Kontakt (404 tills sidorna byggs). Mobil: hamburger + drawer. |
-| Hero | `Hero.astro` | Glas-box med loopande glas-video (Wannathis "Abstract objects"). Tint skyddar läsbarheten; kontrast mätt mot den rörliga videon. |
-| Positionering | `Positionering.astro` | Stort statement + två glas-CTA:er. Bakgrund: punktrutnät-video ("Wall"). Partikelnätet (canvas) pausat, ej raderat. |
+| Nav | `Nav.astro` (via `Layout.astro`) | Tre zoner: statiskt ordmärke · fast glas-pill i mitten (bara länkar) · boknings-CTA → `/kontakt`. Länkar: Tjänster/Om oss/Blogg/Kontakt (bara /kontakt finns). Mobil: hamburger + drawer. |
+| Hero | `Hero.astro` | Glas-box med loopande glas-video (Wannathis "Abstract objects"). |
+| Positionering | `Positionering.astro` | Stort statement + "Boka kartläggning" (glas → /kontakt) och "Mer om oss" (vit → /om-oss, 404). Punktrutnät-video ("Wall"). |
 | Stats | `Stats.astro` | Tre källgranskade siffror (LÅSTA) med räknare + accentlinje. |
-| Services | `Services.astro` | Tjänsterutorna: 5 rutor (5+7 / 4+3+5), hover spelar en 3D-illustration en gång. Ersatte Departments 2026-09-25 (filen + lightboxen kvar, ej i index). |
-| StartFlow | `StartProcess.astro` (aktiv sedan 2026-09-25; före det `StartFlowRail.astro`) | "Var börjar ni med AI?": tre kort på rad + ljusskena med vandrande puls. Vågen (`StartFlow.astro`) och gamla kaskaden (`StartFlow.cascade.astro.bak`, gitignorerad!) kvar. Pausad. |
-| StackFlow | `StackFlow.astro` | Pinnad kortstack: Advisory · Team · Contact. |
-| Footer | `Footer.astro` | Märke + två länkkolumner, ordmärke som stiger ur bottenlinjen (seapattern.com-mekaniken), "soluppgångs"-klot på topplinjen (conversion.framer.media) med låsta färger. ArcBand borttagen ur index (filen kvar). Nav säger fortfarande "Blogg" — footern "Kunskapsbank". |
+| Services | `Services.astro` | Tjänsterutorna: 5 rutor (5+7 / 4+3+5), hover spelar en 3D-illustration en gång. Länkar `/tjanster/<slug>` = platshållare. (`Departments.astro` kvar, ej i index.) |
+| StartFlow | `StartProcess.astro` | "Var börjar ni med AI?": låst vy, tre steg som vilar i tur och ordning, glaskub ritad på canvas ur bildsekvens, scroll-indikator. Steg 3 → /kontakt. |
+| Story | `Story.astro` | "Vår historia." / "Ett team." / "Två varumärken." (ord glider upp), berättelse, porträtt (initialer tills foto) med namn/titel/SEOS-länk. |
+| Avslutning | `ContactCta.astro` | Centrerad CTA ovanför footerns klot, två knappar → /kontakt. |
+| Footer | `Footer.astro` | Märke + länkkolumner, ordmärke som stiger ur bottenlinjen, "soluppgångs"-klot på topplinjen (låsta färger). Nav säger "Blogg", footern "Kunskapsbank". |
 
-Pausade/parkerade: `Robot.astro` (ur index, kan återkomma på /om-oss), `FAQ.astro` (parkerad → /om-oss).
+**Undersidor:** `/kontakt` (`kontakt.astro` + `Contact.astro`): rubrik, kontaktuppgifter (PLATSHÅLLARE från SEOS i `CONTACT`), formulär (demo-kvitto, ingen backend), tre steg.
+
+Ej i index men kvar som filer: `Departments`, `StackFlow`, `Advisory`, `Team`, `StartFlowRail`, `StartFlow` (vågen), `Robot`, `FAQ`, `ArcBand`, `BeamCta`.
 
 ### Delade byggstenar
 
@@ -96,9 +89,11 @@ Pausade/parkerade: `Robot.astro` (ur index, kan återkomma på /om-oss), `FAQ.as
 
 ### Media i `site/public/`
 
-- `hero-glass.{mp4,webm}` + poster · `dep-glass.{mp4,webm}` + poster · `pos-wall.mp4` + poster.
-- `hero-bg.webp` (gamla hero-fotot, sparat för återbruk) och `dep-bg.webp` (oanvänd sedan videon).
-- Källfiler (4K-zippar, `Wall.mp4` m.fl.) ligger i repo-roten men är **gitignorade**.
+- `hero-glass.{mp4,webm}` + poster · `pos-wall.mp4` + poster.
+- `tjanster/` — tjänsterutornas videor (`{mobile,column,funnel,lamp,pencil}.{mp4,webm}`, 540×540) + `*-slut.webp`.
+- `proc-cube/f001–f120.webp` (kubens bildsekvens, 900 px, 2,7 MB) + `proc-cube-poster.webp`.
+- Oanvända men kvar: `dep-glass.*` (Departments), `hero-bg.webp`, `dep-bg.webp`.
+- Källfiler (4K-zippar, `Wall.mp4`, `motion-grid-bilder/`) ligger i repo-roten men är **gitignorade**.
 
 ---
 
@@ -120,7 +115,10 @@ Kollega-överlämning i `docs/innehall-utan-cms.md`: Sanity troligen strukken �
 `--arc-hue: 232` + `--arc-sat: 0.85` = dämpad indigo (Björns val 2026-09-23, "tillsvidare"). Historik: 204 azur → 245 lila-blå (matchade glas-videorna, 244–246°) → 232/0,85 eftersom 245 i full mättnad kändes "disco" (videornas medianmättnad ~0,53). `--arc-sat` är en skala 0–1 som alla accentvärden läser (`calc(var(--arc-sat) * N%)`). Blå/lila är mörkare för ögat än azur: höj **ljusheten** på tunna linjer, inte nyansen. Uppmätt kontrast (kärna mot bakgrund): Stats 5,7 · Team-linjen 3,5 · ArcBand 2,6 · StartFlow-vågen 14,5. Douglas har sista ordet.
 
 ### Knappar
-En enhetlig glasknapp `.btn-glass` i `global.css` för sekundära/accent-CTA:er — ändra på ett ställe. Vit `.btn-primary` används fortfarande längre ner (StartFlow, Team, Contact). Gamla `.btn-glow`, `.btn-comet` och `.btn-azur` ligger kvar oanvända för revert.
+Alla glasknappar (`.btn-glass` i `global.css`) = grått glas med neutral ljus kant; **hover = kanten tar accentfärgen**. `.btn-glass--accent` saknar egna regler (klassen kvar i markupen). Vit `.btn-primary` för primära val ("Mer om oss", "Boka kartläggning" i avslutningen, formulärens knappar). Gamla `.btn-glow`, `.btn-comet` och `.btn-azur` ligger kvar oanvända för revert.
+
+### Typografi
+Rubriker = smal Mona Sans (`font-stretch: 75%` på html), **brödtext = full bredd** (`p, input, textarea { font-stretch: 100% }`, som seosdesign.se). `<p>` som fungerar som rubrik/siffra/versal etikett måste få `font-stretch: 75%` lokalt. `--fs-h2` ≈ 96 px desktop (alla sektionsrubriker), `--fs-h3` ≈ 48 px, `--fs-lead` 18–22 px, alla rubriker vikt 700.
 
 ### Bakgrundsvideor
 Hero, Positionering och Departments har loopande videor från Wannathis (Pro Access, commercial-licens). Regler:
@@ -215,18 +213,20 @@ Sparade som SVG i `site/public/logos/`. Leonardo.Ai saknar öppen SVG — visas 
 
 ## Återstår
 
-**Startsidan (finslipning):**
-- [ ] Knapparna längre ner (vit `.btn-primary` i StartFlow/Team/Contact) — göra enhetliga med glasknapparna? (Björn avvaktar)
-- [ ] Accentfärgen 232/0,85 — satt tillsvidare, Douglas godkänner
-- [x] **Tjänsterutorna** — `Services.astro` (2026-09-25). `Departments.astro` behållen. Väntar på Douglas: länkmål + copy.
-- [x] Footern (klar 2026-09-24, `3244b47`)
-- [ ] StartFlow (pausad, Björn ej nöjd med varken vågen eller raka raden) · knapparna (pausade)
-- [ ] Kontaktformulärets backend
+**Startsidan:**
+- [ ] Accentfärgen 232/0,85 — satt tillsvidare; Björn har inte bestämt sig, och footerns klot (låsta färger) skiljer sig lite från accenten. Återkom. Douglas godkänner.
+- [ ] Foto på Douglas till `Story.astro` (`PHOTO`).
+- [ ] Copy-granskning av Douglas: Story, CTA, tjänsterutor, kubsektionens steg 3-rad.
+- [ ] Tjänsterutornas länkmål (`/tjanster/<slug>`) när tjänstesidorna finns.
 
-**Undersidor (planerad ordning):** Kontakt/bokning → Om oss → Tjänster (kräver Douglas produktbeslut) → Blogg (kräver Sanity + innehåll).
+**Kontaktsidan:**
+- [ ] Riktiga kontaktuppgifter (t.ex. kontakt@aipartner.se) i `CONTACT` i `Contact.astro`.
+- [ ] Formulärets backend (beror på deploy: Netlify Forms, e-posttjänst e.d.). Idag demo-kvitto.
+
+**Undersidor (planerad ordning):** ~~Kontakt/bokning~~ (klar) → **Om oss (nästa)** → Tjänster (kräver Douglas produktbeslut: vilka agentprodukter får egna sidor) → Rådgivning & förvaltning (Advisory) → Kunskapsbank (kräver innehåll + stackbeslut, se `docs/innehall-utan-cms.md`).
 
 **Infrastruktur:**
-- [ ] Sanity-koppling — konto finns, men inget schema, ingen Studio och ingen integration i repot. (CLAUDE.md påstår "Sanity MCP uppkopplad" — det stämmer inte i sessionerna.)
+- [ ] CMS-beslut — Sanity troligen struken för Astro content collections (`docs/innehall-utan-cms.md`); Douglas beslut.
 - [ ] Deploy-pipeline (Netlify/Vercel) — saknas helt.
 - [ ] 24 dependabot-sårbarheter i beroendena.
 - [ ] Wannathis Pro Access sägs upp i december — ladda ner alla motiv som behövs innan dess.
@@ -243,4 +243,6 @@ Se `CLAUDE.md` för full fasöversikt.
 - Knappsystemet ändrat till enhetliga glasknappar (nytt i design-systemet).
 - All text är fortfarande hårdkodad i komponenterna (ingen Sanity än).
 - Nav/footer-länkarnas slugar (`/tjanster`, `/om-oss`, `/blogg`, `/kontakt`) är förslag — bekräftas mot SEOS URL-plan.
+- Kontaktuppgifterna på /kontakt är SEOS (platshållare) och formuläret skickar inget ännu.
+- Kuben laddar en bildsekvens på 2,7 MB (desktop, lazy); mobil får stillbild.
 - Robot/Spline (om den återkommer): extremanimationen ("arms up") vid `ps_x < 0.15` eller `ps_x > 0.85` — koden klampar X till [0.15, 0.85]; Y-range [0.1, 0.9] med neutral 0.5.

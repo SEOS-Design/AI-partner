@@ -32,7 +32,6 @@ const STEPS = [
   { h: 'Prioritering', t: 'Var ger AI och automation störst effekt, och var gör den det inte? Vi är ärliga med båda.' },
   { h: 'Åtgärdsplan', t: 'Konkret och prioriterad. Inget köptvång, ni bestämmer själva om ni går vidare.' },
 ];
-const total = String(STEPS.length).padStart(2, '0');
 ---
 
 <section id="sa-borjar-ni" class="proc" aria-labelledby="proc-title" style={`--n: ${STEPS.length}`}>
@@ -50,7 +49,7 @@ const total = String(STEPS.length).padStart(2, '0');
               <li class="pstep" data-step={i}>
                 <div class="pstep__inner">
                   <span class="pstep__n">
-                    {String(i + 1).padStart(2, '0')}<span class="pstep__of">({total})</span>
+                    {String(i + 1).padStart(2, '0')}
                   </span>
                   <h3 class="pstep__h">{s.h}</h3>
                   <p class="pstep__t">{s.t}</p>
@@ -122,16 +121,16 @@ const total = String(STEPS.length).padStart(2, '0');
     margin: 0;
     padding: 0;
   }
+  /* Stegnumret: "(03)"-totalen borttagen, numret större (Björn 2026-09-29). */
   .pstep__n {
     display: block;
-    font-size: var(--fs-small);
+    font-stretch: 75%;
+    font-weight: 700;
+    font-size: var(--fs-lead);
+    line-height: 1;
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.04em;
     color: var(--fg-2);
-  }
-  .pstep__of {
-    margin-left: 0.3em;
-    color: var(--fg-4);
   }
   .pstep__h {
     margin-top: var(--space-5);

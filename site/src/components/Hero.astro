@@ -117,8 +117,9 @@
     z-index: 1;
     min-height: calc(100svh - var(--edge) * 2);
     display: grid;
-    place-items: center;
-    padding: clamp(32px, 6vh, 88px) clamp(24px, 5vw, 72px);
+    /* Rubriken längs nederkanten, vänsterställd (Björn 2026-09-29, fundamental.bg-ref). */
+    place-items: end start;
+    padding: clamp(96px, 14vh, 140px) clamp(20px, 3.4vw, 48px) clamp(14px, 2.2vw, 30px);
     border-radius: var(--radius);
     overflow: hidden;
     /* Boxens egen yta — syns bara innan bilden laddat, och i eventuella glipor. */
@@ -156,8 +157,10 @@
      Tinten ger glaset dess färg och dämpar bilden bakom rubriken.
      Center-radialen LÄTTAD 0.82 → 0.68 (2026-09) så glas-loopen syns mer; var
      tidigare satt för partikelnätet. Kontrasten är OMMÄTT mot den rörliga videon
-     över hela loopen (Playwright, värsta rutan, vit text vs bakgrund): H1 värsta
-     pixel 3.69 (krav 3.0), underrubrik 5.38 (krav 4.5) — snittet ligger på 14+.
+     över hela loopen (Playwright, värsta rutan, vit text vs bakgrund).
+     2026-09-29, rubriken längs nederkanten + mörk övertoning nedifrån: H1 värsta
+     pixel 8,7 (1920) / 10,0 (1440) / 16,8 (390), krav 3,0; underrubrik (fg-2, högerställd
+     ovanför rubriken, en rad) 6,7 / 7,7 / 9,8, krav 4,5.
      Den bindande gränsen är den ljusaste specular-pixeln bakom texten, INTE
      snittet: mät den (max, inte bara medel) om du lättar tinten mer. */
   .hero-tint {
@@ -167,7 +170,9 @@
     border-radius: inherit;
     pointer-events: none;
     background:
-      radial-gradient(ellipse 62% 54% at 50% 48%, rgba(6, 7, 10, 0.68) 0%, rgba(6, 7, 10, 0) 74%),
+      /* Rubriken ligger nu längs nederkanten → mörkt nedifrån i stället för i mitten. */
+      linear-gradient(0deg, rgba(6, 7, 10, 0.82) 0%, rgba(6, 7, 10, 0.62) 44%, rgba(6, 7, 10, 0) 72%),
+      radial-gradient(ellipse 72% 58% at 34% 84%, rgba(6, 7, 10, 0.45) 0%, rgba(6, 7, 10, 0) 76%),
       radial-gradient(120% 100% at 50% 50%, transparent 52%, rgba(4, 5, 7, 0.48) 100%),
       linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01) 30%, transparent 56%),
       hsl(var(--arc-hue) calc(var(--arc-sat) * 24%) 7% / 0.20);
@@ -177,24 +182,30 @@
   .hero-center {
     position: relative;
     z-index: 4;
-    text-align: center;
-    padding: 0 24px;
+    width: 100%;
+    container-type: inline-size; /* rubrikens storlek räknas från den här bredden */
+    text-align: left;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: var(--space-6);
+    align-items: flex-start;
+    gap: var(--space-4);
   }
 
   .hero-title {
     font-family: var(--font-sans);
     font-weight: 700;
-    font-size: clamp(64px, 14vw, 184px);
-    line-height: 0.86;
-    letter-spacing: -0.05em;
+    /* EN rad som fyller boxens bredd (Björn 2026-09-29; var två centrerade rader). */
+    /* "AI PARTNER" är ~3,46 em bred (ordmellanrummet kommer från markupens blanksteg) → 100cqi / 3,47 fyller raden kant till kant
+       (uppmätt: lika luft vänster/höger vid 1440 och 1920). */
+    font-size: calc(100cqi / 3.47);
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+    margin-bottom: -0.04em; /* bokstävernas fot nära boxens nederkant */
     color: var(--fg-1);
   }
 
-  .hero-title__line { display: block; }
+  .hero-title__line { display: inline-block; }
 
   .hero-title__in {
     position: relative;
@@ -226,8 +237,18 @@
     font-weight: 400;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--fg-3);
-    text-align: center;
+    color: var(--fg-2); /* ljusare: står nu över videons ljusa glas */
+    /* Ovanför rubriken, linjerad med dess HÖGRA kant (Björn 2026-09-29: vänster-
+       ställd svävade den ensam och såg malplacerad ut). H1 kommer först i DOM:en. */
+    order: -1;
+    align-self: flex-end;
+    text-align: right;
+    padding-right: 0.3em;
+    line-height: 1.4;
+  }
+  /* En rad där det får plats; på mobil får den bryta (och linjerar då höger). */
+  @media (min-width: 700px) {
+    .hero-sub-title { white-space: nowrap; }
   }
 
   /* ---- Keyframes ---- */
@@ -249,6 +270,13 @@
     }
     .hero-title__line:nth-child(1) .hero-title__in { animation-delay: .42s; }
     .hero-title__line:nth-child(2) .hero-title__in { animation-delay: .55s; }
+
+    /* Underrubriken kommer strax efter att AI PARTNER landat. */
+    .hero-sub-title {
+      opacity: 0;
+      transform: translateY(0.6em);
+      animation: titleRise 0.9s cubic-bezier(0.16, 0.84, 0.32, 1) 1.15s forwards;
+    }
 
     .hero-title__in::after { animation: titleGlint 6.5s ease-in-out 1.9s infinite; }
     .hero-title__line:nth-child(2) .hero-title__in::after { animation-delay: 2.05s; }

@@ -39,18 +39,23 @@ import Arrow from './Arrow.astro';
 // dit, dubblerar inte. Slugarna är förslag; docs/seo-soktermer.md säger att
 // sidstruktur ska spikas efter SERP-analys → bekräfta med Douglas/SEOS.
 const links = [
+  { href: '/', label: 'Hem' }, // Björn 2026-09-29: saknades i pillen
   { href: '/tjanster', label: 'Tjänster' },
   { href: '/om-oss', label: 'Om oss' },
-  { href: '/blogg', label: 'Blogg' },
+  { href: '/kunskapsbank', label: 'Kunskapsbank' },
   { href: '/kontakt', label: 'Kontakt' },
 ];
 const path = Astro.url.pathname;
-const isActive = (href: string) => href.startsWith('/') && path === href;
+// Undersidor räknas också (t.ex. /kunskapsbank/<artikel> markerar Kunskapsbank).
+// Hem (/) räknas bara på startsidan, inte som förälder till allt.
+const isActive = (href: string) =>
+  href === '/' ? path === '/' : path === href || path.startsWith(href + '/');
 ---
 
 <header id="main-nav" class="nav">
   <div class="navbar">
-    <a class="wordmark" href="#top" aria-label="AI Partner — till toppen">AI PARTNER</a>
+    {/* Ordmärket är också hemknapp (Björn 2026-09-29; var #top). */}
+    <a class="wordmark" href="/" aria-label="AI Partner – till startsidan">AI PARTNER</a>
 
     <nav class="navpill nav-desktop" aria-label="Primär">
       {
@@ -84,7 +89,7 @@ const isActive = (href: string) => href.startsWith('/') && path === href;
 <div class="drawer-scrim" data-menu-close></div>
 <aside class="drawer" id="drawer" aria-label="Meny" aria-hidden="true">
   <div class="drawer__hd">
-    <a class="wordmark" href="#top" data-menu-close>AI Partner</a>
+    <a class="wordmark" href="/" data-menu-close>AI Partner</a>
     <button class="drawer__close" aria-label="Stäng meny" data-menu-close>✕</button>
   </div>
   <nav class="drawer__links" aria-label="Meny">
@@ -170,7 +175,10 @@ const isActive = (href: string) => href.startsWith('/') && path === href;
      en navrad). Scoped klass vinner över den globala .btn tack vare Astros
      attributselektor. */
   .nav-cta {
-    padding: 9px 18px;
+    /* Exakt samma höjd som pillret → samma mittlinje och samma storlek för ögat
+       (Björn 2026-09-29: knappen satt 4,5 px lägre och såg större ut). */
+    height: var(--nav-h);
+    padding: 0 18px;
     font-size: 12px;
     border-radius: 999px;
   }
@@ -179,7 +187,8 @@ const isActive = (href: string) => href.startsWith('/') && path === href;
   .wordmark {
     font-family: var(--font-sans);
     font-weight: 700;
-    font-size: 20px;
+    font-size: clamp(24px, 2.2vw, 30px); /* större (Björn 2026-09-29, var 20 px) */
+    line-height: 1; /* annars blir raden 51 px och CTA:n hamnar under pillrets mittlinje */
     letter-spacing: -0.03em;
     color: var(--fg-1);
     white-space: nowrap;

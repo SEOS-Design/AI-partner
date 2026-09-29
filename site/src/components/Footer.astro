@@ -29,11 +29,15 @@ const pages: [string, string][] = [
 
 <footer class="foot">
   {/* "Soluppgång" på footerns topplinje (Conversion-referensen): ett runt klot bakom
-      sidan, ljust ovanför linjen, dämpat under den. Tre suddiga radiella lager. */}
+      sidan, ljust ovanför linjen, dämpat under den. Sex förskjutna, kraftigt suddade
+      färgmoln i heroens palett (se CSS). */}
   <div class="foot__orb" aria-hidden="true">
-    <span class="foot__orb-outer"></span>
-    <span class="foot__orb-inner"></span>
-    <span class="foot__orb-inner foot__orb-inner--overlay"></span>
+    <span class="orb orb--haze"></span>
+    <span class="orb orb--deep"></span>
+    <span class="orb orb--violet"></span>
+    <span class="orb orb--steel"></span>
+    <span class="orb orb--lilac"></span>
+    <span class="orb orb--core"></span>
   </div>
 
   <div class="container foot__top">
@@ -83,17 +87,18 @@ const pages: [string, string][] = [
     border-top: 1px solid var(--border);
   }
 
-  /* ── Klotet (mätt på conversion.framer.media: 400px blur 70 + 300px blur 32,
-     varav ett i mix-blend overlay; statiskt, konisk gradient) ──
-     z-index:-1 i rotens staplingskontext → bakom kortet ovanför (kortets kant
-     skär rent genom ljuset) men ovanför sidans canvas. Toppen ljus/ljuslila,
-     botten djupare blå. Färgerna är LÅSTA lokalt (se .foot__orb). */
+  /* ── Klotet v2 (2026-09-29) ──
+     Björn: klotet lutade åt ett håll (blått). Nu "spretigt" och grumligt som hos
+     conversion.framer.media (orange/krämvitt/mörkrött/petrol i samma sken), men i
+     HEROENS palett. Uppmätt ur hero-glass.mp4 (Playwright/pngjs, 10 rutor):
+     indigo 230–249° = 67 % av färgen, violett 250–279° = 25 %, stålblått 210–229° = 7 %;
+     mättnad 42–67 %. Sex runda moln, förskjutna från mitten och kraftigt suddade så
+     de flyter ihop; en gråaktig indigodimma i botten ger det grumliga, en blek
+     lavendelvit topp motsvarar Conversions krämvita kärna.
+     Färgerna är LÅSTA här (oberoende av --arc-hue), som förut.
+     z-index:-1 i rotens staplingskontext → bakom kortet/sektionen ovanför men
+     ovanför sidans canvas. Ett statiskt klot kostar inget per bildruta. */
   .foot__orb {
-    /* LÅSTA färger (Björn gillade klotet 2026-09-24): oberoende av sidans accent,
-       så ett accentbyte inte ändrar klotet. Uppmätt på skärm: nyans 206–222,
-       mättnad 45–70 % (overlay + −30°-lagret drar det stålblått). */
-    --arc-hue: 232;
-    --arc-sat: 0.85;
     position: absolute;
     top: 0;
     left: 50%;
@@ -102,49 +107,71 @@ const pages: [string, string][] = [
     height: 0;
     pointer-events: none;
   }
-  .foot__orb span {
+  .orb {
     position: absolute;
     border-radius: 50%;
-    transform: translate(-50%, -50%);
+    /* --x/--y = förskjutning från klotets mitt */
+    transform: translate(calc(-50% + var(--x, 0px)), calc(-50% + var(--y, 0px)));
   }
-  .foot__orb-outer {
-    width: 440px;
-    height: 440px;
-    filter: blur(28px);
+  /* Grumlig bas: bred, lågmättad indigodimma. */
+  .orb--haze {
+    width: 520px;
+    height: 520px;
+    filter: blur(56px);
+    opacity: 0.9;
+    background: radial-gradient(circle, hsl(244 28% 34%) 0%, hsl(244 24% 22%) 55%, transparent 72%);
+  }
+  /* Djup indigo nedtill — heroens huvudton. */
+  .orb--deep {
+    --y: 50px;
+    width: 360px;
+    height: 360px;
+    filter: blur(44px);
+    opacity: 0.9;
+    background: radial-gradient(circle, hsl(240 62% 44%) 0%, hsl(242 55% 32%) 60%, transparent 75%);
+  }
+  /* Violett åt vänster. */
+  .orb--violet {
+    --x: -95px;
+    --y: -10px;
+    width: 280px;
+    height: 280px;
+    filter: blur(46px);
     opacity: 0.85;
-    /* RADIELL, inte konisk: en konisk gradient runt varvet gav en sned droppform —
-       samma HSL-ljushet är olika ljust för ögat per nyans (blått ~206° lyser mer än
-       indigo ~232°), så en sektor blev ljusare. Radiellt = rund oavsett nyans.
-       Färgspelet ligger inifrån och ut: stålblå mitt → indigo kant. */
-    background: radial-gradient(
-      circle,
-      hsl(calc(var(--arc-hue) - 26) calc(var(--arc-sat) * 85%) 52%) 0%,
-      hsl(calc(var(--arc-hue) - 14) calc(var(--arc-sat) * 85%) 48%) 42%,
-      hsl(calc(var(--arc-hue) + 8) calc(var(--arc-sat) * 70%) 44%) 70%
-    );
+    background: radial-gradient(circle, hsl(266 52% 56%) 0%, hsl(266 45% 40%) 55%, transparent 75%);
   }
-  .foot__orb-inner {
-    width: 300px;
-    height: 300px;
-    filter: blur(16px);
-    /* RADIELL (inte konisk som hos Conversion): koniska sektorer strålar ut från
-       mitten och gav klotet en kil-/droppform. Radiellt = rund kärna; ljus topp
-       via förskjutet centrum. */
-    background: radial-gradient(
-      circle at 50% 38%,
-      hsl(var(--arc-hue) calc(var(--arc-sat) * 35%) 88%) 0%,
-      hsl(calc(var(--arc-hue) - 22) calc(var(--arc-sat) * 80%) 55%) 45%,
-      hsl(calc(var(--arc-hue) - 26) calc(var(--arc-sat) * 85%) 40%) 70%
-    );
-    opacity: 0.7;
+  /* Stålblått åt höger. */
+  .orb--steel {
+    --x: 100px;
+    --y: 5px;
+    width: 260px;
+    height: 260px;
+    filter: blur(46px);
+    opacity: 0.8;
+    background: radial-gradient(circle, hsl(212 48% 56%) 0%, hsl(215 42% 40%) 55%, transparent 75%);
   }
-  .foot__orb-inner--overlay {
-    mix-blend-mode: overlay;
-    opacity: 1;
+  /* Liten ljuslila fläck snett upptill. */
+  .orb--lilac {
+    --x: 45px;
+    --y: -75px;
+    width: 170px;
+    height: 170px;
+    filter: blur(38px);
+    opacity: 0.75;
+    background: radial-gradient(circle, hsl(282 45% 68%) 0%, transparent 72%);
+  }
+  /* Blek lavendelvit kärna, lite till vänster om mitten. */
+  .orb--core {
+    --x: -15px;
+    --y: -40px;
+    width: 210px;
+    height: 210px;
+    filter: blur(30px);
+    opacity: 0.8;
+    background: radial-gradient(circle, hsl(248 38% 88%) 0%, hsl(248 32% 70%) 40%, transparent 72%);
   }
   @media (max-width: 560px) {
-    .foot__orb-outer { width: 300px; height: 300px; }
-    .foot__orb-inner { width: 200px; height: 200px; }
+    .foot__orb { transform: scale(0.66); }
   }
 
   .foot__top {

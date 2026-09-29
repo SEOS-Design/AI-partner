@@ -14,7 +14,40 @@
 - **Senast pushat:** `d4a02b6` (2026-09-23). **Committat lokalt, EJ pushat:** `3244b47` (footer) · `b5a18de` (tjänsterutor + StartProcess) · `a2d887e` · `23a40bf` (avslutning, typografi, knappar, canvas-kub) · `533a26e` (/kontakt). Björn vill ofta vänta med push.
 - **Medvetet utanför git:** `CLAUDE.md` (Douglas fil, ändrad), `AI-Partner-strategi-brief-2026-07.md` (committas inte utan avstämning), `pexels-…jpg` (testbild).
 
-### Om oss /om-oss (2026-09-28, byggd, EJ committad)
+### Justeringar startsida, nav och footer (2026-09-29)
+
+- **Hero:** "AI PARTNER" på EN rad längs nederkanten, vänsterställd (fundamental.bg-ref). Storleken räknas från boxens bredd (`container-type: inline-size`, `font-size: calc(100cqi / 3.47)`) → kant till kant på alla bredder. Underrubriken högerställd ovanför rubriken, en rad från 700 px, glider in 1,15 s (efter rubriken). Tinten mörk nedifrån; kontrast mätt mot rörlig video: H1 värsta 8,7–16,8, underrubrik 6,7–9,8.
+- **Nav:** "Hem" först i pillen (markeras bara på /). Ordmärket större (24–30 px), `line-height: 1`, länkar till / (var #top). Nav-CTA:n exakt pillrets höjd (42 px) → samma mittlinje (satt 4,5 px lägre när ordmärket blev större).
+- **Footerns klot v2:** sex förskjutna, kraftigt suddade färgmoln i heroens palett (uppmätt ur hero-glass.mp4: indigo 230–249° 67 %, violett 250–279° 25 %, stålblått 210–229° 7 %) + grå indigodimma och blek lavendelvit kärna → "spretigt" och grumligt som conversion.framer.media. Något svagare än v1 — kan ljusas upp.
+- **Kubsektionen:** "(03)" borttaget, stegnumret större (22 px, smalt, fetstil).
+- **Story:** foto på Douglas (`public/douglas.webp`, från seosdesign.se-bloggens författarkort, beskuret 4:5, 600×750, 17 KB).
+- **Positionering:** brödtexten vit (var grå, fg-3).
+
+### Kunskapsbanken /kunskapsbank (2026-09-29)
+
+**Upplägg som en CMS-kollektion** (Astro content collections, inget CMS):
+- `src/content.config.ts` — schemat = fälten; bygget stoppar vid fel.
+- `src/content/kategorier.yaml` — 5 kategorier: AI-grunder, AI-agenter, Automation, AI på egen data, Regelverk och säkerhet.
+- `src/content/sv/kunskapsbank/<slug>/index.md` — en mapp per artikel, mappnamnet = URL:en.
+- `src/lib/kunskapsbank.ts` — sortering (nyast överst), utkastfilter, byggkontroller.
+- `src/components/KbRow.astro` — artikelraden, delas av listan och "Relaterade artiklar".
+- `src/pages/kunskapsbank/index.astro` (listan) och `[slug].astro` (EN artikelmall).
+- Fält: title, description, h1, category, publishedAt, updatedAt?, featured?, draft?, noindex?
+- Byggkontroller (testade): kvarvarande `[LÄNK:`, döda interna länkar, felstavad kategori, H1 i texten.
+
+**Innehåll:** de 12 artiklarna från Douglas Drive-mapp (AI-Partner-blogg, genväg i `G:\Min enhet`) importerade med `site/scripts/import-kunskapsbank.mjs` — repot är nu källan. `/ai-konsult` importeras INTE (Björn). `publishedAt` = Drive-datum (3–4 aug) tills riktiga datum sätts vid lansering; `featured: true` på vad-ar-en-ai-agent. AI-utbildning ligger i AI-grunder.
+
+**Platshållare:** 15 `[LÄNK:]`-länkar → `/kontakt` (bokning, AI-policy/rådgivning, RAG-assistent, processautomation — peka om när tjänstesidorna finns). Sex fristående agent-produktsidor borttagna i vad-ar-en-ai-agent (kundtjänst, ekonomi, sälj, marknad, projektledning, kvalitetskontroll) — lägg tillbaka länkar när sidorna finns.
+
+**Design (efter Björns feedback):** listan = utvald artikel i kort med loopande glasvideo (Wannathis Glass Cloth_01 dark → `public/kunskapsbank/utvald-cloth.*`, skarv 1,22; kontrast mätt mot rörlig video, värsta 4,86 på lästiden, rubrik 11,8) + kategorifilter med antal + radkort (upphöjd yta `#121212`). Artikel: brödsmulor, H1, datum/lästid/kategori, hårlinje, text med klistrad innehållsförteckning (17 px) + bokningsruta, "Relaterade artiklar" (samma kategori, högst 3). **Förkastat:** rutnät med stora ikonomslag (svårt att skanna), hover-ikoner på rader, ikonomslag på artiklar (KbCover + kategoriikoner borttagna), ingress under H1 (upprepade första stycket).
+
+**Övrigt:** Nav "Blogg" → "Kunskapsbank" (aktiv även på artiklar). Layout har canonical/og-taggar + `<slot name="head">`; `site` satt i astro.config. Omdirigering (HTML i statiskt bygge) `ai-agenter---nasta-steg…` → `vad-ar-en-ai-agent`; äkta 301 läggs hos hostingen.
+
+**VÄNTAR (Björn):** de fem gamla artiklarna på nuvarande aipartner.se (ai-for-smaforetag, ai-policy-i-foretag-…, ai-seo-framtidssakra-… [SEOS-område, Douglas], ai-strategi-for-ditt-foretag, sa-anvander-foretag-ai-…) — kan vara inaktuella. Står i `PENDING_LEGACY` i `lib/kunskapsbank.ts`. **Före lansering:** ai-forordningen och skugg-ai länkar till ai-policy-artikeln → flytta den, peka om eller ta bort länkarna; bestäm 301 för resten så ingen gammal URL ger 404.
+
+**Kvar att granska:** tabellerna (ai-forordningen, ai-utbildning-foretag) och artikelmallen på mobil.
+
+### Om oss /om-oss (2026-09-28, commit bae9574)
 
 `src/pages/om-oss.astro`. Flöde (Björns val efter två skissrundor): **AboutHero** (glaslåda som startsidans hero, jättestort "OM OSS" som seosdesign.se/om-oss, litet ord ovanför som byts var 3:e s, video = Wannathis Glass "Ripples on water" dark → `public/about-ripples.{mp4,webm}` 400/120 KB + poster, skarvkvot 2,19) → **AboutStory** (catchphrase-h2 med ord ur mask + längre text, centrerat) → **AboutOffer** ("Från första samtal till AI i drift.": tre löften = de tre tjänstelagren kartlägger/bygger/förvaltar; accentlinje växer med scrollen och tänder raderna; aktiv rad visar 3D-ikon lamp/pencil/column från `public/tjanster/*-slut.webp`) → **AboutQuote** (ett stort citat från Douglas, orden tänds grått→vitt med scrollen; h2 bara för skärmläsare) → **FAQ** (nu props `heading`/`items`; 6 nya frågor om bolaget, FAQPage-schema, extra luft nedtill för footerns klot) → Footer. **Ingen CTA-sektion** (Björn). Björn förkastade: tre grundare i egen sektion, "Hur vi tänker"-principer (lät som interna copy-regler), "Varför vi gör det här" som rubrik, gamla FAQ-frågorna. Kontrast i heron mätt mot rörlig video: rubrik 12,7 · ingress 4,7 (desktop) / 6,2 (mobil). `.sr-only` tillagd i global.css.
 **Justeringar samma kväll (Björn):** ordet ovanför OM OSS borttaget · historien centrerad (som SEOS) · löftesradernas ikoner bytta till egna Blender-stillbilder `public/om-oss/{magnifier,cleaning,arrow}.webp` (Wannathis Charts 49/23/14, pilen i 14 omfärgad till NEW BLUE, pil ned-objektet `Cylinder.029` dolt; skript `motion-grid-bilder/verktyg/blender/still_about.py`) · nytt citat (fortfarande platshållare), större namn/titel · **Robot.astro (verktygen) monterad mellan löftena och citatet**: centrerad rubrik "Rätt verktyg för jobbet. / Ingen inlåsning.", chipsen är inte länkar (ordlistan finns inte), knappen i mitten borttagen, 60 fps · FAQ-frågan om AI-leverantör struken (5 frågor kvar). · Historiens rubrik → "Vi automatiserar / det som tar tid.", linjen AI PARTNER ━ SEOS DESIGN borttagen · ingressen under verktygsrubriken borttagen och flyttad IN i cirkelns mitt ("Vi väljer modell och verktyg efter uppgiften, inte efter leverantör. Här är några av dem vi bygger med."), luft ovanför cirkeln, texten 15–28 px inom 56 % bredd så den håller sig innanför de inre chipsens bana
@@ -237,7 +270,7 @@ Sparade som SVG i `site/public/logos/`. Leonardo.Ai saknar öppen SVG — visas 
 
 **Startsidan:**
 - [ ] Accentfärgen 232/0,85 — satt tillsvidare; Björn har inte bestämt sig, och footerns klot (låsta färger) skiljer sig lite från accenten. Återkom. Douglas godkänner.
-- [ ] Foto på Douglas till `Story.astro` (`PHOTO`).
+- [x] Foto på Douglas till `Story.astro` (2026-09-29).
 - [ ] Copy-granskning av Douglas: Story, CTA, tjänsterutor, kubsektionens steg 3-rad.
 - [ ] Tjänsterutornas länkmål (`/tjanster/<slug>`) när tjänstesidorna finns.
 
@@ -245,7 +278,7 @@ Sparade som SVG i `site/public/logos/`. Leonardo.Ai saknar öppen SVG — visas 
 - [ ] Riktiga kontaktuppgifter (t.ex. kontakt@aipartner.se) i `CONTACT` i `Contact.astro`.
 - [ ] Formulärets backend (beror på deploy: Netlify Forms, e-posttjänst e.d.). Idag demo-kvitto.
 
-**Undersidor (planerad ordning):** ~~Kontakt/bokning~~ (klar) → ~~Om oss~~ (byggd) → Tjänster (kräver Douglas produktbeslut: vilka agentprodukter får egna sidor) → Rådgivning & förvaltning (Advisory) → Kunskapsbank (kräver innehåll + stackbeslut, se `docs/innehall-utan-cms.md`).
+**Undersidor (planerad ordning):** ~~Kontakt/bokning~~ (klar) → ~~Om oss~~ (byggd) → ~~Kunskapsbank~~ (byggd, se ovan) → Tjänster (kräver Douglas produktbeslut: vilka agentprodukter får egna sidor) → Rådgivning & förvaltning (Advisory) → Kunskapsbank (kräver innehåll + stackbeslut, se `docs/innehall-utan-cms.md`).
 
 **Infrastruktur:**
 - [ ] CMS-beslut — Sanity troligen struken för Astro content collections (`docs/innehall-utan-cms.md`); Douglas beslut.

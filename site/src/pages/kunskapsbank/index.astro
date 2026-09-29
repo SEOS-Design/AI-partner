@@ -1,0 +1,332 @@
+---
+// /kunskapsbank – listsidan (2026-09-29).
+// v2 efter Björns feedback (v1 = rutnät med stora omslag var svårt att skanna):
+// EN utvald artikel överst (kort med loopande glasvideo, som startsidans hero), sedan kategorifilter och en lista där varje
+// rad läses i ett svep (kategori · rubrik + en rad om innehållet · lästid). 3D-ikonen
+// syns bara på den utvalda. Raderna är egna kort med upphöjd yta (Björn: bättre
+// läsbarhet); hover-ikonerna på raderna provades och togs bort.
+// Utvald = artikeln med `featured: true`, annars den nyaste. Sortering och utkast-
+// filter sköts i lib/kunskapsbank.ts. Filtret är en förstärkning: utan JS syns allt.
+import Layout from '../../layouts/Layout.astro';
+import Footer from '../../components/Footer.astro';
+import Arrow from '../../components/Arrow.astro';
+import KbRow from '../../components/KbRow.astro';
+import { getCollection, getEntries } from 'astro:content';
+import { getArticles, readingTime } from '../../lib/kunskapsbank';
+
+const articles = await getArticles();
+const featuredArticle = articles.find((a) => a.data.featured) ?? articles[0];
+const cats = await getEntries(articles.map((a) => a.data.category));
+const rows = articles.map((a, i) => ({
+  id: a.id,
+  href: `/kunskapsbank/${a.id}`,
+  title: a.data.h1,
+  text: a.data.description,
+  category: cats[i],
+  minutes: readingTime(a.body),
+  featured: a.id === featuredArticle?.id,
+}));
+const featured = rows.find((r) => r.featured);
+
+// Filterknappar: bara kategorier som har artiklar, i kategorifilens ordning.
+const counts = new Map<string, number>();
+rows.forEach((r) => counts.set(r.category.id, (counts.get(r.category.id) ?? 0) + 1));
+const filters = (await getCollection('kategorier'))
+  .filter((c) => counts.has(c.id))
+  .map((c) => ({ id: c.id, name: c.data.name, count: counts.get(c.id)! }));
+---
+
+<Layout
+  title="Kunskapsbank – guider om AI för företag | AI Partner"
+  description="Guider om AI, AI-agenter, automation och regelverk för små och medelstora företag. Rakt på sak och utan hype, från AI Partner."
+>
+  <main class="kb">
+    <div class="container">
+      <header class="kb__head">
+        <h1 class="kb__h">Kunskapsbank</h1>
+        <p class="kb__lead">
+          Guider om AI, automation och regelverk för små och medelstora företag. Rakt på
+          sak, med källor, och utan hype.
+        </p>
+      </header>
+
+      {featured && (
+        <a class="kb-feat" href={featured.href}>
+          {/* Wannathis Glass "Cloth_01" (dark), 4K → 1600 px. Skarvkvot 1,22 (sömlös).
+              Spelar bara när den syns (inview-video). Postern vid reduced motion. */}
+          <video
+            class="kb-feat__video"
+            data-inview-video
+            preload="auto"
+            muted
+            loop
+            playsinline
+            poster="/kunskapsbank/utvald-cloth-poster.webp"
+            aria-hidden="true"
+          >
+            <source src="/kunskapsbank/utvald-cloth.webm" type="video/webm" />
+            <source src="/kunskapsbank/utvald-cloth.mp4" type="video/mp4" />
+          </video>
+          <span class="kb-feat__tint" aria-hidden="true"></span>
+          <div class="kb-feat__text">
+            <span class="kb-cat">{featured.category.data.name} · Senaste</span>
+            <h2 class="kb-feat__title">{featured.title}</h2>
+            <p class="kb-feat__desc">{featured.text}</p>
+            <span class="kb-feat__meta">
+              <span class="kb-feat__btn">Läs artikeln <Arrow class="arrow" /></span>
+              {featured.minutes} min läsning
+            </span>
+          </div>
+        </a>
+      )}
+
+      <div class="kb-filter" role="group" aria-label="Filtrera på kategori" hidden>
+        <button type="button" class="kb-chip" data-filter="alla" aria-pressed="true">
+          Alla <span>{rows.length}</span>
+        </button>
+        {filters.map((f) => (
+          <button type="button" class="kb-chip" data-filter={f.id} aria-pressed="false">
+            {f.name} <span>{f.count}</span>
+          </button>
+        ))}
+      </div>
+
+      <ul class="kb-list" aria-label="Alla artiklar">
+        {rows.map((r) => (
+          <KbRow
+            href={r.href}
+            title={r.title}
+            text={r.text}
+            category={r.category.data.name}
+            categoryId={r.category.id}
+            minutes={r.minutes}
+            featured={r.featured}
+          />
+        ))}
+      </ul>
+      <p class="kb-empty" hidden>Inga artiklar i den här kategorin än.</p>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .kb {
+    /* Överst: luft för nav-pillen. Nederst: luft för footerns klot (som /kontakt). */
+    padding: clamp(140px, 13vw, 190px) 0 clamp(200px, 20vw, 280px);
+  }
+  .container {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+  }
+  .kb__head {
+    margin-bottom: clamp(40px, 5vw, 64px);
+  }
+  .kb__h {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--fs-h2);
+    line-height: var(--lh-display);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+  }
+  .kb__lead {
+    max-width: 34em;
+    margin: var(--space-5) 0 0;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+  }
+
+  /* Kategorietikett i accentfärg (samma stil som i KbRow). */
+  .kb-cat {
+    font-stretch: 75%;
+    font-size: var(--fs-small);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 80%);
+  }
+
+
+  /* ---- utvald: kort med glasvideo ---- */
+  .kb-feat {
+    position: relative;
+    isolation: isolate; /* innehåller inget fixed */
+    display: flex;
+    align-items: center;
+    min-height: clamp(380px, 38vw, 480px);
+    padding: clamp(28px, 4vw, 56px);
+    overflow: hidden;
+    border: 1px solid var(--border-strong);
+    border-radius: 22px;
+    background: #06070a url('/kunskapsbank/utvald-cloth-poster.webp') center / cover no-repeat;
+    color: inherit;
+    text-decoration: none;
+    outline: none;
+    transition: border-color var(--dur-fast) var(--ease);
+  }
+  .kb-feat:hover,
+  .kb-feat:focus-visible {
+    border-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 70% / 0.7);
+  }
+  .kb-feat:focus-visible { box-shadow: var(--focus-ring); }
+  .kb-feat__video {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .kb-feat__video { display: none; }
+  }
+  /* Tint: mörk mot vänster där texten står, videon syns fritt till höger.
+     Kontrasten uppmätt mot den rörliga videon (se progress.md). */
+  .kb-feat__tint {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(90deg, rgba(6, 7, 10, 0.92) 0%, rgba(6, 7, 10, 0.78) 42%, rgba(6, 7, 10, 0.1) 78%),
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 24%) 7% / 0.2);
+  }
+  .kb-feat__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    max-width: min(36em, 62%);
+  }
+  .kb-feat__title {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(30px, 3.8vw, 52px);
+    line-height: 1.04;
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+    text-wrap: balance;
+  }
+  .kb-feat__desc {
+    margin: 0;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+  }
+  .kb-feat__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    margin-top: var(--space-3);
+    font-size: var(--fs-small);
+    color: var(--fg-3);
+  }
+  /* Ser ut som sidans glasknapp men är en span — hela kortet är redan länken. */
+  .kb-feat__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 12px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent), rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(18px);
+    font-stretch: 75%;
+    font-weight: 700;
+    font-size: var(--fs-small);
+    letter-spacing: var(--tracking-button);
+    text-transform: uppercase;
+    color: var(--fg-1);
+    transition: border-color var(--dur-fast) var(--ease);
+  }
+  .kb-feat:hover .kb-feat__btn {
+    border-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 70%);
+  }
+
+  /* ---- filter ---- */
+  .kb-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: clamp(48px, 6vw, 80px) 0 var(--space-5);
+  }
+  .kb-filter[hidden] { display: none; }
+  .kb-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 9px 16px;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    background: transparent;
+    font: inherit;
+    font-size: var(--fs-small);
+    color: var(--fg-2);
+    cursor: pointer;
+    transition: border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+  }
+  .kb-chip span { color: var(--fg-4); }
+  .kb-chip:hover { border-color: rgba(255, 255, 255, 0.4); color: var(--fg-1); }
+  .kb-chip[aria-pressed='true'] {
+    border-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 70%);
+    color: var(--fg-1);
+  }
+  .kb-chip[aria-pressed='true'] span { color: var(--fg-3); }
+  .kb-chip:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+  /* ---- listan ---- */
+  .kb-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-3);
+  }
+  /* Utan filter (Alla) står den utvalda redan överst → inte en gång till i listan. */
+  .kb-list:not(.is-filtered) :global(.kb-row--featured) { display: none; }
+  .kb-empty {
+    margin: var(--space-6) 0 0;
+    color: var(--fg-3);
+  }
+
+  @media (max-width: 860px) {
+    .kb-feat { align-items: flex-end; min-height: 520px; }
+    .kb-feat__text { max-width: none; }
+    /* på smal skärm står texten nedtill → tinten mörkast nedåt */
+    .kb-feat__tint {
+      background:
+        linear-gradient(0deg, rgba(6, 7, 10, 0.94) 0%, rgba(6, 7, 10, 0.8) 55%, rgba(6, 7, 10, 0.15) 100%),
+        hsl(var(--arc-hue) calc(var(--arc-sat) * 24%) 7% / 0.2);
+    }
+  }
+</style>
+
+<script>
+  import '../../scripts/inview-video';
+
+  // Kategorifilter: visar/döljer rader. Utan JS är filtret dolt och alla rader syns.
+  const bar = document.querySelector<HTMLElement>('.kb-filter');
+  const list = document.querySelector<HTMLElement>('.kb-list');
+  const empty = document.querySelector<HTMLElement>('.kb-empty');
+  if (bar && list) {
+    bar.hidden = false;
+    const chips = Array.from(bar.querySelectorAll<HTMLButtonElement>('.kb-chip'));
+    const rows = Array.from(list.querySelectorAll<HTMLElement>('.kb-row'));
+    const apply = (cat: string) => {
+      chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.filter === cat)));
+      const all = cat === 'alla';
+      list.classList.toggle('is-filtered', !all);
+      let shown = 0;
+      rows.forEach((r) => {
+        const on = all || r.dataset.cat === cat;
+        r.hidden = !on;
+        if (on) shown++;
+      });
+      if (empty) empty.hidden = shown > 0;
+    };
+    chips.forEach((c) => c.addEventListener('click', () => apply(c.dataset.filter ?? 'alla')));
+  }
+</script>

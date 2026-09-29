@@ -1,0 +1,126 @@
+---
+// KbRow.astro – en artikelrad i kunskapsbanken (2026-09-29). Delas av listsidan
+// (/kunskapsbank) och "Relaterade artiklar" på artikelsidorna, så att de alltid ser
+// likadana ut. Kort med upphöjd yta: kategori · rubrik + en rad om innehållet ·
+// lästid · pil. Roten är ett <li> — lägg raderna i en <ul>.
+import Arrow from './Arrow.astro';
+
+interface Props {
+  href: string;
+  title: string;
+  text: string;
+  category: string; // kategorins namn
+  categoryId: string; // för listsidans filter (data-cat)
+  minutes: number;
+  featured?: boolean; // listsidan döljer den utvalda i "Alla"-läget
+}
+const { href, title, text, category, categoryId, minutes, featured = false } = Astro.props;
+---
+
+<li class:list={['kb-row', featured && 'kb-row--featured']} data-cat={categoryId}>
+  <a class="kb-row__link" href={href}>
+    <span class="kb-row__cat">{category}</span>
+    <span class="kb-row__main">
+      <span class="kb-row__title">{title}</span>
+      <span class="kb-row__desc">{text}</span>
+    </span>
+    <span class="kb-row__min">{minutes} min</span>
+    <span class="kb-row__go" aria-hidden="true"><Arrow /></span>
+  </a>
+</li>
+
+<style>
+  .kb-row[hidden] { display: none; }
+  .kb-row__link {
+    display: grid;
+    grid-template-columns: 11em minmax(0, 1fr) 5em auto;
+    gap: var(--space-5);
+    align-items: center;
+    padding: clamp(20px, 2.4vw, 28px) clamp(20px, 2.4vw, 32px);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    /* Upphöjd yta i varje kort — tydligare avgränsning än hårlinjer (Björn 2026-09-29). */
+    background: #121212;
+    color: inherit;
+    text-decoration: none;
+    outline: none;
+    transition: border-color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
+  }
+  .kb-row__link:hover,
+  .kb-row__link:focus-visible {
+    background: #161616;
+    border-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 70% / 0.5);
+  }
+  .kb-row__link:focus-visible { box-shadow: var(--focus-ring); }
+
+  /* Kategorietikett i accentfärg (samma stil som den utvalda artikeln på listsidan). */
+  .kb-row__cat {
+    align-self: start;
+    padding-top: 0.35em;
+    font-stretch: 75%;
+    font-size: var(--fs-small);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 80%);
+  }
+  .kb-row__main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    max-width: 44em;
+  }
+  .kb-row__title {
+    font-weight: 700;
+    font-size: clamp(20px, 2vw, 26px);
+    line-height: 1.2;
+    letter-spacing: var(--tracking-tight);
+    color: var(--fg-1);
+  }
+  .kb-row__desc {
+    font-stretch: 100%;
+    font-size: var(--fs-body);
+    line-height: 1.5;
+    color: var(--fg-3);
+    /* en till två rader räcker för att skanna */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .kb-row__min {
+    font-size: var(--fs-small);
+    color: var(--fg-3);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  /* Rund pil i grått glas (som sidans knappar); kanten tar accenten vid hover. */
+  .kb-row__go {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--fg-1);
+    transition: border-color var(--dur-fast) var(--ease);
+  }
+  .kb-row__go :global(svg) {
+    width: 14px;
+    height: 14px;
+  }
+  .kb-row__link:hover .kb-row__go {
+    border-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 70%);
+  }
+
+  @media (max-width: 860px) {
+    .kb-row__link {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: var(--space-2) var(--space-4);
+    }
+    .kb-row__cat { grid-column: 1 / -1; padding-top: 0; }
+    .kb-row__min { display: none; }
+  }
+</style>

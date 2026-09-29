@@ -1,0 +1,390 @@
+---
+// /kunskapsbank/<slug> – artikelmallen (2026-09-29). EN mall för alla artiklar,
+// motsvarar Webflows Collection Page: ändras mallen ändras alla artiklar.
+// Brödsmulor → H1 + datum/lästid → text med klistrad innehållsförteckning
+// (byggs ur H2:orna) och bokningsruta → relaterade artiklar (samma kategori, högst tre).
+// Ingen ingress: description upprepade artikelns första stycke (Björn 2026-09-29);
+// den används bara som meta-beskrivning och som raden i listorna.
+// (Ikonomslaget överst och ikonkorten längst ned togs bort 2026-09-29, Björn.)
+// Strukturerad data: Article (författare/utgivare = organisationen AI Partner,
+// enligt överlämningen) + BreadcrumbList.
+import { getEntry, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Footer from '../../components/Footer.astro';
+import KbRow from '../../components/KbRow.astro';
+import Arrow from '../../components/Arrow.astro';
+import { getArticles, readingTime, formatDate, type Article } from '../../lib/kunskapsbank';
+
+export async function getStaticPaths() {
+  const articles = await getArticles(); // kör byggkontrollerna
+  return articles.map((article) => ({ params: { slug: article.id }, props: { article, articles } }));
+}
+
+interface Props {
+  article: Article;
+  articles: Article[];
+}
+const { article, articles } = Astro.props;
+const { data } = article;
+const category = await getEntry(data.category);
+const { Content, headings } = await render(article);
+const toc = headings.filter((h) => h.depth === 2);
+const minutes = readingTime(article.body);
+const updated = data.updatedAt && data.updatedAt > data.publishedAt ? data.updatedAt : undefined;
+
+// Relaterade artiklar: bara samma kategori, de tre nyaste (Björn). Finns inga visas
+// inte sektionen.
+const related = articles
+  .filter((a) => a.id !== article.id && a.data.category.id === data.category.id)
+  .slice(0, 3);
+
+const url = new URL(Astro.url.pathname, Astro.site).href;
+const org = { '@type': 'Organization', name: 'AI Partner', url: Astro.site?.href };
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: data.h1,
+    description: data.description,
+    datePublished: data.publishedAt.toISOString().slice(0, 10),
+    dateModified: (updated ?? data.publishedAt).toISOString().slice(0, 10),
+    author: org,
+    publisher: org,
+    mainEntityOfPage: url,
+    inLanguage: 'sv-SE',
+    articleSection: category.data.name,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Kunskapsbank', item: new URL('/kunskapsbank', Astro.site).href },
+      { '@type': 'ListItem', position: 2, name: data.h1, item: url },
+    ],
+  },
+];
+---
+
+<Layout title={data.title} description={data.description} ogType="article" noindex={data.noindex}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(schema)} is:inline />
+  <main class="art">
+    <div class="container">
+      <nav class="art__crumbs" aria-label="Brödsmulor">
+        <a href="/kunskapsbank">Kunskapsbank</a>
+        <span aria-hidden="true">/</span>
+        <span>{category.data.name}</span>
+      </nav>
+
+      <header class="art__head">
+        <h1 class="art__h">{data.h1}</h1>
+        <dl class="art__meta">
+          <div><dt>Publicerad</dt><dd><time datetime={data.publishedAt.toISOString().slice(0, 10)}>{formatDate(data.publishedAt)}</time></dd></div>
+          {updated && <div><dt>Uppdaterad</dt><dd><time datetime={updated.toISOString().slice(0, 10)}>{formatDate(updated)}</time></dd></div>}
+          <div><dt>Lästid</dt><dd>{minutes} min</dd></div>
+          <div><dt>Kategori</dt><dd>{category.data.name}</dd></div>
+        </dl>
+      </header>
+
+      <div class="art__grid">
+        <article class="art__body">
+          <Content />
+        </article>
+
+        <aside class="art__aside">
+          {toc.length > 1 && (
+            <nav class="art__toc" aria-labelledby="toc-title">
+              <p id="toc-title" class="art__aside-h">På den här sidan</p>
+              <ol>
+                {toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
+              </ol>
+            </nav>
+          )}
+          <div class="art__cta">
+            <p class="art__aside-h">Vill ni veta var AI lönar sig hos er?</p>
+            <p>Vi kartlägger era processer kostnadsfritt och visar var automation gör skillnad.</p>
+            <a class="btn btn-glass" href="/kontakt">Boka kartläggning <Arrow class="arrow" /></a>
+          </div>
+        </aside>
+      </div>
+
+      {related.length > 0 && (
+        <section class="art__more" aria-labelledby="more-title">
+          <h2 id="more-title" class="art__more-h">Relaterade artiklar</h2>
+          <ul class="art__more-list">
+            {related.map((a) => (
+              <KbRow
+                href={`/kunskapsbank/${a.id}`}
+                title={a.data.h1}
+                text={a.data.description}
+                category={category.data.name}
+                categoryId={category.id}
+                minutes={readingTime(a.body)}
+              />
+            ))}
+          </ul>
+        </section>
+      )}
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .art {
+    padding: clamp(130px, 12vw, 170px) 0 clamp(200px, 20vw, 280px);
+  }
+  .container {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+  }
+
+  /* ---- brödsmulor ---- */
+  .art__crumbs {
+    display: flex;
+    gap: var(--space-2);
+    font-stretch: 75%;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+  .art__crumbs a {
+    color: var(--fg-2);
+    text-decoration: none;
+  }
+  .art__crumbs a:hover { color: var(--fg-1); }
+
+  /* ---- rubrik + meta ---- */
+  .art__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: clamp(24px, 4vw, 64px);
+    align-items: end;
+    margin-top: clamp(28px, 3vw, 44px);
+  }
+  .art__h {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(38px, 5.4vw, 72px);
+    line-height: var(--lh-display);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+    text-wrap: balance;
+  }
+  .art__meta {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    min-width: 12em;
+    font-size: var(--fs-small);
+  }
+  .art__meta div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--border);
+  }
+  .art__meta dt { color: var(--fg-3); }
+  .art__meta dd { margin: 0; color: var(--fg-1); }
+
+
+  /* ---- text + sidokolumn ---- */
+  .art__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+    gap: clamp(48px, 7vw, 120px);
+    /* Luft + hårlinje mellan sidhuvudet och texten (Björn: mallen kändes texttung). */
+    margin-top: clamp(48px, 6vw, 88px);
+    padding-top: clamp(48px, 6vw, 88px);
+    border-top: 1px solid var(--border);
+    align-items: start;
+  }
+  .art__aside {
+    position: sticky;
+    top: 104px; /* under nav-pillen */
+    display: grid;
+    gap: var(--space-8);
+  }
+  /* Större sidokolumn (Björn 2026-09-29: förteckningen var för liten). */
+  .art__aside-h {
+    margin: 0 0 var(--space-4);
+    font-stretch: 75%;
+    font-size: var(--fs-body);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-1);
+  }
+  .art__toc ol {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 var(--space-4);
+    border-left: 1px solid var(--border);
+    display: grid;
+    gap: var(--space-4);
+  }
+  .art__toc a {
+    display: block;
+    font-size: var(--fs-body);
+    line-height: 1.4;
+    color: var(--fg-3);
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .art__toc a:hover { color: var(--fg-1); }
+  .art__toc a.is-current { color: var(--fg-1); }
+  .art__cta {
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: var(--bg-raised);
+  }
+  .art__cta p:not(.art__aside-h) {
+    margin: 0 0 var(--space-5);
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--fg-3);
+  }
+
+  /* ---- brödtexten (markdown) ---- */
+  .art__body {
+    min-width: 0;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+  }
+  .art__body :global(p),
+  .art__body :global(ul),
+  .art__body :global(ol) {
+    margin: 0 0 1.5em;
+  }
+  .art__body :global(h2) {
+    margin: 2.6em 0 0.75em;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(26px, 2.8vw, 38px);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+    scroll-margin-top: 110px;
+  }
+  .art__body :global(h2:first-child) { margin-top: 0; }
+  .art__body :global(h3) {
+    margin: 2em 0 0.6em;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(20px, 1.8vw, 24px);
+    line-height: 1.25;
+    color: var(--fg-1);
+    scroll-margin-top: 110px;
+  }
+  .art__body :global(strong) { color: var(--fg-1); font-weight: 600; }
+  .art__body :global(a) {
+    color: var(--fg-1);
+    text-decoration: underline;
+    text-decoration-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 70% / 0.7);
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+    transition: text-decoration-color var(--dur-fast) var(--ease);
+  }
+  .art__body :global(a:hover) { text-decoration-color: currentColor; }
+  .art__body :global(ul),
+  .art__body :global(ol) { padding-left: 1.3em; }
+  .art__body :global(li + li) { margin-top: 0.6em; }
+  .art__body :global(li::marker) { color: var(--fg-3); }
+  .art__body :global(blockquote) {
+    margin: 1.4em 0;
+    padding-left: var(--space-5);
+    border-left: 2px solid hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 70%);
+    color: var(--fg-1);
+  }
+  .art__body :global(hr) {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 2.4em 0;
+  }
+  /* Tabeller (ai-forordningen, ai-utbildning-foretag) — rullar i sidled på mobil. */
+  .art__body :global(table) {
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+    margin: 1.4em 0;
+    border-collapse: collapse;
+    font-size: var(--fs-small);
+    line-height: 1.5;
+  }
+  .art__body :global(th),
+  .art__body :global(td) {
+    padding: 12px 14px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--border);
+    min-width: 9em;
+  }
+  .art__body :global(th) {
+    color: var(--fg-1);
+    font-weight: 600;
+    border-bottom-color: var(--border-strong);
+  }
+
+  /* ---- fler artiklar ---- */
+  .art__more {
+    margin-top: clamp(64px, 8vw, 120px);
+    padding-top: clamp(40px, 5vw, 64px);
+    border-top: 1px solid var(--border);
+  }
+  .art__more-h {
+    margin: 0 0 clamp(24px, 3vw, 40px);
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--fs-h3);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+  }
+  .art__more-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  @media (max-width: 960px) {
+    .art__head { grid-template-columns: minmax(0, 1fr); }
+    .art__grid { grid-template-columns: minmax(0, 1fr); }
+    .art__aside { position: static; }
+    .art__toc { display: none; } /* på smal skärm: bara bokningsrutan, efter texten */
+  }
+</style>
+
+<script>
+  // Markerar rubriken i innehållsförteckningen som man läser just nu.
+  const links = new Map(
+    Array.from(document.querySelectorAll<HTMLAnchorElement>('.art__toc a')).map((a) => [
+      decodeURIComponent(a.hash.slice(1)),
+      a,
+    ]),
+  );
+  const heads = Array.from(document.querySelectorAll<HTMLElement>('.art__body h2[id]'));
+  if (links.size && heads.length && 'IntersectionObserver' in window) {
+    let current: HTMLAnchorElement | undefined;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          current?.classList.remove('is-current');
+          current = links.get(e.target.id);
+          current?.classList.add('is-current');
+        }
+      },
+      { rootMargin: '-110px 0px -65% 0px' },
+    );
+    heads.forEach((h) => io.observe(h));
+    document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
+  }
+</script>

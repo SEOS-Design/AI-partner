@@ -1,0 +1,13 @@
+# Kunskapsbankens kategorier (Björn 2026-09-29: fem stycken).
+# Artiklarnas `category` refererar till id här — en felstavning stoppar bygget.
+# (Ikonomslag per kategori provades och togs bort 2026-09-29 — Björn gillade dem inte.)
+- id: ai-grunder
+  name: AI-grunder
+- id: ai-agenter
+  name: AI-agenter
+- id: automation
+  name: Automation
+- id: ai-pa-egen-data
+  name: AI på egen data
+- id: regelverk-sakerhet
+  name: Regelverk och säkerhet

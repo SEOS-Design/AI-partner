@@ -1,18 +1,31 @@
 # Byggstatus — aipartner.se
 
-> Senast uppdaterad: 2026-09-28
+> Senast uppdaterad: 2026-09-29
 
 ---
 
 ## Var vi är nu
 
-**Startsidan är klar i sin helhet**, **kontaktsidan `/kontakt`** och **Om oss `/om-oss`** är byggda (Om oss ej committad 2026-09-28). Övriga undersidor är inte påbörjade. Inget är driftsatt — det sker i Fas 4 efter Douglas granskning.
+**Byggt:** startsidan, `/kontakt`, `/om-oss` och `/kunskapsbank` (12 artiklar). Kvar: tjänstesidorna (kräver Douglas produktbeslut). **Senast:** "Det är där vi kommer in." i Stats animeras nu ord för ord som Story (2026-09-30, väntar på Björns omdöme; se Stats-avsnittet nedan).
 
-- **Driftsatt:** Nej. Det finns **ingen deploy-pipeline** (ingen netlify/vercel/actions-config) — push till `master` är bara backup till GitHub och går inte live.
+- **Driftsatt:** Vercel-projekt kopplat till repot (på Björns privata Vercel-konto; ska flyttas till SEOS Pro-teamet via Transfer Project — kontrollera GitHub-kopplingen efteråt). Root Directory måste vara `site`. Ingen vercel.json. Äkta 301:or läggs där när det blir aktuellt.
 - **Repo:** github.com/SEOS-Design/AI-partner, branch `master`
 - **Dev-server:** `cd site && npm run dev` → http://localhost:4321 (Björn kör den själv — starta ingen egen)
-- **Senast pushat:** `d4a02b6` (2026-09-23). **Committat lokalt, EJ pushat:** `3244b47` (footer) · `b5a18de` (tjänsterutor + StartProcess) · `a2d887e` · `23a40bf` (avslutning, typografi, knappar, canvas-kub) · `533a26e` (/kontakt). Björn vill ofta vänta med push.
+- **Senast pushat:** `d6403e8` (2026-09-29: Om oss, kunskapsbanken, hero/nav/footer-justeringar). **Ej committat:** Stats v2 (`Stats.astro`).
 - **Medvetet utanför git:** `CLAUDE.md` (Douglas fil, ändrad), `AI-Partner-strategi-brief-2026-07.md` (committas inte utan avstämning), `pexels-…jpg` (testbild).
+
+### Stats-sektionen v2 (2026-09-29, EJ committad) — NÄSTA STEG: gör slutmeningens animation långsammare
+
+`site/src/components/Stats.astro` (Björns val "C" efter skisser A/B/C; v1 i git-historiken).
+- **Layout:** två kolumner. Rubriken **"Var står svenska företag med AI?"** (PLATSHÅLLARE, Björn; copy → Douglas) står låst till vänster (`position: sticky`, top clamp(110px, 16vh, 150px)) och släpper exakt i linje med sista siffran (`.stats__side` stretchar till listans höjd). Siffrorna rullar förbi till höger, en per ~58svh. Siffrorna/formuleringarna/källorna LÅSTA som förut.
+- **Borttaget på Björns begäran:** räknare (uppräkning), tänd/dämpad-effekten, "(01)–(03)"-etiketterna.
+- **"Det är där vi kommer in."** — samma storlek som rubriken (`--fs-h2`), egen rad under kolumnerna, centrerad. På bred skärm utan reduced motion: `.statement-stage` (lika hög som meningen) är sticky med `top: --pin` (= 50svh − fs-h2·0,55 → meningens mitt i vyns mitt) medan meningen glider in RAKT från vänster (`translateX(-100vw)` → 0).
+  - Glidningen = **CSS scroll-driven animation**: `view-timeline: --statement` på `.statement-track`, `animation-range: cover calc(100svh − --pin + --gap) cover calc(… + --run)`. En JS-driven transform låg en bildruta efter den trådade scrollningen → rörelsen såg diagonal ut ("snett"). JS finns kvar bara som reserv (`CSS.supports('animation-timeline: --a')`, t.ex. Firefox).
+  - Glidsträckan `--run` (16svh) ligger som `::after`-block i spåret — INTE padding (sticky rör sig bara inom förälderns innehållsyta; med padding låste den aldrig).
+  - Lika luft upptill/nedtill när den landat: `.stats { padding-bottom: calc(--gap + --run) }` (--gap = space-7). Uppmätt: 192/193 px (1440×900), 163/164 (1280×720), 220/222 (1920×1080).
+  - Mobil/reduced motion: statisk, centrerad, ingen animation.
+- **2026-09-30 — glidningen ERSATT (Björn: testa något annat än att den flyger in):** meningen animeras nu som Storys "Vår historia." — varje ord i en mask glider upp ur den, ett i taget (0,9 s, 0,11 s mellan orden), när meningen nått ~20 % upp i vyn (IntersectionObserver, en gång). Ingen sticky/scroll-driven animation längre. Slutläget oförändrat: `padding-top` på spåret = `--gap + --run`, sektionens `padding-bottom` samma → uppmätt 192/193 (1440×900), 163/164 (1280×720), 221/222 (1920×1080). Animerar även på mobil; reduced motion/utan JS = statisk. Glidversionen sparad i `site/src/components/Stats.slide.astro.bak` (revert: kopiera tillbaka över Stats.astro).
+- (Gammalt) **NÄSTA STEG (Björn):** animationen är "alldeles för snabb". Den går över `--run` = 16svh scroll (~145 px vid 900 px höjd). Att bara höja `--run` ökar också luften (padding = gap + run). Alternativ att pröva: (a) längre `--run` men låt meningen landa tidigare i låsningen och sänk padding så luften ändå blir lika (luften blir då lika först efter en stund), (b) längre `--run` och acceptera mer luft, (c) låt glidningen följa scrollen långsammare genom att skala `animation-range` över en längre sträcka där spåret har extra tomrum ovanför scenen. Mät med Playwright headless (skriptmönster: sticky-mitt = vh/2, luft upp/ner vid landning).
 
 ### Justeringar startsida, nav och footer (2026-09-29)
 
@@ -109,7 +122,7 @@ Björns val "B" (SEOS /kontakt utan "klotter"): `src/pages/kontakt.astro` + `Con
 | Nav | `Nav.astro` (via `Layout.astro`) | Tre zoner: statiskt ordmärke · fast glas-pill i mitten (bara länkar) · boknings-CTA → `/kontakt`. Länkar: Tjänster/Om oss/Blogg/Kontakt (bara /kontakt finns). Mobil: hamburger + drawer. |
 | Hero | `Hero.astro` | Glas-box med loopande glas-video (Wannathis "Abstract objects"). |
 | Positionering | `Positionering.astro` | Stort statement + "Boka kartläggning" (glas → /kontakt) och "Mer om oss" (vit → /om-oss, 404). Punktrutnät-video ("Wall"). |
-| Stats | `Stats.astro` | Tre källgranskade siffror (LÅSTA) med räknare + accentlinje. |
+| Stats | `Stats.astro` | v2: låst rubrik vänster, tre källgranskade siffror (LÅSTA) rullar höger, "Det är där vi kommer in." glider in rakt från vänster (scroll-driven). Se avsnittet ovan. |
 | Services | `Services.astro` | Tjänsterutorna: 5 rutor (5+7 / 4+3+5), hover spelar en 3D-illustration en gång. Länkar `/tjanster/<slug>` = platshållare. (`Departments.astro` kvar, ej i index.) |
 | StartFlow | `StartProcess.astro` | "Var börjar ni med AI?": låst vy, tre steg som vilar i tur och ordning, glaskub ritad på canvas ur bildsekvens, scroll-indikator. Steg 3 → /kontakt. |
 | Story | `Story.astro` | "Vår historia." / "Ett team." / "Två varumärken." (ord glider upp), berättelse, porträtt (initialer tills foto) med namn/titel/SEOS-länk. |

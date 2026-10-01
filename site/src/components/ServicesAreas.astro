@@ -1,0 +1,353 @@
+---
+// ServicesAreas.astro – "Var brukar vi börja?" på /tjanster (2026-09-30).
+// Fem områden med tre korta delar var (det som tar tid / det vi bygger / så kan det
+// se ut). Avslutas med "Hittar ni inte ert område?" — listan är exempel, inte gränser.
+//
+// KORTEN (Björns val "A · Glaskort"): varje område är ett glaskort (22px radie,
+// --border-strong-kant, ljus topp; ingen backdrop-filter) med stort konturnummer i
+// hörnet, en LITEN ikon (3D-stillbilden från startsidans tjänsterutor, ~110px, Björn:
+// ikonerna ska inte ta fokus) bredvid rubriken och de tre delarna som kolumner, så
+// kortet går snabbt att skumma.
+//
+// KORTSTAPEL (GSAP ScrollTrigger, grund = demot "Pinned panels with overscroll"): på
+// bred skärm utan reduced motion låses varje kort under nav-pillen; nästa glider upp
+// och täcker det, och det täckta tonas ner och krymper något. Alla kort får samma
+// höjd (den högsta, mätt i scriptet) så inget sticker ut under ett täckande kort. Ett
+// kort som är högre än vyn låses först när nederkanten når vyns nederkant → inget
+// klipps. Sista kortet låses inte. pinSpacing: false → korten ligger kvar i flödet och
+// ankarlänkarna från startsidans rutor (#salj-offert …) landar rätt.
+// Mobil/reduced motion/utan JS: korten under varandra.
+//
+// Innehållet ligger i kollektionen `tjanster` (src/content/sv/tjanster/<id>/index.md).
+import { getCollection } from 'astro:content';
+import Arrow from './Arrow.astro';
+
+const areas = (await getCollection('tjanster')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section class="areas" aria-labelledby="areas-title">
+  <div class="container">
+    <div class="areas__head">
+      <h2 id="areas-title" class="h2">Var brukar vi börja?</h2>
+      <p class="areas__lead">
+        Fem områden där rutinarbetet oftast tar mest tid. Så här kan det se ut hos er.
+      </p>
+    </div>
+
+    <div class="areas__list">
+      {areas.map((a, i) => (
+        <article id={a.id} class="area" aria-labelledby={`area-${a.id}`}>
+          <div class="card">
+            <span class="card__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <div class="card__top">
+              <div class="card__icon" aria-hidden="true">
+                <img src={`/tjanster/${a.data.media}-slut.webp`} alt="" width="540" height="540" loading="lazy" decoding="async" />
+              </div>
+              <h3 class="card__h" id={`area-${a.id}`}>
+                <span class="card__name">{a.data.name}</span>
+                <span class="card__heading">{a.data.heading}</span>
+              </h3>
+            </div>
+            <dl class="card__parts">
+              <div>
+                <dt>Det som tar tid</dt>
+                <dd>{a.data.takesTime}</dd>
+              </div>
+              <div>
+                <dt>Det vi bygger</dt>
+                <dd>{a.data.build}</dd>
+              </div>
+              <div>
+                <dt>Så kan det se ut</dt>
+                <dd>{a.data.example}</dd>
+              </div>
+            </dl>
+            <div class="card__shade" aria-hidden="true"></div>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <div class="custom">
+      <h2 class="h2 custom__h">Hittar ni inte ert område?</h2>
+      <div class="custom__body">
+        <p>
+          Listan ovan är exempel, inte gränser. Beskriv vad som tar tid hos er, så tar vi
+          reda på om det går att automatisera och vad det skulle ge.
+        </p>
+        <a class="btn btn-glass" href="/kontakt">Berätta om ert behov <Arrow class="arrow" /></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .areas {
+    --lock: 96px; /* kortens låsläge: under nav-pillen + luft */
+    padding: var(--section-py) 0;
+    background: var(--bg-raised);
+    border-block: 1px solid var(--border);
+  }
+  .container {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+  }
+  .areas__head .h2 { margin: 0; }
+  .areas__lead {
+    margin: var(--space-5) 0 0;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+  }
+
+  /* ---- korten ---- */
+  .areas__list {
+    margin-top: clamp(48px, 6vw, 88px);
+    display: grid;
+    gap: var(--space-5);
+  }
+  .area {
+    scroll-margin-top: var(--lock); /* ankarlänkar landar där kortet låses */
+  }
+  .card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 22px;
+    border: 1px solid var(--border-strong);
+    /* Opakt (täcker kortet under i stapeln) — glaset kommer av kanten, ljus topp och
+       en inre highlight, inte av backdrop-filter. */
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0) 40%),
+      #151518;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 24px 60px rgba(0, 0, 0, 0.45);
+    padding: clamp(24px, 3.2vw, 44px);
+    transform-origin: 50% 0;
+  }
+
+  /* Stort konturnummer i övre högra hörnet. */
+  .card__num {
+    position: absolute;
+    top: clamp(4px, 1vw, 12px);
+    right: clamp(16px, 2.4vw, 32px);
+    font-weight: 800;
+    font-size: clamp(88px, 11vw, 150px);
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.13);
+    pointer-events: none;
+  }
+
+  .card__top {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: clamp(16px, 2.4vw, 32px);
+    padding-right: clamp(80px, 12vw, 170px); /* rubriken går inte in under numret */
+  }
+  /* Liten ikon med svagt indigosken bakom. Renderingarna har #050505 inbakat →
+     "lighten" mot kortets yta så bara föremålet syns. */
+  .card__icon {
+    position: relative;
+    flex: none;
+    width: clamp(76px, 8vw, 112px);
+    aspect-ratio: 1;
+  }
+  .card__icon::before {
+    content: "";
+    position: absolute;
+    inset: -30%;
+    background: radial-gradient(closest-side, hsl(var(--arc-hue) 70% 55% / 0.22), transparent);
+    pointer-events: none;
+  }
+  .card__icon img {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    mix-blend-mode: lighten;
+  }
+
+  .card__h {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .card__name {
+    font-size: var(--fs-small);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+  .card__heading {
+    font-size: var(--fs-h3);
+    font-weight: 700;
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+    text-wrap: balance;
+  }
+
+  /* De tre delarna som kolumner → snabba att skumma. */
+  .card__parts {
+    position: relative;
+    margin: clamp(24px, 3vw, 40px) 0 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(20px, 2.6vw, 36px);
+  }
+  .card__parts div {
+    border-top: 1px solid var(--border);
+    padding-top: var(--space-4);
+  }
+  .card__parts dt {
+    font-size: var(--fs-small);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    /* Accenten sparsamt: bara etiketterna. Tunn text i lila behöver ljushet. */
+    color: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 82%);
+  }
+  .card__parts dd {
+    font-stretch: 100%; /* brödtext = full bredd (den globala regeln gäller bara p) */
+    margin: var(--space-2) 0 0;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+  }
+
+  /* Mörkret över ett kort som täcks av nästa (GSAP styr opaciteten). */
+  .card__shade {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    opacity: 0;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  /* Stapelläge (sätts av scriptet): luft mellan korten = scrollsträckan de står låsta. */
+  .areas.is-stack .areas__list {
+    gap: 28svh;
+  }
+  .areas.is-stack .card {
+    min-height: var(--card-h, auto);
+    display: flex;
+    flex-direction: column;
+  }
+  .areas.is-stack .card__parts {
+    margin-top: auto;
+    padding-top: clamp(24px, 3vw, 40px);
+  }
+
+  /* ---- "Hittar ni inte ert område?" ---- */
+  .custom {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(32px, 5vw, 80px);
+    align-items: end;
+    margin-top: clamp(64px, 8vw, 112px);
+    padding-top: clamp(64px, 8vw, 112px);
+    border-top: 1px solid var(--border);
+  }
+  .custom__h { margin: 0; }
+  .custom__body p {
+    margin: 0 0 var(--space-5);
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+  }
+
+  @media (max-width: 859px) {
+    .card__parts,
+    .custom {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .card__top {
+      padding-right: 64px;
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const section = document.querySelector<HTMLElement>('.areas');
+  if (section) {
+    const mm = gsap.matchMedia();
+    mm.add('(min-width: 860px) and (prefers-reduced-motion: no-preference)', () => {
+      section.classList.add('is-stack');
+      const areas = gsap.utils.toArray<HTMLElement>('.area', section);
+      const cards = areas.map((a) => a.querySelector<HTMLElement>('.card')!);
+      const lock = () => parseFloat(getComputedStyle(section).getPropertyValue('--lock')) || 96;
+
+      // Alla kort lika höga (den högsta) → inget sticker ut under ett täckande kort.
+      const equalize = () => {
+        section.style.removeProperty('--card-h');
+        const max = Math.max(...cards.map((c) => c.offsetHeight));
+        section.style.setProperty('--card-h', `${max}px`);
+      };
+      equalize();
+      ScrollTrigger.addEventListener('refreshInit', equalize);
+
+      areas.forEach((area, i) => {
+        const next = areas[i + 1];
+        if (!next) return; // sista kortet låses inte
+        const card = cards[i];
+
+        // Låses under nav om kortet ryms, annars när nederkanten når vyns nederkant.
+        ScrollTrigger.create({
+          trigger: card,
+          start: () =>
+            card.offsetHeight + lock() <= window.innerHeight ? `top ${lock()}px` : 'bottom bottom-=24',
+          endTrigger: next,
+          end: () => `top ${lock()}px`,
+          pin: area,
+          pinSpacing: false,
+        });
+
+        // Tonas ner och krymper lite medan nästa kort glider upp över det.
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: next,
+              start: 'top bottom',
+              end: () => `top ${lock()}px`,
+              scrub: true,
+            },
+          })
+          .to(card, { scale: 0.94, ease: 'none' }, 0)
+          .to(card.querySelector('.card__shade'), { opacity: 0.55, ease: 'none' }, 0);
+      });
+
+      return () => {
+        ScrollTrigger.removeEventListener('refreshInit', equalize);
+        section.classList.remove('is-stack');
+        section.style.removeProperty('--card-h');
+      };
+    });
+
+    // Bilderna/typsnitten kan ändra höjder efter start → räkna om lägena. Omräkningen
+    // avbryter webbläsarens (mjuka) scroll till ett ankare (#salj-offert från
+    // startsidan; uppmätt: stannade halvvägs) → scrolla dit igen efteråt.
+    window.addEventListener(
+      'load',
+      () => {
+        ScrollTrigger.refresh();
+        const id = decodeURIComponent(location.hash.slice(1));
+        if (id) document.getElementById(id)?.scrollIntoView();
+      },
+      { once: true },
+    );
+    document.addEventListener('astro:before-swap', () => mm.revert(), { once: true });
+  }
+</script>

@@ -1,0 +1,53 @@
+---
+// /tjanster – samlingssidan för tjänsterna (2026-09-30). Björns upplägg: ENKLARE än
+// SEOS tjänstekatalog, betoning på att vi kartlägger och skräddarsyr. Flöde:
+// Hero (som Om oss: jätteordet i mitten + budskapet, Displacement-video) → processen →
+// fem områden (variant B, kollektionen `tjanster`) + "Hittar ni inte ert område?" →
+// FAQ → ContactCta → Footer.
+// Startsidans tjänsterutor länkar hit till respektive område (#kundtjanst …). När ett
+// område får en egen sida blir den /tjanster/<id> med samma fält som mall.
+// Copy = utkast (Douglas granskar).
+import Layout from '../../layouts/Layout.astro';
+import ServicesHero from '../../components/ServicesHero.astro';
+import ServicesProcess from '../../components/ServicesProcess.astro';
+import ServicesAreas from '../../components/ServicesAreas.astro';
+import FAQ from '../../components/FAQ.astro';
+import ContactCta from '../../components/ContactCta.astro';
+import Footer from '../../components/Footer.astro';
+
+// Frågor om hur ett uppdrag går till. Blir FAQPage-schema.
+const FAQS = [
+  {
+    q: 'Vad kostar det?',
+    a: 'Vi publicerar inga fasta priser och har inget abonnemang. Varje uppdrag prissätts efter problemet det ska lösa. Efter kartläggningen får ni ett konkret förslag, och vi börjar oftast avgränsat så att ni ser resultatet innan ni bygger vidare.',
+  },
+  {
+    q: 'Måste vi byta system?',
+    a: 'I de flesta fall nej. Vi kopplar lösningen till systemen ni redan använder, till exempel affärssystem, CRM och mejl. Saknar ett system en koppling tar vi upp det redan i kartläggningen.',
+  },
+  {
+    q: 'Måste vi redan kunna AI för att börja?',
+    a: 'Nej. Vi jobbar både med företag som vet exakt vad de vill automatisera och med dem som inte vet var de ska börja. Vill ni förstå mer först kommer vi gärna ut och föreläser.',
+  },
+  {
+    q: 'Vem äger lösningen när den är klar?',
+    a: 'Ni gör. Kod, prompts och flöden tillhör er, och er data stannar hos er. Vi kan förvalta lösningen, men ni är aldrig inlåsta hos oss.',
+  },
+  {
+    q: 'Vad säger EU:s AI-förordning?',
+    a: 'För de flesta processer går det bra att använda AI. Vissa användningar, till exempel gallring av CV:n, räknas som högrisk och kräver extra mänsklig kontroll. Vi hjälper er att sätta en policy och följa regelverket.',
+  },
+];
+---
+
+<Layout
+  title="Tjänster – AI-agenter och automation | AI Partner"
+  description="AI Partner kartlägger var tiden går och bygger AI-agenter och automationer för kundtjänst, ekonomi, sälj, kvalitet och egen data. Skräddarsytt, från kartläggning till drift."
+>
+  <ServicesHero />
+  <ServicesProcess />
+  <ServicesAreas />
+  <FAQ heading="Vanliga frågor om hur vi jobbar" items={FAQS} beforeFooter={false} />
+  <ContactCta />
+  <Footer />
+</Layout>

@@ -1,0 +1,190 @@
+---
+// ServicesHero.astro – heron på /tjanster (2026-09-30).
+// Speglar Om oss-heron (AboutHero): glaslådan, jätteordet "Tjänster" i mitten och
+// ingressen under. (Först byggd som startsidans variant med ordet längs nederkanten
+// + knapp; Björn ville ha plats för budskapet under rubriken → Om oss-varianten.
+// Statementet "Vi börjar med er vardag…" under heron togs bort samtidigt och bor nu
+// i ingressen.)
+//
+// Video (2026-10-01, Björn): Wannathis "Glass cylinders" (dark) → public/tjanster-skivor.*
+// (1920, 30 fps, 12,1 s, mp4 1,5 MB / webm 0,6 MB). HELT SÖMLÖS loop utan övertoning:
+// källan (718 rutor i 60 fps) är nästan en loop — det saknas ~8 rutors rörelse mellan
+// sista och första rutan. De saknade rutorna är framräknade med ffmpeg minterpolate
+// (i videons eget färgformat; via PNG gav det ett färgskift i skarven) och varannan
+// ruta behållen. Uppmätt: stegen runt skarven 0,4–1,0 × klippets medelsteg (klippets
+// egen variation 0,5–2,0). Den äldre public/dep-glass.* (Departments) har i stället en
+// 1 s crossfade där skivorna syns dubbelt. Displacement ligger kvar i tjanster-hero.*.
+// Postern = första rutan, visas innan videon laddat och vid reduced motion.
+// Copy = utkast (Douglas granskar).
+---
+
+<section class="shero" aria-labelledby="shero-title">
+  <div class="shero__box">
+    <video
+      class="shero__video"
+      data-inview-video
+      preload="auto"
+      muted
+      loop
+      playsinline
+      poster="/tjanster-skivor-poster.webp"
+      aria-hidden="true"
+    >
+      <source src="/tjanster-skivor.webm" type="video/webm" />
+      <source src="/tjanster-skivor.mp4" type="video/mp4" />
+    </video>
+    <div class="shero__bg" aria-hidden="true"></div>
+    <div class="shero__tint" aria-hidden="true"></div>
+
+    <div class="shero__center">
+      <h1 id="shero-title" class="shero__title">
+        <span class="shero__mask"><span class="shero__in">Tjänster</span></span>
+      </h1>
+      <p class="shero__lead">
+        Vi börjar med er vardag, inte med en produktlista. Vi bygger AI-agenter och
+        automationer som tar bort det som tar tid hos just er, och sköter dem efter
+        lansering.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .shero {
+    --edge: 10px;
+    --radius: 32px;
+    position: relative;
+    min-height: 100svh;
+    padding: var(--edge);
+    background: var(--bg);
+    isolation: isolate;
+  }
+
+  .shero__box {
+    position: relative;
+    min-height: calc(100svh - var(--edge) * 2);
+    display: grid;
+    place-items: center;
+    padding: clamp(96px, 14vh, 140px) clamp(24px, 5vw, 72px) clamp(48px, 8vh, 96px);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #06070a;
+  }
+  /* Kanten = design-systemets hårstreck, ovanpå video och tint. */
+  .shero__box::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    border-radius: inherit;
+    pointer-events: none;
+    border: 1px solid var(--border-strong);
+  }
+
+  .shero__bg,
+  .shero__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+  }
+  .shero__bg {
+    z-index: 0;
+    background: url("/tjanster-skivor-poster.webp") center / cover no-repeat;
+  }
+  .shero__video {
+    z-index: 1;
+    object-fit: cover;
+    display: block;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .shero__video { display: none; }
+  }
+
+  /* Tinten är mörkare än Om oss: glasskivorna är ljusa och hamnar rakt bakom texten.
+     Kontrasten mätt mot den rörliga videon, se docs/progress.md. */
+  .shero__tint {
+    --flat: 0.1;
+    --core: 0.56;
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 78% 64% at 50% 56%, rgba(6, 7, 10, var(--core)) 0%, rgba(6, 7, 10, var(--core)) 38%, rgba(6, 7, 10, 0) 82%),
+      radial-gradient(120% 100% at 50% 50%, transparent 52%, rgba(4, 5, 7, 0.5) 100%),
+      linear-gradient(rgba(6, 7, 10, var(--flat)), rgba(6, 7, 10, var(--flat))),
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 24%) 7% / 0.2);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  }
+  /* Mobil: skivorna fyller hela lådan bakom texten → mer tint. */
+  @media (max-width: 700px) {
+    .shero__tint {
+      --flat: 0.22;
+      --core: 0.68;
+    }
+  }
+
+  .shero__center {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* ---- jätterubriken ---- */
+  .shero__title {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(88px, 17vw, 240px);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    color: var(--fg-1);
+  }
+  /* Masken klipper ordet när det glider upp. Luft upptill så att Ä-prickarna inte
+     klipps (Om oss-rubriken har inga prickar). */
+  .shero__mask {
+    display: inline-block;
+    overflow: clip;
+    padding: 0.14em 0 0.04em;
+    margin-top: -0.14em;
+  }
+  .shero__in {
+    display: inline-block;
+  }
+
+  .shero__lead {
+    max-width: 34em;
+    margin: var(--space-6) 0 0;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-1); /* vit: står över ljusa glasskivor */
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .shero__in {
+      transform: translateY(120%);
+      animation: sheroRise 1.1s cubic-bezier(0.16, 0.84, 0.32, 1) 0.3s forwards;
+    }
+    .shero__lead {
+      opacity: 0;
+      animation: sheroFade 0.9s var(--ease) 0.9s forwards;
+    }
+  }
+  @keyframes sheroRise {
+    to { transform: none; }
+  }
+  @keyframes sheroFade {
+    to { opacity: 1; }
+  }
+</style>
+
+<script>
+  import '../scripts/inview-video';
+</script>

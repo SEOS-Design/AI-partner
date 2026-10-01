@@ -33,4 +33,23 @@ const kunskapsbank = defineCollection({
   }),
 });
 
-export const collections = { kategorier, kunskapsbank };
+// Tjänsteområdena (2026-09-30). Visas som sektioner på /tjanster (#<id>); samma fält
+// blir mallen när ett område får en egen sida (/tjanster/<id>, brödtexten i index.md).
+const tjanster = defineCollection({
+  loader: glob({
+    pattern: '*/index.md',
+    base: './src/content/sv/tjanster',
+    generateId: ({ entry }) => entry.replace(/\/index\.md$/, ''),
+  }),
+  schema: z.object({
+    name: z.string(), // områdets namn, som på startsidans tjänsterutor
+    order: z.number(),
+    media: z.enum(['mobile', 'column', 'funnel', 'lamp', 'pencil']), // 3D-bild i public/tjanster/
+    heading: z.string(),
+    takesTime: z.string(), // "Det som tar tid"
+    build: z.string(), // "Det vi bygger"
+    example: z.string(), // "Så kan det se ut"
+  }),
+});
+
+export const collections = { kategorier, kunskapsbank, tjanster };

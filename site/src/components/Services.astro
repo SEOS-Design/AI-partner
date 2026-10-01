@@ -13,7 +13,8 @@
 // inom 81–558 px) så motivet blir större i rutan. Rutorna har samma #050505.
 // `*-slut.webp` = videons sista ruta → stillbild vid reduced motion.
 //
-// OBS platshållare (stäm av med Douglas): länkmålen (tjänstesidorna finns inte än)
+// Länkarna går till respektive område på /tjanster (2026-09-30); byts mot
+// /tjanster/<id> när ett område får en egen sida. OBS platshållare (Douglas):
 // och copyn. Marknadsföring är medvetet utelämnad (finns inte i strategin).
 import Arrow from './Arrow.astro';
 
@@ -21,35 +22,35 @@ const services = [
   {
     name: 'Kundtjänst',
     desc: 'Besvarar kundärenden direkt och lämnar över till er när det behövs.',
-    href: '/tjanster/kundtjanst',
+    href: '/tjanster#kundtjanst',
     media: 'mobile',
     span: 5,
   },
   {
     name: 'Ekonomi & administration',
     desc: 'Fakturor tolkas, konteras och går vidare till attest.',
-    href: '/tjanster/ekonomi-administration',
+    href: '/tjanster#ekonomi-administration',
     media: 'column',
     span: 7,
   },
   {
     name: 'Sälj & offert',
     desc: 'Leads poängsätts och offerten skrivs fram.',
-    href: '/tjanster/salj-offert',
+    href: '/tjanster#salj-offert',
     media: 'funnel',
     span: 4,
   },
   {
     name: 'Er egen AI-assistent',
     desc: 'Svarar med källa i era egna dokument.',
-    href: '/tjanster/ai-assistent',
+    href: '/tjanster#ai-assistent',
     media: 'lamp',
     span: 3,
   },
   {
     name: 'Kvalitet & projekt',
     desc: 'Avvikelser flaggas och veckorapporten skriver sig själv.',
-    href: '/tjanster/kvalitet-projekt',
+    href: '/tjanster#kvalitet-projekt',
     media: 'pencil',
     span: 5,
   },

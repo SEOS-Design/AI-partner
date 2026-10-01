@@ -38,11 +38,14 @@ const FAQS = [
 
 // Återanvändbar (2026-09-28): /om-oss skickar in egen rubrik + egna frågor. Utan props
 // visas de ursprungliga frågorna (startsidans parkerade version).
+// beforeFooter (standard): extra luft nedtill för footerns klot. false när en annan
+// sektion (t.ex. ContactCta på /tjanster) kommer emellan → vanlig sektionsluft.
 interface Props {
   heading?: string;
   items?: { q: string; a: string }[];
+  beforeFooter?: boolean;
 }
-const { heading = 'Det ni undrar, rakt på sak.', items = FAQS } = Astro.props;
+const { heading = 'Det ni undrar, rakt på sak.', items = FAQS, beforeFooter = true } = Astro.props;
 
 // FAQPage-strukturdata (schema.org) — AEO: maskinläsbart för sök + AI-modeller.
 const faqSchema = {
@@ -56,7 +59,7 @@ const faqSchema = {
 };
 ---
 
-<section id="faq" class="section faq" aria-labelledby="faq-heading">
+<section id="faq" class:list={['section faq', beforeFooter && 'faq--before-footer']} aria-labelledby="faq-heading">
   <div class="container">
     <div class="faq-head">
       <h2 id="faq-heading" class="h2">{heading}</h2>
@@ -92,7 +95,7 @@ const faqSchema = {
 <style>
   /* Ligger direkt före footern (på /om-oss): extra luft nedtill så att footerns klot
      (lyser ~250 px upp) inte hamnar bakom de sista frågorna. Samma mått som /kontakt. */
-  .faq {
+  .faq--before-footer {
     padding-bottom: clamp(200px, 20vw, 280px);
   }
 

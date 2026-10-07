@@ -235,21 +235,53 @@ button {
   transform: translateX(4px);
 }
 
-/* Primär — ljus/vit (grå-accent, matchar SEOS). AKTIV variant.
-   Används av StartFlow, Team, Contact och Positioneringens sekundär. */
+/* Primär — MJÖLKGLAS (Björns val 2026-10-05): den vita knappen, men i samma glas-
+   material som .btn-glass — frostat vitt med glasrand och lätt genomskinlighet, mörk
+   text. Syns lika tydligt som den vita primären men hör ihop med glasknappen.
+   Hover: helt vit + ett svagt accentsken runt om.
+   (Samma dag provades NEONKANT — mörk yta med accentkant från vänster — och valdes
+   bort; receptet finns kvar i .btn-glow längre ner.)
+   CENTRAL: slår på ALLA primärknappar (Positionering, ContactCta, StartProcess,
+   StartFlow, Team, Contacts submit). */
 .btn-primary {
-  background: var(--accent);
+  transition-duration: 0.55s; /* samma lugna hover som glasknappen */
   color: var(--accent-ink);
-  border-color: var(--accent);
+  /* Grundfärg + ljus gradient OVANPÅ. Hover byter BARA grundfärgen: en gradient kan
+     inte tonas mot en ren färg — då försvann gradienten direkt och knappen blinkade
+     svart i början av hovern (uppmätt 2026-10-05). */
+  background-color: rgba(226, 226, 236, 0.84);
+  background-image: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.85),
+    rgba(255, 255, 255, 0) 50%,
+    rgba(255, 255, 255, 0.6)
+  );
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow:
+    inset 0 1.5px 0 #fff,
+    inset 0 -2px 6px rgba(120, 120, 160, 0.35),
+    inset 0 0 0 4px rgba(255, 255, 255, 0.25),
+    0 8px 24px rgba(0, 0, 0, 0.45);
 }
-.btn-primary:hover {
-  background: var(--accent-hover);
-  border-color: var(--accent-hover);
+.btn-primary:hover,
+.btn-primary:focus-visible {
+  background-color: #fff;
+  border-color: #fff;
+  box-shadow:
+    0 0 26px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 75% / 0.55),
+    0 8px 24px rgba(0, 0, 0, 0.45);
 }
 .btn-primary:active {
-  background: var(--accent-press);
-  border-color: var(--accent-press);
+  background-color: var(--accent-press);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.25);
 }
+/* SPARAD vit primär (grå-accent, matchade SEOS) — ersätt reglerna ovan med detta:
+  .btn-primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  .btn-primary:active { background: var(--accent-press); border-color: var(--accent-press); }
+*/
 
 /* Azur — glaskant med bloom (Framer-referensen). EGEN VARIANT, inte primären:
    används bara där en enskild CTA ska bära accenten (i dag Positioneringens
@@ -286,36 +318,87 @@ button {
     inset 0 0 22px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 55% / 0.24);
 }
 
-/* Glas — frostad grå glasknapp. SIDANS ENHETLIGA SEKUNDÄR/ACCENT-CTA (Björn
-   sept 2026: knapparna var spretiga, och de mörka komet-/glow-knapparna syntes
-   knappt förutom kanten). Samma värden som "Till SEOS Design" hade — BeamCta.astro
-   använder nu DENNA klass, så alla glasknappar delar en definition. Ändra här.
-   Används av: nav-CTA:n (desktop + drawer), "Boka kartläggning", BeamCta.
-   backdrop-filter är OK här (litet område) — till skillnad från helskärms-blur. */
+/* Glas — "FLYTANDE GLAS" (Björns val 2026-10-05, referens: filterknapparna på
+   fundamental.bg/en/services). SIDANS ENHETLIGA GLASKNAPP: nav-CTA:n (desktop +
+   drawer), "Boka kartläggning", "Kontakta oss", "Berätta om ert behov", BeamCta,
+   kunskapsbankens bokningsruta. Ändra här.
+   Uppmätt på originalet: sju staplade backdrop-filter-lager + en sned kantgradient
+   (155deg ljus → mörk → ljus). Här förenklat till ETT backdrop-lager (ljusar upp och
+   bryter det som ligger bakom), samma 155°-gradient som yta och en dubbel glasrand
+   via inset-skuggor. Glaset syns bäst där något ligger bakom (hero, punktmönstret,
+   footerns sken); mot helsvart blir det mest randen — som hos fundamental.
+   Hover: accentfärgen fyller knappen nedifrån (::after under texten).
+   backdrop-filter är OK här (litet område, uppmätt 0 tappade rutor). */
 .btn-glass {
-  /* GRÅTT GLAS på alla glasknappar (nav-CTA:n, "Boka kartläggning", "Kontakta oss"),
-     neutral ljus kant i vila — accenten syns BARA i hover-kanten (Björn 2026-09-27).
-     (Ett försök samma dag med indigotonad fyllning var ett missförstånd.) */
+  /* Hover-farten för båda knapptyperna (Björn 2026-10-05: 0,18–0,3 s var "alldeles
+     för snabbt"). Fyllnaden är en dämpad indigo — accentnyansen men lägre mättnad än
+     tokenets fulla, som gav en elektrisk kungsblå som inte finns någon annanstans. */
+  --btn-hover-dur: 0.55s;
+  transition-duration: var(--btn-hover-dur);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate; /* ::after (fyllnaden) hamnar under texten men över ytan */
   color: var(--fg-1);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03) 42%, transparent 72%),
-    rgba(255, 255, 255, 0.05);
-  -webkit-backdrop-filter: blur(18px) saturate(1.1);
-  backdrop-filter: blur(18px) saturate(1.1);
-  border-color: rgba(255, 255, 255, 0.22);
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.13),
+    rgba(255, 255, 255, 0.015) 46%,
+    rgba(255, 255, 255, 0.09)
+  );
+  -webkit-backdrop-filter: blur(5px) brightness(1.35) saturate(1.4) contrast(1.1);
+  backdrop-filter: blur(5px) brightness(1.35) saturate(1.4) contrast(1.1);
+  border-color: rgba(255, 255, 255, 0.1);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.38),
-    inset 0 0 20px rgba(255, 255, 255, 0.04),
-    0 8px 26px rgba(0, 0, 0, 0.4);
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.42),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 0 0 4px rgba(255, 255, 255, 0.035),
+    inset 0 0 16px rgba(255, 255, 255, 0.07),
+    0 8px 22px rgba(0, 0, 0, 0.45);
 }
-/* Samma hover på alla glasknappar: kanten tar accentfärgen. */
-.btn-glass:hover {
-  border-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 70% / 1);
+.btn-glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    120% 140% at 50% 110%,
+    hsl(var(--arc-hue) calc(var(--arc-sat) * 62%) 58%),
+    hsl(var(--arc-hue) calc(var(--arc-sat) * 58%) 42%)
+  );
+  opacity: 0;
+  transform: translateY(40%);
+  transition:
+    opacity var(--btn-hover-dur) var(--ease),
+    transform var(--btn-hover-dur) var(--ease);
+}
+.btn-glass:hover::after,
+.btn-glass:focus-visible::after {
+  opacity: 1;
+  transform: none;
+}
+.btn-glass:hover,
+.btn-glass:focus-visible {
+  border-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 82% / 0.7);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    inset 0 0 24px rgba(255, 255, 255, 0.06),
-    0 12px 32px rgba(0, 0, 0, 0.5);
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.5),
+    inset 0 0 14px rgba(255, 255, 255, 0.18),
+    0 8px 26px hsl(var(--arc-hue) calc(var(--arc-sat) * 70%) 50% / 0.4);
 }
+@media (prefers-reduced-motion: reduce) {
+  .btn-glass::after {
+    transform: none;
+    transition: opacity 0.2s var(--ease);
+  }
+}
+/* SPARAD grå glasknapp (sept 2026: frostad, accent bara i hover-kanten):
+  .btn-glass { color: var(--fg-1);
+    background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.03) 42%, transparent 72%), rgba(255,255,255,.05);
+    backdrop-filter: blur(18px) saturate(1.1); border-color: rgba(255,255,255,.22);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.38), inset 0 0 20px rgba(255,255,255,.04), 0 8px 26px rgba(0,0,0,.4); }
+  .btn-glass:hover { border-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 70% / 1);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 0 24px rgba(255,255,255,.06), 0 12px 32px rgba(0,0,0,.5); }
+*/
 /* .btn-glass--accent (nav-CTA:n, "Boka kartläggning") hade tidigare en egen indigo
    kant i vila. Numera identisk med .btn-glass — klassen ligger kvar i markupen men
    har inga egna regler. */

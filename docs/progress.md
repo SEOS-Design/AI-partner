@@ -6,7 +6,7 @@
 
 ## Var vi är nu
 
-**Byggt:** startsidan, `/kontakt`, `/om-oss`, `/kunskapsbank` (12 artiklar) och `/tjanster` (samlingssidan, 2026-09-30, ej committad). Kvar: enskilda tjänstesidor (kräver Douglas produktbeslut). **Senast:** "Det är där vi kommer in." i Stats animeras nu ord för ord som Story (2026-09-30, väntar på Björns omdöme; se Stats-avsnittet nedan).
+**Byggt:** startsidan, `/kontakt`, `/om-oss`, `/kunskapsbank` (12 artiklar) och `/tjanster` (samlingssidan, pushad `96ab01d` 2026-10-01). Kvar: enskilda tjänstesidor (kräver Douglas produktbeslut). **Senast:** "Det är där vi kommer in." i Stats animeras nu ord för ord som Story (2026-09-30, väntar på Björns omdöme; se Stats-avsnittet nedan).
 
 - **Driftsatt:** Vercel-projekt i SEOS Pro-teamet (flyttat 2026-09-30), deployar från `master`. Root Directory måste vara `site`. Ingen vercel.json. Äkta 301:or läggs där när det blir aktuellt.
 - **Repo:** github.com/SEOS-Design/AI-partner, branch `master`
@@ -14,7 +14,17 @@
 - **Senast pushat:** `d6403e8` (2026-09-29: Om oss, kunskapsbanken, hero/nav/footer-justeringar). **Ej committat:** Stats v2 (`Stats.astro`).
 - **Medvetet utanför git:** `CLAUDE.md` (Douglas fil, ändrad), `AI-Partner-strategi-brief-2026-07.md` (committas inte utan avstämning), `pexels-…jpg` (testbild).
 
-### Tjänster /tjanster (2026-09-30, EJ committad)
+### Knapparna omgjorda (2026-10-05, EJ committad)
+
+Björns val "variant 3" efter skisser (nu · glas+vit · allt i glas · glas+neonkant · glas+komet). Allt i `site/src/styles/global.css`, inga komponenter ändrade:
+- **`.btn-glass` = "flytande glas"** (referens: filterknapparna på fundamental.bg/en/services, uppmätta: sju staplade backdrop-filter-lager + 155°-kantgradient). Här ETT backdrop-lager (`blur(5px) brightness(1.35) saturate(1.4) contrast(1.1)`), 155°-gradient som yta, dubbel glasrand via inset-skuggor. Hover/fokus: accentfärgen fyller knappen nedifrån (`::after`, 0,3 s; reduced motion = bara toning). Gäller nav-CTA:n, "Boka kartläggning" (Positionering), "Kontakta oss", "Berätta om ert behov", BeamCta, kunskapsbankens bokningsruta.
+- **`.btn-primary` = MJÖLKGLAS** (Björns slutval samma dag): den vita knappen i glasmaterial — frostat vitt (155°-gradient 96 % → 82 % → 92 % vitt, `blur(8px)`), glasrand, mörk text; hover = helt vit + svagt accentsken. Gäller Positionering "Mer om oss", ContactCta "Boka kartläggning", StartProcess/StartFlow "Boka en tid", Team, kontaktformulärets "Skicka förfrågan". **Neonkanten (variant 3) byggdes först och valdes bort** ("gillar inte den svarta med neonkant"); även tonat glas, fyllt accentglas och knapp + textlänk visades som alternativ.
+- **Hover-justeringar (Björn: "alldeles för snabb", "är det verkligen accentfärgen?"):** båda knapparna tonar nu på 0,55 s (`--btn-hover-dur`; var 0,18 s från .btn + 0,3 s på fyllnaden). Glasfyllnaden dämpad till indigo `hsl(arc-hue, sat×62 %, 58 %) → (sat×58 %, 42 %)` = rgb(91,107,204) → rgb(54,68,160): tokenets fulla mättnad vid 46–60 % ljushet gav en elektrisk kungsblå som inte finns någon annanstans på sajten (accenten syns annars som ljus lila 76–84 %). Vit text mot nya fyllnaden: 5,6. **Bugg hittad via frysta övergångsrutor:** mjölkglaset blinkade SVART i början av hovern — `background: gradient` → `background: #fff` kan inte tonas (gradienten försvinner direkt, färgen tonas in från genomskinligt). Löst: fast `background-image`-gradient ovanpå en `background-color` som är det enda som byts. Frys övergångar med `document.getAnimations().filter(a => a instanceof CSSTransition)` (utan filtret träffas sidans oändliga animationer).
+- Gamla grå glaset och vita primären sparade som kommentarblock i global.css (revert = klistra tillbaka).
+- **Uppmätt kontrast, vit text (Playwright headless, värsta pixel bakom texten):** glas i vila 13,4–17,7 (nav-CTA:n mätt över de tre hero-videorna, 8 rutor var), glas med accentfyllnad 6,1–6,2. Mjölkglas (mörk text mot knappens mörkaste pixel): vila 10,9–11,3, hover 19,8 (Positionering, ContactCta, kubsektionen med aktivt steg, kontaktformuläret). Krav 4,5.
+- **Att tänka på:** rangordningen är oförändrad från förr — på Positionering är "Boka kartläggning" glas och "Mer om oss" mjölkglas; i ContactCta tvärtom. Björn valde bort "allt i glas" (accentfylld huvudknapp). Komet- och glow-klasserna (.btn-comet/.btn-glow) ligger kvar oanvända.
+
+### Tjänster /tjanster (2026-09-30, pushad 96ab01d 2026-10-01)
 
 **Upplägg (Björn):** ENKLARE än SEOS nya tjänstekatalog (seos-web-gamma.vercel.app/tjanster, 15 tjänster i 3 grupper). Betoningen är att vi kartlägger och skräddarsyr, inte en lista med AI-produkter. Samlingssidan först; enskilda sidor per område senare med samma fält som mall.
 

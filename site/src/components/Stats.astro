@@ -32,8 +32,10 @@ const STATEMENT = 'Det är där vi kommer in.'.split(' ');
     <div class="stats__grid">
       <div class="stats__side">
         <div class="stats__sticky">
+          {/* Två bestämda rader (Björn 2026-10-08; fyra rader i den smala kolumnen såg fel ut). */}
           <h2 id="stats-heading" class="h2 stats-h">
-            Var står svenska företag med AI?
+            <span class="stats-h__line">Var står svenska</span>{' '}
+            <span class="stats-h__line">företag med AI?</span>
           </h2>
         </div>
       </div>
@@ -112,21 +114,42 @@ const STATEMENT = 'Det är där vi kommer in.'.split(' ');
 
   /* ---- Två kolumner: låst rubrik vänster, siffrorna rullar höger ---- */
   .stats__grid {
+    --g: clamp(40px, 5vw, 64px); /* smal skärm; bred skärm sätts nedan */
     display: grid;
+    /* Lika breda kolumner med rejäl luft emellan. (En bredare vänsterkolumn provades
+       2026-10-08 för rubrikens skull — Björn: rubriken kom för nära siffrorna och
+       siffrorna flyttades. Rubriken anpassar i stället sin storlek till kolumnen.) */
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: clamp(40px, 6vw, 96px);
     align-items: start;
   }
   .stats__side {
     align-self: stretch; /* lika hög som listan → rubriken släpper i linje med sista siffran */
+    container-type: inline-size; /* rubrikens storlek räknas från kolumnens bredd */
+  }
+  /* Smal skärm: en kolumn, rubriken ovanför siffrorna och inte låst (i två kolumner
+     blev rubriken ~20 px i en 160 px bred spalt). */
+  @media (max-width: 859px) {
+    .stats__grid { grid-template-columns: minmax(0, 1fr); }
+    .stats__sticky { position: static !important; }
+  }
+  @media (min-width: 860px) {
+    .stats__grid { --g: clamp(96px, 20svh, 220px); }
   }
   .stats__sticky {
     position: sticky;
     top: clamp(110px, 16vh, 150px); /* under nav-pillen */
   }
+  /* Storleken = det minsta av sajtens h2 och vad som får plats: den längre raden
+     ("Var står svenska") är ~5,6 em bred (uppmätt) → 100cqi / 5.7 fyller kolumnen.
+     Med 478 px kolumn (1440 och uppåt) blir det ~84 px, något under h2:ans 96. */
   .stats-h {
     margin: 0;
-    text-wrap: balance;
+    font-size: min(var(--fs-h2), calc(100cqi / 5.7));
+  }
+  .stats-h__line {
+    display: block;
+    white-space: nowrap;
   }
 
   /* ---- Siffrorna ---- */
@@ -139,29 +162,82 @@ const STATEMENT = 'Det är där vi kommer in.'.split(' ');
     position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     gap: var(--space-4);
-    min-height: 58svh; /* ger den låsta rubriken en sträcka att stå kvar under */
-    padding: clamp(40px, 5vw, 64px) 0;
-    border-top: 1px solid var(--border);
+    /* --g = luften mellan en stats text och linjen, LIKA stor över och under varje
+       linje (Björn 2026-10-08). Förut: 58svh höga utrymmen med centrerat innehåll —
+       när första staten lades i överkant hamnade all tom yta under den. --g är
+       tilltagen (≈ 20 % av vyn) så att den låsta rubriken får en sträcka att stå
+       kvar under, ungefär lika lång som förut. */
+    padding: var(--g) 0;
+  }
+  /* Linjer bara MELLAN siffrorna — ingen ovanför den första eller under den sista
+     (Björn 2026-10-08). Skarpare än förut (--border-strong, var --border). */
+  .stat + .stat {
+    border-top: 1px solid var(--border-strong);
+  }
+  .stat:first-child .tick {
+    display: none;
+  }
+  /* Linjering mot rubriken (Björn 2026-10-08): första siffran börjar i höjd med
+     rubrikens överkant, och sista statens sista rad slutar i höjd med rubrikens
+     underkant när den släpper. (Förut var alla centrerade i sitt utrymme → den första
+     låg för lågt och den sista slutade för högt.)
+     text-box-trim beskär textrutorna till versalhöjd resp. baslinje, så att det är
+     BOKSTÄVERNAS kanter som linjerar, oavsett teckenstorlek (Chrome/Edge/Safari;
+     andra webbläsare hamnar några pixlar ifrån). */
+  .stat:first-child {
+    padding-top: 0;
   }
   .stat:last-child {
-    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+  }
+  .stats-h {
+    text-box: trim-both cap alphabetic;
+  }
+  /* Beskärningen på ALLA siffror och källrader (inte bara första/sista), så att --g
+     är det avstånd ögat ser: från bokstävernas kant till linjen, lika på båda sidor. */
+  .num {
+    text-box: trim-start cap alphabetic;
+  }
+  .src {
+    text-box: trim-end cap alphabetic;
   }
   /* Accentlinjen på radens hårstreck (ingen blur — gradientstoppen gör uttoningen). */
   .tick {
     position: absolute;
     top: -1px;
     left: 0;
-    width: clamp(160px, 45%, 320px);
+    width: min(100%, clamp(200px, 60%, 420px)); /* aldrig bredare än kolumnen */
     height: 1px;
     background: linear-gradient(
       90deg,
-      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 80% / 0) 0%,
-      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 80% / 0.85) 7%,
-      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 76% / 0.5) 48%,
-      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 76% / 0) 100%
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 84% / 0) 0%,
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 84% / 1) 6%,
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 80% / 0.7) 48%,
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 78% / 0) 100%
     );
+  }
+
+  /* 3) Siffror som inte står mitt i vyn tonas ner (Björn 2026-10-08). Ren CSS, i takt
+     med scrollen (view-timeline per element): full styrka runt vyns mitt, dämpad när
+     siffran är på väg in eller ut. Webbläsare utan stöd visar allt i full styrka.
+     (En tänd/dämpad-effekt togs bort i v2 — den här är mjukare och rör bara innehållet,
+     inte linjerna.) */
+  @media (min-width: 860px) and (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .stat .num,
+      .stat .meta {
+        animation: statFocus linear both;
+        animation-timeline: view();
+        animation-range: cover 0% cover 100%;
+      }
+    }
+  }
+  @keyframes statFocus {
+    0% { opacity: 0.22; }
+    36% { opacity: 1; }
+    64% { opacity: 1; }
+    100% { opacity: 0.22; }
   }
   /* <p> som fungerar som rubrik/siffra → smal bredd. */
   .num {
@@ -197,13 +273,16 @@ const STATEMENT = 'Det är där vi kommer in.'.split(' ');
   }
   .src a {
     color: var(--fg-3);
-    border-bottom: 1px solid var(--border-strong);
-    padding-bottom: 1px;
-    transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+    /* Vanlig textunderstrykning (var border + padding): rutan slutar då på baslinjen,
+       vilket linjeringen och avståndet till linjen räknar med. */
+    text-decoration: underline;
+    text-decoration-color: var(--border-strong);
+    text-underline-offset: 3px;
+    transition: color var(--dur-fast) var(--ease), text-decoration-color var(--dur-fast) var(--ease);
   }
   .src a:hover {
     color: var(--fg-2);
-    border-color: var(--fg-3);
+    text-decoration-color: var(--fg-3);
   }
   .src a:focus-visible {
     outline: none;

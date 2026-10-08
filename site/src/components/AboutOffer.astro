@@ -8,6 +8,10 @@
 // fylld, alla rader tända.
 // (3D-ikonerna som tonades in till höger om aktiv rad — Wannathis Charts-stillbilder —
 // togs bort 2026-10-08: kollegorna tyckte inte att 3D-illustrationerna passade in.)
+// I stället (Björns val samma dag, "piffa upp typografiskt"): stora KONTURNUMMER
+// 01–03 till höger, som på korten på /tjanster. Numret tänds när linjen når raden
+// och får accentfärg + svag fyllnad på den aktiva raden; rubriken på rader som
+// linjen inte nått är dämpad.
 //
 // Copy = utkast (Douglas granskar).
 
@@ -41,13 +45,13 @@ const ROWS = [
       <ol class="aoffer__rows">
       {ROWS.map((r, i) => (
         <li class="aoffer__row">
-          <span class="aoffer__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
           <div class="aoffer__text">
             <h3 class="aoffer__title">
               {r.title} <span class="aoffer__dim">{r.dim}</span>
             </h3>
             <p>{r.text}</p>
           </div>
+          <span class="aoffer__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
         </li>
       ))}
       </ol>
@@ -81,7 +85,7 @@ const ROWS = [
   /* ---- listan med scroll-linjen ---- */
   .aoffer__list {
     --p: 1; /* 0–1, sätts av scriptet. Utan JS: full linje. */
-    --num-w: clamp(48px, 6vw, 80px);
+    --indent: clamp(24px, 3.4vw, 48px); /* textens avstånd från scroll-linjen */
     position: relative;
   }
   .aoffer__rows {
@@ -113,10 +117,10 @@ const ROWS = [
   .aoffer__row {
     position: relative;
     display: grid;
-    grid-template-columns: var(--num-w) minmax(0, 1fr);
-    gap: var(--space-5);
-    align-items: start;
-    padding: clamp(28px, 3.5vw, 44px) 0;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: clamp(24px, 4vw, 64px);
+    align-items: center;
+    padding: clamp(28px, 3.5vw, 44px) 0 clamp(28px, 3.5vw, 44px) var(--indent);
     border-top: 1px solid var(--border);
     outline: none;
   }
@@ -124,16 +128,24 @@ const ROWS = [
     border-bottom: 1px solid var(--border);
   }
 
+  /* Stort konturnummer till höger (samma grepp som korten på /tjanster). */
   .aoffer__num {
-    padding-left: var(--space-5);
-    /* Numret i höjd med rubrikens första rad (h3: line-height 1.1). */
-    padding-top: calc(var(--fs-h3) * 0.55 - 0.6em);
     font-stretch: 75%;
-    font-size: var(--fs-small);
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    color: var(--fg-4);
-    transition: color 0.4s var(--ease);
+    font-weight: 800;
+    font-size: clamp(88px, 12vw, 168px);
+    line-height: 0.8;
+    letter-spacing: 0.01em; /* siffrorna får inte överlappa: fyllnaden skulle täcka grannens kontur */
+    /* Fyllnad = bakgrundsfärgen, ritad OVANPÅ konturen (paint-order). Typsnittets
+       siffror består av överlappande delar, och en ren kontur (transparent fyllnad)
+       visade de inre skarvarna som extra streck (ettans flagga, tvåans inre linjer).
+       Fyllnaden täcker dem och konturens inre halva → 2px ger 1px skarp ytterlinje. */
+    color: var(--bg);
+    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.12);
+    paint-order: stroke fill;
+    transition:
+      -webkit-text-stroke-color 0.5s var(--ease),
+      color 0.5s var(--ease);
+    user-select: none;
   }
 
   .aoffer__title {
@@ -144,6 +156,7 @@ const ROWS = [
     line-height: var(--lh-heading);
     letter-spacing: var(--tracking-display);
     color: var(--fg-1);
+    transition: color 0.4s var(--ease);
   }
   .aoffer__text p {
     margin: var(--space-3) 0 0;
@@ -154,20 +167,41 @@ const ROWS = [
     transition: color 0.4s var(--ease);
   }
 
-  /* 3D-ikonen: transparent webp. */
-  .aoffer__row.is-lit .aoffer__num {
-    color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 78%);
+  /* Med JS: rader som linjen inte nått är dämpade. */
+  .aoffer__list.is-js .aoffer__row:not(.is-lit) .aoffer__title {
+    color: var(--fg-3);
   }
   .aoffer__row.is-lit .aoffer__text p {
     color: var(--fg-2);
   }
+  /* Tänd rad: konturen ljusnar. Aktiv rad (där linjen är nu): accent + svag fyllnad. */
+  .aoffer__row.is-lit .aoffer__num {
+    -webkit-text-stroke-color: rgba(255, 255, 255, 0.34);
+  }
+  .aoffer__row.is-active .aoffer__num {
+    -webkit-text-stroke-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 80%);
+    color: color-mix(in srgb, hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 70%) 14%, var(--bg));
+  }
   /* Utan JS: alla rader tända. */
-  .aoffer__list:not(.is-js) .aoffer__row .aoffer__num {
-    color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 78%);
+  .aoffer__list:not(.is-js) .aoffer__num {
+    -webkit-text-stroke-color: rgba(255, 255, 255, 0.34);
+  }
+
+  /* Smal skärm: numret litet ovanför rubriken i stället för till höger. */
+  @media (max-width: 719px) {
+    .aoffer__row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-3);
+    }
+    .aoffer__num {
+      order: -1;
+      font-size: 56px;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .aoffer__num,
+    .aoffer__title,
     .aoffer__text p { transition: none; }
   }
 </style>

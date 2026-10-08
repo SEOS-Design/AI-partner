@@ -1,20 +1,36 @@
 # Byggstatus — aipartner.se
 
-> Senast uppdaterad: 2026-09-29
+> Senast uppdaterad: 2026-10-08
 
 ---
 
-## Var vi är nu
+## Var vi är nu (handover 2026-10-08)
 
-**Byggt:** startsidan, `/kontakt`, `/om-oss`, `/kunskapsbank` (12 artiklar) och `/tjanster` (samlingssidan, pushad `96ab01d` 2026-10-01). Kvar: enskilda tjänstesidor (kräver Douglas produktbeslut). **Senast:** "Det är där vi kommer in." i Stats animeras nu ord för ord som Story (2026-09-30, väntar på Björns omdöme; se Stats-avsnittet nedan).
+**Byggt och pushat (`fb7bfd8`):** startsidan, `/tjanster`, `/om-oss`, `/kunskapsbank` (12 artiklar), `/kontakt`. Alla sidor har en bas. Björn hade avstämning med kollegorna 2026-10-08; deras synpunkter är inarbetade (se "Efter avstämningen" nedan).
 
-- **Driftsatt:** Vercel-projekt i SEOS Pro-teamet (flyttat 2026-09-30), deployar från `master`. Root Directory måste vara `site`. Ingen vercel.json. Äkta 301:or läggs där när det blir aktuellt.
-- **Repo:** github.com/SEOS-Design/AI-partner, branch `master`
-- **Dev-server:** `cd site && npm run dev` → http://localhost:4321 (Björn kör den själv — starta ingen egen)
-- **Senast pushat:** `d6403e8` (2026-09-29: Om oss, kunskapsbanken, hero/nav/footer-justeringar). **Ej committat:** Stats v2 (`Stats.astro`).
-- **Medvetet utanför git:** `CLAUDE.md` (Douglas fil, ändrad), `AI-Partner-strategi-brief-2026-07.md` (committas inte utan avstämning), `pexels-…jpg` (testbild).
+- **Driftsatt:** Vercel (SEOS Pro-teamet), deployar från `master` → https://ai-partner-sepia.vercel.app. Root Directory = `site`.
+- **Repo:** github.com/SEOS-Design/AI-partner, branch `master`. Senaste commits: `fb7bfd8` (Stats-linjering, konturnummer) · `7cf4f67` + `ae032c6` (startsidan efter avstämningen, linjeillustrationer) · `937ff78` (knapparna) · `96ab01d` (/tjanster).
+- **Dev-server:** Björn kör sin egen på http://localhost:4321 — starta ingen egen. Starta om den när `content.config.ts` eller beroenden ändras.
+- **Medvetet utanför git:** `CLAUDE.md` (Douglas fil, ändrad + INAKTUELL: säger Astro + Sanity), `AI-Partner-strategi-brief-2026-07.md`, `pexels-…jpg`, `site/public/tjanster-hero.*` (Displacement-videon, oanvänd reserv).
+- **Beroenden:** Astro + `gsap` (bara /tjanster-kortstapeln använder det).
 
-### Efter avstämningen med kollegorna (2026-10-08, pushad ae032c6 + 7cf4f67)
+**Startsidans flöde nu:** Hero (budskapet ovanför "AI PARTNER", H1 animeras in först) → Stats (rubrik på två rader låst till vänster, siffror till höger, "Det är där vi kommer in." + text + knappar) → Services (tjänsterutor med linjeillustrationer) → StartProcess (kuben BAKOM centrerat innehåll) → Story → ContactCta → Footer. Positionering-sektionen är borttagen från sidan (komponenten finns kvar).
+
+**Arbetsläge (Björn):** copy och GSAP-animationer tas EFTER kollegornas vidare feedback — sektioner kan ändras eller strykas. Gör bara sådant som överlever feedbacken.
+
+### Öppet / väntar på beslut
+
+- **Tjänsteheron (`/tjanster`):** meshen (punktrutnätet) ligger där som TEST. Alternativ: Displacement, glasskivorna (sömlös loop finns), ingen video. Björn har inte gett slutbesked.
+- **Linjeillustrationerna (`ServiceArt.astro`)** är PLATSHÅLLARE. Stil vald (linjer + svagt glas, rika små scener, inget golv); motiven Kundtjänst och AI-assistent godkända, de tre andra "fungerar tills vidare". Motiven är små i de breda rutorna.
+- **Om oss:** 3D-ikonerna borta, konturnummer i stället. Egna linjeillustrationer där är bortvalt tills stilen är bekräftad.
+- **Kubsektionen:** `--cube-dim` 0,20 är nära taket (den grå ingressen har kontrast 4,8; krav 4,5). Björn har inte bekräftat den nya scrollkänslan i handen.
+- **Knapparna:** glas + mjölkglas pushade; rangordningen (vilken som är bokningsknappen) är inte enhetlig mellan sektionerna.
+- **Från mötesunderlaget, fortfarande obesvarat:** CMS (Sanity eller inte — sajten är byggd utan), SEOS nya sajt har egna sidor för AI-konsult och Automationer (överlapp), vilka tjänster som ska få egna sidor, accentfärgen, platshållare (Om oss-citatet, kontaktuppgifterna, Stats-rubriken, all copy), formulärets backend, 301-karta, 24 dependabot-varningar, Wannathis-licensen sägs upp i december.
+- **Möjliga nästa steg:** Lenis-test (smooth scroll, separat och avstängningsbart — dämpad scroll har valts bort förut), enskilda tjänstesidor, mer GSAP på startsidan.
+
+---
+
+### Efter avstämningen med kollegorna (2026-10-08, allt pushat t.o.m. fb7bfd8)
 
 **Startsidan — Positionering borttagen under heron** (för mycket rörelse direkt efter den rörliga heron; budskapet behålls):
 - **Hero (slutläge 2026-10-08, Björns val "staplat till vänster" efter fem placeringsskisser):** budskapet **"Vi bygger AI-agenter och automation som tar rutinarbetet."** står vänsterställt direkt OVANFÖR "AI PARTNER", allt samlat nere till vänster, höger sida åt videon. H1 = `100cqi / 4.27` (81 % av bredden; mobil ≤760 px kant till kant), budskapet `clamp(24px, 3.9cqi, 54px)`, två rader (tre på mobil). **Animationsordning (Björns krav): H1 först, texten kort efter** — uppmätt synlig efter ~0,4 s resp. ~0,9 s. Kontrast mot rörlig video: 7,8 / 7,5 / 11,2 / 17,1 vid 1440 / 1920 / 1024 / 390. Första försöket samma dag (H1 64 % till vänster + text till höger på samma baslinje) kändes obalanserat — de vägde för lika. Bortvalda skisser: diagonal (text uppe till höger), budskapet som stor rubrik med AI PARTNER som signatur, text högerställd ovanför rubrikens slut. Gamla underrubriken "Din personliga tjänst…" struken (för vag).

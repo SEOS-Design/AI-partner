@@ -4,11 +4,10 @@
 // kartläggning (gratis ingång) → bygg (agenter per avdelning) → förvaltning.
 //
 // Rörelse: en accentlinje växer nedåt längs vänsterkanten i takt med scrollen. När
-// linjen når en rad tänds dess nummer och radens 3D-ikon tonas in till höger
-// (Wannathis Charts: 49 magnifier, 23 cleaning, 14 arrow up with columns med pilen
-// omfärgad till blå — egna stillbilder, så de inte krockar med startsidans tjänsterutor.
-// Renderade i Blender med motion-grid-bilder/verktyg/blender/still_about.py). Hover/fokus gör
-// samma sak. Utan JS / reduced motion: linjen fylld, alla rader tända, inga ikoner.
+// linjen når en rad tänds dess nummer och text. Utan JS / reduced motion: linjen
+// fylld, alla rader tända.
+// (3D-ikonerna som tonades in till höger om aktiv rad — Wannathis Charts-stillbilder —
+// togs bort 2026-10-08: kollegorna tyckte inte att 3D-illustrationerna passade in.)
 //
 // Copy = utkast (Douglas granskar).
 
@@ -17,19 +16,16 @@ const ROWS = [
     title: 'Vi kartlägger.',
     dim: 'Kostnadsfritt.',
     text: 'Vi går igenom era processer tillsammans med er och visar var AI lönar sig, och var den inte gör det. Ni får en prioriterad åtgärdsplan.',
-    img: '/om-oss/magnifier.webp',
   },
   {
     title: 'Vi bygger.',
     dim: 'Per avdelning.',
     text: 'Agenter för kundtjänst, sälj, ekonomi och kvalitetskontroll, och assistenter som svarar ur er egen data. Byggt mot en bestämd process, inte som allmän chatt.',
-    img: '/om-oss/cleaning.webp',
   },
   {
     title: 'Vi förvaltar.',
     dim: 'Efter lansering.',
     text: 'Rådgivning, AI-policy och löpande drift. Vi följer upp att lösningen fortsätter leverera och justerar när era processer ändras.',
-    img: '/om-oss/arrow.webp',
   },
 ];
 ---
@@ -52,7 +48,6 @@ const ROWS = [
             </h3>
             <p>{r.text}</p>
           </div>
-          <img class="aoffer__img" src={r.img} alt="" width="540" height="540" loading="lazy" decoding="async" />
         </li>
       ))}
       </ol>
@@ -118,7 +113,7 @@ const ROWS = [
   .aoffer__row {
     position: relative;
     display: grid;
-    grid-template-columns: var(--num-w) minmax(0, 1fr) clamp(140px, 17vw, 220px);
+    grid-template-columns: var(--num-w) minmax(0, 1fr);
     gap: var(--space-5);
     align-items: start;
     padding: clamp(28px, 3.5vw, 44px) 0;
@@ -160,44 +155,18 @@ const ROWS = [
   }
 
   /* 3D-ikonen: transparent webp. */
-  .aoffer__img {
-    align-self: center;
-    width: 100%;
-    height: auto;
-    opacity: 0;
-    transform: translateY(14px) scale(0.94);
-    transition: opacity 0.6s var(--ease), transform 0.8s var(--ease);
-    pointer-events: none;
-  }
-
-  /* Tänd rad: numret tar accenten, texten ljusnar. */
   .aoffer__row.is-lit .aoffer__num {
     color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 78%);
   }
   .aoffer__row.is-lit .aoffer__text p {
     color: var(--fg-2);
   }
-  /* Aktiv rad (där linjen är nu) eller hover/fokus: ikonen syns. */
-  .aoffer__row.is-active .aoffer__img,
-  .aoffer__row:hover .aoffer__img,
-  .aoffer__row:focus-within .aoffer__img {
-    opacity: 1;
-    transform: none;
-  }
-  /* Utan JS: alla rader tända (ikonerna förblir en förstärkning). */
+  /* Utan JS: alla rader tända. */
   .aoffer__list:not(.is-js) .aoffer__row .aoffer__num {
     color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 78%);
   }
 
-  @media (max-width: 719px) {
-    .aoffer__row {
-      grid-template-columns: var(--num-w) minmax(0, 1fr);
-    }
-    .aoffer__img { display: none; }
-  }
-
   @media (prefers-reduced-motion: reduce) {
-    .aoffer__img,
     .aoffer__num,
     .aoffer__text p { transition: none; }
   }

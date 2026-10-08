@@ -6,14 +6,12 @@
 // Statementet "Vi börjar med er vardag…" under heron togs bort samtidigt och bor nu
 // i ingressen.)
 //
-// Video (2026-10-01, Björn): Wannathis "Glass cylinders" (dark) → public/tjanster-skivor.*
-// (1920, 30 fps, 12,1 s, mp4 1,5 MB / webm 0,6 MB). HELT SÖMLÖS loop utan övertoning:
-// källan (718 rutor i 60 fps) är nästan en loop — det saknas ~8 rutors rörelse mellan
-// sista och första rutan. De saknade rutorna är framräknade med ffmpeg minterpolate
-// (i videons eget färgformat; via PNG gav det ett färgskift i skarven) och varannan
-// ruta behållen. Uppmätt: stegen runt skarven 0,4–1,0 × klippets medelsteg (klippets
-// egen variation 0,5–2,0). Den äldre public/dep-glass.* (Departments) har i stället en
-// 1 s crossfade där skivorna syns dubbelt. Displacement ligger kvar i tjanster-hero.*.
+// Video (TEST 2026-10-08, Björn): MESHEN — punktrutnätet i våg (Wannathis "Wall",
+// public/pos-wall.mp4 + poster, sömlös loop, skarv 1,67) som låg under startsidans
+// hero i Positionering. Björn ville behålla meshen men flytta den; glasskivorna
+// "passade inte riktigt" här. Bara mp4 (webm blev större för fina prickar).
+// Tidigare videor ligger kvar: glasskivorna public/tjanster-skivor.* (sömlös loop)
+// och Displacement public/tjanster-hero.* (lokalt, ej committad).
 // Postern = första rutan, visas innan videon laddat och vid reduced motion.
 // Copy = utkast (Douglas granskar).
 ---
@@ -27,11 +25,10 @@
       muted
       loop
       playsinline
-      poster="/tjanster-skivor-poster.webp"
+      poster="/pos-wall-poster.webp"
       aria-hidden="true"
     >
-      <source src="/tjanster-skivor.webm" type="video/webm" />
-      <source src="/tjanster-skivor.mp4" type="video/mp4" />
+      <source src="/pos-wall.mp4" type="video/mp4" />
     </video>
     <div class="shero__bg" aria-hidden="true"></div>
     <div class="shero__tint" aria-hidden="true"></div>
@@ -91,7 +88,7 @@
   }
   .shero__bg {
     z-index: 0;
-    background: url("/tjanster-skivor-poster.webp") center / cover no-repeat;
+    background: url("/pos-wall-poster.webp") center / cover no-repeat;
   }
   .shero__video {
     z-index: 1;
@@ -102,28 +99,28 @@
     .shero__video { display: none; }
   }
 
-  /* Tinten är mörkare än Om oss: glasskivorna är ljusa och hamnar rakt bakom texten.
-     Kontrasten mätt mot den rörliga videon, se docs/progress.md. */
+  /* Tinten: meshen är vita prickar på svart → mörk kärna bakom rubrik och ingress,
+     lätt i kanterna så mönstret syns runt om. Kontrasten mätt mot den rörliga
+     videon, se docs/progress.md. */
   .shero__tint {
-    --flat: 0.1;
-    --core: 0.56;
+    --flat: 0.02;
+    --core: 0.6;
     position: absolute;
     inset: 0;
     z-index: 2;
     border-radius: inherit;
     pointer-events: none;
     background:
-      radial-gradient(ellipse 78% 64% at 50% 56%, rgba(6, 7, 10, var(--core)) 0%, rgba(6, 7, 10, var(--core)) 38%, rgba(6, 7, 10, 0) 82%),
+      radial-gradient(ellipse 62% 56% at 50% 54%, rgba(6, 7, 10, var(--core)) 0%, rgba(6, 7, 10, var(--core)) 46%, rgba(6, 7, 10, 0) 88%),
       radial-gradient(120% 100% at 50% 50%, transparent 52%, rgba(4, 5, 7, 0.5) 100%),
-      linear-gradient(rgba(6, 7, 10, var(--flat)), rgba(6, 7, 10, var(--flat))),
-      hsl(var(--arc-hue) calc(var(--arc-sat) * 24%) 7% / 0.2);
+      linear-gradient(rgba(6, 7, 10, var(--flat)), rgba(6, 7, 10, var(--flat)));
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
   }
-  /* Mobil: skivorna fyller hela lådan bakom texten → mer tint. */
+  /* Mobil: texten fyller nästan hela bredden → kärnan bredare. */
   @media (max-width: 700px) {
     .shero__tint {
-      --flat: 0.22;
-      --core: 0.68;
+      --flat: 0.12;
+      --core: 0.72;
     }
   }
 
@@ -164,7 +161,7 @@
     margin: var(--space-6) 0 0;
     font-size: var(--fs-lead);
     line-height: var(--lh-body);
-    color: var(--fg-1); /* vit: står över ljusa glasskivor */
+    color: var(--fg-1); /* vit: står över meshens ljusa prickar */
   }
 
   @media (prefers-reduced-motion: no-preference) {

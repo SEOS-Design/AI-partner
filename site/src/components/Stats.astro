@@ -18,6 +18,12 @@
 // (McKinsey — teknisk potential, inte prognos) och "som övervägt" (SCB —
 // gruppen siffran avser). Årtal i källraderna. Ändra aldrig utan ny verifiering.
 
+// 2026-10-08 (efter avstämning): Positionering-sektionens budskap + knappar bor nu
+// HÄR, direkt under "Det är där vi kommer in." — siffrorna ger skälet, det här ger
+// svaret. (Positionering låg under heron och blev för mycket ihop med den rörliga
+// heron; dess rubrik står nu i heron. Copy = utkast, Douglas granskar.)
+import Arrow from './Arrow.astro';
+
 const STATEMENT = 'Det är där vi kommer in.'.split(' ');
 ---
 
@@ -77,6 +83,17 @@ const STATEMENT = 'Det är där vi kommer in.'.split(' ');
         </>
       ))}
     </p>
+    <div class="statement-more">
+      <p class="statement-more__text">
+        Vi bygger AI-agenter och automation som tar det repetitiva, så att teamen lägger
+        tiden där den gör skillnad och ni växer utan att anställa fler. Utgångspunkten är
+        era egna processer och data. Vi automatiserar bara det som lönar sig.
+      </p>
+      <div class="statement-more__cta">
+        <a class="btn btn-primary" href="/kontakt">Boka kartläggning <Arrow class="arrow" /></a>
+        <a class="btn btn-glass" href="/om-oss">Mer om oss <Arrow class="arrow" /></a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -217,6 +234,26 @@ const STATEMENT = 'Det är där vi kommer in.'.split(' ');
   .statement__word {
     display: inline-block;
   }
+  /* Budskapet + knapparna under meningen (flyttat från Positionering 2026-10-08). */
+  .statement-more {
+    max-width: 44em;
+    margin: clamp(24px, 3vw, 40px) auto 0;
+    text-align: center;
+  }
+  .statement-more__text {
+    margin: 0;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+    text-wrap: pretty;
+  }
+  .statement-more__cta {
+    margin-top: var(--space-6);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-4);
+  }
   /* Standard (mobil): vanlig rad med luft omkring. */
   .statement-track {
     padding: clamp(56px, 8vw, 112px) var(--space-5) 0;
@@ -244,8 +281,18 @@ const STATEMENT = 'Det är där vi kommer in.'.split(' ');
     transition: transform 0.9s var(--ease);
     transition-delay: calc(0.1s + var(--i) * 0.11s);
   }
-  .statement-track.will-reveal.is-in .statement__word {
+  /* Texten och knapparna tonas in en gång efter orden (ingen scrollanimation på
+     brödtext — Björns regel). */
+  .statement-track.will-reveal .statement-more {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+    transition-delay: 0.9s;
+  }
+  .statement-track.will-reveal.is-in .statement__word,
+  .statement-track.will-reveal.is-in .statement-more {
     transform: none;
+    opacity: 1;
   }
 </style>
 

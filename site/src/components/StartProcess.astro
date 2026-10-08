@@ -18,6 +18,11 @@
 // rörelse i skärmens takt. Svart bakgrund → mix-blend-mode: lighten mot scenens
 // egen bakgrund + ett indigo-sken bakom kuben som skiftar nyans med scrollen.
 //
+// 2026-10-08 (efter avstämning, Björns val "B"): i låst läge ligger kuben BAKOM
+// innehållet, nedtonad (--cube-dim), och rubrik + steg är centrerade. Förut stod
+// kuben stor och ljus i en egen högerkolumn och vägde tyngre än de tre stegen.
+// Scrollmekaniken är oförändrad (stegen rullar förbi ett i taget).
+//
 // Låst läge slås på av scriptet (.is-pinned) bara på breda skärmar utan reduced
 // motion. Annars (och utan JS): vanligt flöde, stegen under varandra, kuben som
 // stillbild (sekvensen laddas bara i låst läge).
@@ -146,7 +151,7 @@ const STEPS = [
     max-width: 30em;
     font-size: var(--fs-lead);
     line-height: 1.6;
-    color: var(--fg-3);
+    color: var(--fg-2); /* var fg-3: den grå texten förlorade mot kuben */
   }
   .pstep__cta {
     margin-top: var(--space-6);
@@ -246,8 +251,10 @@ const STEPS = [
      ============================================================ */
   .proc.is-pinned {
     padding: 0;
-    /* 100svh låst ruta + scrollsträckan för stegen */
-    height: calc(100svh + (var(--n) - 1) * 70svh + 40svh);
+    /* 100svh låst ruta + scrollsträckan för stegen. 110svh per steg (var 70): med 70
+       stod stegen still 78 % av sträckan och byttes sedan på en kort bit, upp till 5×
+       scrollfarten (uppmätt 2026-10-08) → kändes hackigt. */
+    height: calc(100svh + (var(--n) - 1) * 110svh + 40svh);
   }
   .is-pinned .proc__pin {
     position: sticky;
@@ -258,15 +265,37 @@ const STEPS = [
     display: flex;
   }
   .is-pinned .proc__grid {
+    position: relative;
+    isolation: isolate;
     flex: 1;
     min-height: 0;
     width: 100%;
     padding-bottom: var(--space-5);
+    grid-template-columns: minmax(0, 1fr);
   }
+  /* Allt centrerat (Björn 2026-10-08). */
   .is-pinned .proc__text {
     display: flex;
     flex-direction: column;
     min-height: 0;
+    text-align: center;
+    position: relative;
+    z-index: 1; /* över kuben */
+  }
+  /* Större text i stegen (Björn 2026-10-08) — de är sektionens huvudsak nu när kuben
+     ligger bakom. min(vw, vh): på låga skärmar krymper de så steg 3 med knappen ryms. */
+  .is-pinned .pstep__n { font-size: clamp(20px, min(1.9vw, 3.2vh), 28px); }
+  .is-pinned .pstep__h { font-size: clamp(38px, min(5.2vw, 8.4vh), 76px); }
+  .is-pinned .pstep__t {
+    max-width: 26em;
+    font-size: clamp(19px, min(1.9vw, 3.1vh), 27px);
+    line-height: 1.5;
+  }
+  .is-pinned .pstep { justify-content: center; }
+  .is-pinned .pstep__t { margin-inline: auto; }
+  .is-pinned .pstep__cta {
+    flex-direction: column;
+    justify-content: center;
   }
   .is-pinned .proc__viewport {
     position: relative;
@@ -296,15 +325,24 @@ const STEPS = [
   }
   /* Scenen = kvadrat, det minsta av kolumnens bredd och höjd (container query).
      Med height:100% blev kuben ~780 px i en ~600 px bred kolumn och klipptes. */
+  /* Kuben = nedtonat bakgrundslager bakom innehållet, centrerad i den låsta rutan.
+     --cube-dim är satt så att texten klarar kontrastkravet mot kubens ljusaste
+     reflexer (mätt mot den rörliga kuben, se docs/progress.md). */
   .is-pinned .proc__visual {
+    --cube-dim: 0.2;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
     min-height: 0;
     container-type: size;
     display: grid;
     place-items: center;
+    opacity: var(--cube-dim);
+    pointer-events: none;
   }
   .is-pinned .proc__stage {
-    width: min(100cqw, 100cqh);
-    height: min(100cqw, 100cqh);
+    width: min(100cqw, 96cqh);
+    height: min(100cqw, 96cqh);
   }
   .is-pinned .proc__video {
     width: 100%;
@@ -366,8 +404,8 @@ const STEPS = [
     const n = steps.length;
     // Små dödzoner i början och slutet: första steget står still en stund när
     // rutan låses, och sista steget likaså innan den släpper.
-    const LEAD = 0.08;
-    const TAIL = 0.1;
+    const LEAD = 0.05;
+    const TAIL = 0.07;
 
     // Kubens bildsekvens (public/proc-cube/f001–f120.webp).
     const FRAMES = 120;
@@ -392,7 +430,8 @@ const STEPS = [
       // Minst det högsta steget + luft: steg 3 (med knappen) blev högre än 62 % av
       // vyn när typografin växte och spillde in i grannsteget/uttoningen.
       const tallest = Math.max(...inners.map((el) => el.offsetHeight));
-      slot = Math.max(Math.round(vpH * 0.62), tallest + 48);
+      // 0.8 av vyn (var 0.62): mer luft mellan stegen, grannarna syns mindre.
+      slot = Math.max(Math.round(vpH * 0.8), tallest + 48);
       section.style.setProperty('--slot', `${slot}px`);
       // Canvasens buffert = visad storlek × skärmens pixeltäthet (max bildernas 900 px).
       const css = canvas.getBoundingClientRect().width;
@@ -413,7 +452,9 @@ const STEPS = [
     // Viloläge: varje steg står STILLA och skarpt en del av sin scrollsträcka
     // (HOLD på var sida om mitten) och byter sedan till nästa med en mjuk kurva.
     // Kuben följer däremot den jämna progressen.
-    const HOLD = 0.28;
+    // 0.12 (var 0.28): kort vila → bytet sprids över ~76 % av stegets sträcka och
+    // texten rör sig långsammare än scrollen i stället för att fara förbi.
+    const HOLD = 0.12;
     const smooth = (x: number) => x * x * (3 - 2 * x);
     const settle = (pos: number) => {
       const i = Math.floor(pos);

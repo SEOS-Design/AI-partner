@@ -7,51 +7,52 @@
 // och spelar EN gång (stannar på sista rutan), ringen fylls och beskrivning + pil
 // glider upp. Portad från motion-grid-bilder/animationer/prototyp.html.
 //
-// Illustrationerna = Wannathis "Charts 3D" renderade i Blender (se
-// motion-grid-bilder/verktyg/README.md). 1,6 s, 30 fps, renderade 640×640 mot
-// #050505 och sedan beskurna till 540×540 (crop=540:540:50:50, motivet ligger
-// inom 81–558 px) så motivet blir större i rutan. Rutorna har samma #050505.
-// `*-slut.webp` = videons sista ruta → stillbild vid reduced motion.
+// ILLUSTRATIONERNA (2026-10-08): linjeillustrationer i SVG (ServiceArt.astro) i
+// stället för Wannathis 3D-videor, som kollegorna tyckte inte passade in. Motivet
+// syns hela tiden (dämpat) och förloppet spelas när rutan är aktiv (.is-on: hover,
+// fokus, eller "syns" på touch). PLATSHÅLLARE tills vidare (Björn).
+// (Före det: videor som tonades in vid hover och spelade en gång — se git-historiken.)
 //
 // Länkarna går till respektive område på /tjanster (2026-09-30); byts mot
 // /tjanster/<id> när ett område får en egen sida. OBS platshållare (Douglas):
 // och copyn. Marknadsföring är medvetet utelämnad (finns inte i strategin).
 import Arrow from './Arrow.astro';
+import ServiceArt from './ServiceArt.astro';
 
 const services = [
   {
     name: 'Kundtjänst',
     desc: 'Besvarar kundärenden direkt och lämnar över till er när det behövs.',
     href: '/tjanster#kundtjanst',
-    media: 'mobile',
+    id: 'kundtjanst' as const,
     span: 5,
   },
   {
     name: 'Ekonomi & administration',
     desc: 'Fakturor tolkas, konteras och går vidare till attest.',
     href: '/tjanster#ekonomi-administration',
-    media: 'column',
+    id: 'ekonomi-administration' as const,
     span: 7,
   },
   {
     name: 'Sälj & offert',
     desc: 'Leads poängsätts och offerten skrivs fram.',
     href: '/tjanster#salj-offert',
-    media: 'funnel',
+    id: 'salj-offert' as const,
     span: 4,
   },
   {
     name: 'Er egen AI-assistent',
     desc: 'Svarar med källa i era egna dokument.',
     href: '/tjanster#ai-assistent',
-    media: 'lamp',
+    id: 'ai-assistent' as const,
     span: 3,
   },
   {
     name: 'Kvalitet & projekt',
     desc: 'Avvikelser flaggas och veckorapporten skriver sig själv.',
     href: '/tjanster#kvalitet-projekt',
-    media: 'pencil',
+    id: 'kvalitet-projekt' as const,
     span: 5,
   },
 ];
@@ -73,24 +74,7 @@ const services = [
           <a class="cell" href={s.href}>
             <span class="glow" aria-hidden="true"></span>
             <span class="media" aria-hidden="true">
-              {/* Ingen poster: rutan visas först vid hover, och en poster (= sista
-                  rutan) hade blinkat förbi innan uppspelningen börjar om från 0.
-                  preload="none" → laddas när sektionen närmar sig (scriptet). */}
-              <video muted playsinline preload="none" disablepictureinpicture>
-                <source src={`/tjanster/${s.media}.webm`} type="video/webm" />
-                <source src={`/tjanster/${s.media}.mp4`} type="video/mp4" />
-              </video>
-              {/* Stillbild vid reduced motion. display:none annars → lazy-bilden
-                  hämtas inte alls. */}
-              <img
-                class="still"
-                src={`/tjanster/${s.media}-slut.webp`}
-                alt=""
-                width="480"
-                height="480"
-                loading="lazy"
-                decoding="async"
-              />
+              <ServiceArt id={s.id} />
             </span>
             <span class="ring" aria-hidden="true"></span>
             <span class="txt">
@@ -143,7 +127,7 @@ const services = [
      Grid — hårlinjerna ÄR gridets bakgrund som syns genom 1px-gapet
      ============================================================ */
   .svc-grid {
-    --cell-bg: #050505; /* = videornas bakgrund (renderad mot #050505) */
+    --cell-bg: #050505;
     --cell-h: clamp(300px, 32vw, 380px);
     list-style: none;
     margin: 56px 0 0;
@@ -168,7 +152,7 @@ const services = [
     display: block;
     height: 100%;
     overflow: hidden;
-    isolation: isolate; /* avgränsar mediets blend-läge till rutan */
+    isolation: isolate;
     background: var(--cell-bg);
     color: inherit;
     text-decoration: none;
@@ -203,54 +187,22 @@ const services = [
     );
   }
 
-  /* Mediet: tonas in och glider upp. Videon får ALDRIG nå rutans kant: ett
-     videolager som klipps av rutan (bråkdels-pixlar) åt upp halva hårlinjen
-     ovanför (uppmätt vid 820 px bredd, när videon var uppskalad med scale()).
-     mix-blend-mode: lighten i stället för prototypens radiella mask: videons
-     bakgrund (#050505) = rutans, så "ljusast vinner" låter skenet bakom lysa
-     igenom runt motivet utan synlig videokant. Masken skar i stället av hörnen
-     på breda motiv (stapeldiagrammet) och gav en suddig vit gloria. */
+  /* Illustrationen: syns hela tiden, dämpad i vila och full styrka när rutan är
+     aktiv. Ytan ligger ovanför texten; SVG:n skalar in i den (behåller proportionen). */
   .media {
     position: absolute;
-    top: var(--space-4);
+    top: var(--space-6);
     left: var(--space-5);
     right: var(--space-5);
-    bottom: 92px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transform: translateY(18px) scale(0.97);
-    transition:
-      opacity 0.5s var(--ease),
-      transform 0.7s var(--ease);
+    bottom: 96px;
+    opacity: 0.6;
+    transition: opacity 0.5s var(--ease);
     pointer-events: none;
-    mix-blend-mode: lighten;
-  }
-  .media video,
-  .media img {
-    height: 100%;
-    max-width: 100%;
-    aspect-ratio: 1;
-    object-fit: contain;
-    /* Mjuk uttoning i de yttersta ~6 %: föremål som glider in från bildkanten
-       (sökfältet, kuberna, pennan) ska inte klippas av med en hård linje. */
-    -webkit-mask-image:
-      linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent),
-      linear-gradient(180deg, transparent, #000 6%, #000 94%, transparent);
-    -webkit-mask-composite: source-in;
-    mask-image:
-      linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent),
-      linear-gradient(180deg, transparent, #000 6%, #000 94%, transparent);
-    mask-composite: intersect;
   }
   /* Smala rutor (3-kolumnsrutan): rubriken går på två rader och beskrivningen
      på två–tre → ge texten mer plats så den inte hamnar över motivet. */
   @container (max-width: 320px) {
     .media { bottom: 150px; }
-  }
-  .still {
-    display: none;
   }
 
   .txt {
@@ -301,8 +253,9 @@ const services = [
   }
 
   /* ---- aktivt läge: .is-on (JS: hover, fokus, eller "syns" på touch) ----
-     :focus-visible och :hover som fallback utan JS (texten, inte videon). */
-  .cell.is-on .media { opacity: 1; transform: none; }
+     :focus-visible och :hover som fallback utan JS (texten; illustrationens förlopp
+     kräver .is-on). */
+  .cell.is-on .media { opacity: 1; }
   .cell:is(.is-on, :focus-visible) .glow { opacity: 1; }
   .cell:is(.is-on, :focus-visible) .ring { background-color: var(--fg-1); }
   .cell:is(.is-on, :focus-visible) .name { color: var(--fg-1); }
@@ -337,78 +290,35 @@ const services = [
     .svc-item:last-child { grid-column: auto; }
   }
 
-  /* ---- reduced motion: stillbilden (sista rutan) i stället för videon ---- */
+  /* ---- reduced motion: inga övergångar (illustrationen visar slutläget direkt) ---- */
   @media (prefers-reduced-motion: reduce) {
-    .media video { display: none; }
-    .still { display: block; }
     .media,
     .glow,
     .ring,
     .name,
     .desc,
     .cell :global(.arrow) { transition: none; }
-    .media { transform: none; }
   }
 </style>
 
 <script>
-  // Hover/fokus: videon spelas från början EN gång och stannar på sista rutan
-  // (ingen loop). När rutan lämnas tonas mediet ut, och först därefter spolas
-  // videon tillbaka — annars syns hoppet till ruta 0 under uttoningen.
+  // Hover/fokus sätter .is-on på rutan → texten kommer fram och illustrationens
+  // förlopp spelas (CSS i ServiceArt.astro). När rutan lämnas går allt tillbaka.
   //
   // Touch (ingen hover): rutan aktiveras när den syns ordentligt och ligger kvar
-  // aktiv — illustrationen spelar en gång och beskrivningen är framme.
-  //
-  // Videorna har preload="none" och börjar laddas när sektionen närmar sig vyn,
-  // så de ligger redo när man väl hovrar (5 × 20–40 kB webm).
+  // aktiv — förloppet spelar en gång och beskrivningen är framme.
   const section = document.querySelector<HTMLElement>('.svc');
 
   if (section) {
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     const cells = Array.from(section.querySelectorAll<HTMLAnchorElement>('.cell'));
-    const FADE_MS = 500; // = .media opacity-transitionen
 
-    const videoOf = (cell: HTMLElement) => cell.querySelector('video');
-
-    const activate = (cell: HTMLElement) => {
-      if (cell.classList.contains('is-on')) return;
-      cell.classList.add('is-on');
-      const v = videoOf(cell);
-      if (!v || reduced) return;
-      v.currentTime = 0;
-      v.play().catch(() => {});
-    };
-
+    const activate = (cell: HTMLElement) => cell.classList.add('is-on');
     const deactivate = (cell: HTMLElement) => {
       // Fokus kvar i rutan (t.ex. musen lämnar en tabbad ruta) → behåll läget.
       if (cell.matches(':focus-visible')) return;
       cell.classList.remove('is-on');
-      const v = videoOf(cell);
-      if (!v || reduced) return;
-      window.setTimeout(() => {
-        if (cell.classList.contains('is-on')) return;
-        v.pause();
-        v.currentTime = 0;
-      }, FADE_MS);
     };
-
-    // Förladdning när sektionen närmar sig.
-    const loader = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((e) => e.isIntersecting)) return;
-        loader.disconnect();
-        if (reduced) return;
-        cells.forEach((c) => {
-          const v = videoOf(c);
-          if (!v) return;
-          v.preload = 'auto';
-          v.load();
-        });
-      },
-      { rootMargin: '400px 0px' },
-    );
-    loader.observe(section);
 
     let showObserver: IntersectionObserver | undefined;
 
@@ -441,13 +351,6 @@ const services = [
       });
     });
 
-    document.addEventListener(
-      'astro:before-swap',
-      () => {
-        loader.disconnect();
-        showObserver?.disconnect();
-      },
-      { once: true },
-    );
+    document.addEventListener('astro:before-swap', () => showObserver?.disconnect(), { once: true });
   }
 </script>

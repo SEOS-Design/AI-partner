@@ -44,7 +44,6 @@ const tjanster = defineCollection({
   schema: z.object({
     name: z.string(), // områdets namn, som på startsidans tjänsterutor
     order: z.number(),
-    media: z.enum(['mobile', 'column', 'funnel', 'lamp', 'pencil']), // 3D-bild i public/tjanster/
     heading: z.string(),
     takesTime: z.string(), // "Det som tar tid"
     build: z.string(), // "Det vi bygger"

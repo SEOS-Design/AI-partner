@@ -1,6 +1,10 @@
 ---
 import Hero from '../components/Hero.astro';
-import Positionering from '../components/Positionering.astro';
+// Positionering (budskap + punktrutnäts-video under heron) togs ur startsidan
+// 2026-10-08 efter avstämning: för mycket rörelse direkt under den rörliga heron.
+// Rubriken står nu i heron, texten + knapparna under "Det är där vi kommer in." i
+// Stats. Komponenten finns kvar — punktrutnätet (meshen) ska flyttas till en annan sida.
+// import Positionering from '../components/Positionering.astro';
 import Stats from '../components/Stats.astro';
 // Tjänsterutorna (Services) ersätter Departments sedan 2026-09-25. Departments.astro
 // (agentkort + lightbox) finns kvar: återställ genom att avkommentera importen och
@@ -35,7 +39,6 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout>
   <Hero />
-  <Positionering />
   <Stats />
   {/* Tjänsterutorna är en katalog (5 rutor man skannar samtidigt) → egen obunden
       sektion, INTE i stacken. Bygg-läget i flödet: Ingång → Bygg → avslutande

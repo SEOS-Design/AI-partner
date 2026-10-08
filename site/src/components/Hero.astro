@@ -45,11 +45,16 @@
           <span class="hero-title__in" data-text="AI">AI</span>
         </span>
         <span class="hero-title__line">
-          <span class="hero-title__in" data-text="Partner">PARTNER</span>
+          <span class="hero-title__in" data-text="PARTNER">PARTNER</span>
         </span>
       </h1>
+      {/* Budskapet (2026-10-08, efter avstämning): flyttat hit från Positionering-
+          sektionen, som låg direkt under heron och blev för mycket ihop med den
+          rörliga heron. Står vänsterställt direkt OVANFÖR rubriken (Björns val
+          "staplat till vänster"; bredvid rubriken på samma baslinje kändes
+          obalanserat). H1 kommer först i DOM:en och glider in först. */}
       <h2 class="hero-sub-title">
-        Din personliga tjänst för utveckling och automatisering
+        Vi bygger AI-agenter och automation som tar rutinarbetet.
       </h2>
     </div>
   </div>
@@ -185,10 +190,11 @@
     width: 100%;
     container-type: inline-size; /* rubrikens storlek räknas från den här bredden */
     text-align: left;
+    /* Allt samlat nere till vänster: budskapet ovanför rubriken, höger sida åt videon. */
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-4);
+    gap: clamp(14px, 2.2cqi, 30px);
   }
 
   .hero-title {
@@ -197,7 +203,9 @@
     /* EN rad som fyller boxens bredd (Björn 2026-09-29; var två centrerade rader). */
     /* "AI PARTNER" är ~3,46 em bred (ordmellanrummet kommer från markupens blanksteg) → 100cqi / 3,47 fyller raden kant till kant
        (uppmätt: lika luft vänster/höger vid 1440 och 1920). */
-    font-size: calc(100cqi / 3.47);
+    /* Ca 81 % av bredden (100cqi / 4.27): stor nog att dominera, men inte kant till
+       kant — luften till höger ger asymmetrin. Mobil: full bredd (media-regeln nedan). */
+    font-size: calc(100cqi / 4.27);
     line-height: 0.8;
     letter-spacing: -0.04em;
     white-space: nowrap;
@@ -231,24 +239,30 @@
     background-clip: text;
   }
 
+  /* Budskapet: smalt och vänsterställt direkt ovanför rubriken (visuellt först,
+     men efter H1 i DOM:en och i animationen). */
   .hero-sub-title {
-    font-family: var(--font-sans);
-    font-size: clamp(14px, 1.6vw, 18px);
-    font-weight: 400;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--fg-2); /* ljusare: står nu över videons ljusa glas */
-    /* Ovanför rubriken, linjerad med dess HÖGRA kant (Björn 2026-09-29: vänster-
-       ställd svävade den ensam och såg malplacerad ut). H1 kommer först i DOM:en. */
     order: -1;
-    align-self: flex-end;
-    text-align: right;
-    padding-right: 0.3em;
-    line-height: 1.4;
+    max-width: 26ch;
+    margin: 0;
+    padding-left: 0.12em; /* optiskt i linje med rubrikens A */
+    font-family: var(--font-sans);
+    font-size: clamp(24px, 3.9cqi, 54px);
+    font-weight: 600;
+    line-height: 1.06;
+    letter-spacing: -0.01em;
+    text-align: left;
+    text-wrap: balance;
+    color: var(--fg-1);
   }
-  /* En rad där det får plats; på mobil får den bryta (och linjerar då höger). */
-  @media (min-width: 700px) {
-    .hero-sub-title { white-space: nowrap; }
+  /* Smal skärm: rubriken kant till kant. */
+  @media (max-width: 760px) {
+    .hero-title {
+      font-size: calc(100cqi / 3.47);
+    }
+    .hero-sub-title {
+      max-width: 18ch;
+    }
   }
 
   /* ---- Keyframes ---- */
@@ -271,11 +285,11 @@
     .hero-title__line:nth-child(1) .hero-title__in { animation-delay: .42s; }
     .hero-title__line:nth-child(2) .hero-title__in { animation-delay: .55s; }
 
-    /* Underrubriken kommer strax efter att AI PARTNER landat. */
+    /* Budskapet kommer kort efter rubriken (Björn 2026-10-08: H1 först, sedan texten). */
     .hero-sub-title {
       opacity: 0;
       transform: translateY(0.6em);
-      animation: titleRise 0.9s cubic-bezier(0.16, 0.84, 0.32, 1) 1.15s forwards;
+      animation: titleRise 0.9s cubic-bezier(0.16, 0.84, 0.32, 1) 0.95s forwards;
     }
 
     .hero-title__in::after { animation: titleGlint 6.5s ease-in-out 1.9s infinite; }

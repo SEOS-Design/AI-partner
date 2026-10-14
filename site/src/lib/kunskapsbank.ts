@@ -47,6 +47,7 @@ function validate(all: Article[], categories: Set<string>) {
       errors.push(`${a.id}: okänd kategori "${a.data.category.id}" (finns: ${[...categories].join(', ')})`);
     }
     if (body.includes('[LÄNK:')) errors.push(`${a.id}: platshållaren [LÄNK: …] finns kvar`);
+    if (body.includes('[KOMMANDE]')) errors.push(`${a.id}: platshållaren [KOMMANDE] finns kvar`);
     for (const [, slug] of body.matchAll(/\]\(\/kunskapsbank\/([^)#\s/]+)\/?(?:#[^)]*)?\)/g)) {
       if (!ids.has(slug) && !PENDING_LEGACY.has(slug)) {
         errors.push(`${a.id}: död intern länk till /kunskapsbank/${slug}`);

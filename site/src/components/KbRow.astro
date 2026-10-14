@@ -13,17 +13,19 @@ interface Props {
   categoryId: string; // för listsidans filter (data-cat)
   minutes: number;
   featured?: boolean; // listsidan döljer den utvalda i "Alla"-läget
+  /** Titelns rubriknivå: h2 i listan, h3 under "Relaterade artiklar" (en h2). */
+  heading?: 'h2' | 'h3';
 }
-const { href, title, text, category, categoryId, minutes, featured = false } = Astro.props;
+const { href, title, text, category, categoryId, minutes, featured = false, heading: Heading = 'h2' } = Astro.props;
 ---
 
 <li class:list={['kb-row', featured && 'kb-row--featured']} data-cat={categoryId}>
   <a class="kb-row__link" href={href}>
     <span class="kb-row__cat">{category}</span>
-    <span class="kb-row__main">
-      <span class="kb-row__title">{title}</span>
+    <div class="kb-row__main">
+      <Heading class="kb-row__title">{title}</Heading>
       <span class="kb-row__desc">{text}</span>
-    </span>
+    </div>
     <span class="kb-row__min">{minutes} min</span>
     <span class="kb-row__go" aria-hidden="true"><Arrow /></span>
   </a>
@@ -71,6 +73,7 @@ const { href, title, text, category, categoryId, minutes, featured = false } = A
     max-width: 44em;
   }
   .kb-row__title {
+    margin: 0;
     font-weight: 700;
     font-size: clamp(20px, 2vw, 26px);
     line-height: 1.2;

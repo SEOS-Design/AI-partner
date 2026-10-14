@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
+import { canonicalUrl, siteSchema } from '../lib/site';
 
 interface Props {
   title?: string;
@@ -17,8 +18,9 @@ const {
   noindex = false,
 } = Astro.props;
 
-// Canonical + og:url från sajtens adress (site i astro.config.mjs).
-const canonical = new URL(Astro.url.pathname, Astro.site).href;
+// Canonical + og:url: www-adressen utan avslutande snedstreck (lib/site.ts).
+const canonical = canonicalUrl(Astro.url.pathname);
+const isHome = canonical === canonicalUrl('/');
 ---
 
 <!doctype html>
@@ -28,17 +30,26 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
+    {/* Mona Sans laddas här i stället för @import i global.css: en @import i den
+        buntade CSS:en hittas först när den filen laddats, vilket skjuter upp texten. */}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Mona+Sans:ital,wdth,wght@0,75..125,200..900;1,75..125,200..900&display=swap"
+    />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     <title>{title}</title>
-    <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex" />}
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content="sv_SE" />
     <meta property="og:site_name" content="AI Partner" />
+    {/* Organization + WebSite på startsidan (lib/site.ts). */}
+    {isHome && <script type="application/ld+json" set:html={JSON.stringify(siteSchema)} is:inline />}
     {/* Sidspecifikt i <head>, t.ex. strukturerad data (JSON-LD) på artiklar. */}
     <slot name="head" />
   </head>

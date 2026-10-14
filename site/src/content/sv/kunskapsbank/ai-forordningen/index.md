@@ -56,7 +56,7 @@ Vissa AI-användningar är helt förbjudna: social scoring, AI som manipulerar m
 
 [Artikel 4](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-4) säger att alla som använder AI-system ska säkerställa att personalen har tillräcklig AI-kunskap för sin roll. Det gäller alltså även företaget som "bara" använder ChatGPT internt – inte enbart de som bygger AI.
 
-Kravet är medvetet flexibelt: en säljare som använder en skrivassistent behöver inte samma kunskap som den som konfigurerar ett gallringssystem. Det finns ingen direkt bötesgrund kopplad till artikel 4 i sanktionskapitlet, men efterlevnaden kan vägas in när andra överträdelser bedöms. Det praktiska sättet att uppfylla kravet är en grundläggande utbildningsinsats plus en AI-policy som beskriver vad som gäller hos er. Vi går igenom hur en sådan utbildning kan läggas upp i vår guide om [AI-utbildning för företag](/kunskapsbank/ai-utbildning-foretag) [KOMMANDE].
+Kravet är medvetet flexibelt: en säljare som använder en skrivassistent behöver inte samma kunskap som den som konfigurerar ett gallringssystem. Det finns ingen direkt bötesgrund kopplad till artikel 4 i sanktionskapitlet, men efterlevnaden kan vägas in när andra överträdelser bedöms. Det praktiska sättet att uppfylla kravet är en grundläggande utbildningsinsats plus en AI-policy som beskriver vad som gäller hos er. Vi går igenom hur en sådan utbildning kan läggas upp i vår guide om [AI-utbildning för företag](/kunskapsbank/ai-utbildning-foretag).
 
 ### 3. Transparenskraven (sedan den 2 augusti 2026)
 

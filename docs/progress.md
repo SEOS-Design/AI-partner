@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-10-14 — Om oss: citatet från hela teamet (Douglas)
+
+- `AboutQuote.astro`: avsändaren är nu hela teamet — "Douglas Ekman, Anton Sahibzada, Björn Wildenstam och Elliot Eslander", raden under "Teamet bakom AI Partner" (var "Douglas Ekman / VD och medgrundare …"). Ny citattext (Douglas): "Vi mäter vårt arbete i hur mycket tid våra kunder får tillbaka, och skapar bara automationer som leder till tidsbesparing, inte mer underhåll." (ersatte Claudes platshållare).
+- Verktygssektionen "Rätt verktyg för jobbet" (`Robot.astro`) borttagen från /om-oss (Douglas). Komponenten ligger kvar.
+- **Till Elliot – teambilden:** lägg bilden i `site/public/om-oss/` (t.ex. `team.webp`, ~2000 px bred) och sätt `TEAM_PHOTO` överst i `AboutQuote.astro` till `'/om-oss/team.webp'`. Den visas då mellan citatet och namnen (max 880 px bred, rundade hörn, alt-text = de fyra namnen). Så länge `TEAM_PHOTO` är `null` syns ingenting. Fritt fram att flytta eller formge om bildytan.
+
+---
+
 ## 2026-10-14 — agentkorten: intern admin, onboarding, marknad (Douglas)
 
 - **Bort från ekonomi/fakturering** (Douglas v2-beslut): tjänsterutorna på startsidan (`Services.astro`) och områdena på /tjanster (kollektionen `tjanster`) följer nu problemsektionen. Ordning = problemens: **Intern admin** (`#intern-admin`, ny) · **Onboarding** (f.d. "Er egen AI-assistent", id och ankare `#ai-assistent` behålls) · **Marknad** (`#marknad`, ny) · Kundtjänst · Sälj & offert. Utgick: Ekonomi & administration, Kvalitet & projekt (veckorapporten flyttade in i Intern admin, avvikelsebevakningen struken). Copy ordagrant ur underlaget avsnitt 1b/1c. `span` i Services följer platsen i gridet (5+7 / 4+3+5), så Kundtjänst ligger nu i den smala rutan.

@@ -1,14 +1,15 @@
 ---
 // /om-oss – Om AI Partner (2026-09-28). Hit leder "Mer om oss" under startsidans hero
 // och "Om oss" i navigationen. Flöde (Björns val): Hero → Historia → Från första
-// samtal till AI i drift → Verktygen (Robot.astro) → Citat → FAQ → Footer. Ingen avslutande CTA-sektion här.
-// Copy = utkast (Douglas granskar). Citatet i AboutQuote är en platshållare.
+// samtal till AI i drift → Citat → FAQ → Footer. Ingen avslutande CTA-sektion här.
+// Verktygssektionen ("Rätt verktyg för jobbet", Robot.astro) borttagen 2026-10-14
+// (Douglas) — komponenten finns kvar; återställ med importen + <Robot /> före <AboutQuote />.
+// Copy = utkast (Douglas granskar). Citatet i AboutQuote = Douglas text (2026-10-14).
 import Layout from '../layouts/Layout.astro';
 import AboutHero from '../components/AboutHero.astro';
 import AboutStory from '../components/AboutStory.astro';
 import AboutOffer from '../components/AboutOffer.astro';
 import AboutQuote from '../components/AboutQuote.astro';
-import Robot from '../components/Robot.astro';
 import FAQ from '../components/FAQ.astro';
 import Footer from '../components/Footer.astro';
 
@@ -44,7 +45,6 @@ const FAQS = [
   <AboutHero />
   <AboutStory />
   <AboutOffer />
-  <Robot />
   <AboutQuote />
   <FAQ heading="Vanliga frågor om AI Partner" items={FAQS} />
   <Footer />

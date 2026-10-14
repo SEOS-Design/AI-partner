@@ -14,45 +14,51 @@
 // (Före det: videor som tonades in vid hover och spelade en gång — se git-historiken.)
 //
 // Länkarna går till respektive område på /tjanster (2026-09-30); byts mot
-// /tjanster/<id> när ett område får en egen sida. OBS platshållare (Douglas):
-// och copyn. Marknadsföring är medvetet utelämnad (finns inte i strategin).
+// /tjanster/<id> när ett område får en egen sida. Copy = Douglas.
+//
+// OMRÅDENA (Douglas 2026-10-14): bort från ekonomi/fakturering (det finns redan många
+// AI-bokföringssystem), mot intern admin, onboarding och marknad. Ekonomi &
+// administration och Kvalitet & projekt utgick; veckorapporten flyttade in i Intern
+// admin. De tre första korten står i samma ordning som problemen i Problems.astro.
+// "Onboarding" behåller id ai-assistent (ankaret #ai-assistent).
+// span = rutans bredd i gridet; följer platsen (5+7 / 4+3+5), inte området.
 import Arrow from './Arrow.astro';
 import ServiceArt from './ServiceArt.astro';
 
 const services = [
   {
+    name: 'Intern admin',
+    desc: 'Mötesanteckningar blir uppgifter med ansvarig och deadline. Veckorapporten skriver sig själv.',
+    href: '/tjanster#intern-admin',
+    id: 'intern-admin' as const,
+    span: 5,
+  },
+  {
+    name: 'Onboarding',
+    desc: 'Nya kollegor får svar med källa i era egna dokument, utan att fråga samma två personer.',
+    href: '/tjanster#ai-assistent',
+    id: 'ai-assistent' as const,
+    span: 7,
+  },
+  {
+    name: 'Marknad',
+    desc: 'Nyhetsbrev, inlägg och kundcase skrivs fram i er röst, ur ert eget material. Ni godkänner innan något går ut.',
+    href: '/tjanster#marknad',
+    id: 'marknad' as const,
+    span: 4,
+  },
+  {
     name: 'Kundtjänst',
     desc: 'Besvarar kundärenden direkt och lämnar över till er när det behövs.',
     href: '/tjanster#kundtjanst',
     id: 'kundtjanst' as const,
-    span: 5,
-  },
-  {
-    name: 'Ekonomi & administration',
-    desc: 'Fakturor tolkas, konteras och går vidare till attest.',
-    href: '/tjanster#ekonomi-administration',
-    id: 'ekonomi-administration' as const,
-    span: 7,
+    span: 3,
   },
   {
     name: 'Sälj & offert',
     desc: 'Leads poängsätts och offerten skrivs fram.',
     href: '/tjanster#salj-offert',
     id: 'salj-offert' as const,
-    span: 4,
-  },
-  {
-    name: 'Er egen AI-assistent',
-    desc: 'Svarar med källa i era egna dokument.',
-    href: '/tjanster#ai-assistent',
-    id: 'ai-assistent' as const,
-    span: 3,
-  },
-  {
-    name: 'Kvalitet & projekt',
-    desc: 'Avvikelser flaggas och veckorapporten skriver sig själv.',
-    href: '/tjanster#kvalitet-projekt',
-    id: 'kvalitet-projekt' as const,
     span: 5,
   },
 ];
@@ -214,8 +220,8 @@ const services = [
   .name {
     font-family: var(--font-sans);
     font-weight: 700;
-    /* Egen storlek, inte --fs-h3 (48 px): "AI-assistent" måste rymmas i den
-       smala 3-kolumnsrutan (~250 px). */
+    /* Egen storlek, inte --fs-h3 (48 px): namnet måste rymmas i den smala
+       3-kolumnsrutan (~250 px). */
     font-size: clamp(24px, 2.6vw, 36px);
     line-height: var(--lh-heading);
     letter-spacing: var(--tracking-tight);
@@ -279,6 +285,27 @@ const services = [
     .svc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .svc-item { grid-column: span 1; }
     .svc-item:last-child { grid-column: span 2; }
+
+    /* Här är beskrivningen oftast framme hela tiden (touch) och 2–4 rader lång
+       (områdena 2026-10-14). Med fast plats för motivet krockade det med texten
+       (Onboarding vid 375 och 700 px) och fyra rader klipptes (Marknad vid 320 px).
+       Rutan blir därför en kolumn: motivet tar höjden som blir kvar ovanför texten,
+       och beskrivningen har sin plats reserverad (tonas bara in), så att motivet
+       inte krymper när rutan aktiveras. */
+    .cell { display: flex; flex-direction: column; }
+    .media {
+      position: relative;
+      inset: auto;
+      flex: 1 1 0;
+      min-height: 0;
+      margin: var(--space-6) var(--space-5) var(--space-4);
+    }
+    .txt {
+      position: relative;
+      inset: auto;
+      margin: 0 calc(var(--space-5) + 32px) var(--space-5) var(--space-5);
+    }
+    .svc-grid .cell .desc { max-height: none; margin-top: var(--space-2); }
   }
   /* Mobil: en kolumn. Rutorna aktiveras när de syns (scriptet) i stället för hover. */
   @media (max-width: 639px) {

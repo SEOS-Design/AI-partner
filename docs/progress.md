@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-10-14 — agentkorten: intern admin, onboarding, marknad (Douglas)
+
+- **Bort från ekonomi/fakturering** (Douglas v2-beslut): tjänsterutorna på startsidan (`Services.astro`) och områdena på /tjanster (kollektionen `tjanster`) följer nu problemsektionen. Ordning = problemens: **Intern admin** (`#intern-admin`, ny) · **Onboarding** (f.d. "Er egen AI-assistent", id och ankare `#ai-assistent` behålls) · **Marknad** (`#marknad`, ny) · Kundtjänst · Sälj & offert. Utgick: Ekonomi & administration, Kvalitet & projekt (veckorapporten flyttade in i Intern admin, avvikelsebevakningen struken). Copy ordagrant ur underlaget avsnitt 1b/1c. `span` i Services följer platsen i gridet (5+7 / 4+3+5), så Kundtjänst ligger nu i den smala rutan.
+- **Illustrationer (`ServiceArt.astro`):** Ekonomi- och Kvalitet-motiven borttagna (git-historiken t.o.m. 32eb834) med sin CSS. Onboarding behåller det godkända AI-assistent-motivet. **Nya scener för Intern admin och Marknad (Douglas ok samma dag, ersatte en neutral platshållare)**, i samma stil (linjer + glas, isometriskt, inget golv, förlopp vid aktiv ruta): *Intern admin* = mötesanteckning "MÖTE" där tre punkter markeras → tre uppgiftskort med ansvarig (avatar) och dag (TIS/ONS/FRE) glider in efter varandra → "RAPPORT"-bock. *Marknad* = ert eget material (dokumentbunt som fläktas ut) → utkastet (accentavatar = er röst) skrivs fram rad för rad med gnistan → "GODKÄND"-bock (en människa godkänner). Nya klasser: `.dl` (längre streckmönster för framskrivna linjer), `.w2`/`.w3`, `.in.s2`/`.in.s3` (kort i tur och ordning), `.ch.lt` + `.c4` (bocken väntar in resten). Compact-utsnitt: Intern admin = anteckningen, Marknad = utkastet; marginalerna i ikonen motsvarar Kundtjänsts.
+- **Layout under 960 px:** beskrivningarna är nu 2–4 rader, och med fast plats för motivet krockade Onboarding med texten (375 och 700 px) och Marknad klipptes vid 320 px. Under 960 px är rutan nu en flexkolumn: motivet tar höjden ovanför texten, beskrivningen har reserverad plats och tonas bara in. Från 960 px och uppåt oförändrat.
+- **Verifierat** (dev-server, 18 bredder 320–1920 via iframes + 1440×900 och 375×812): minst 19 px mellan motiv och text, ingen text klipps, ingen sidledsscroll; alla fem ankare landar 96 px under nav i både 1440 och 375 (i 1440 klickat från startsidan, med kortstapeln). Efter de nya scenerna: minst 23 px mellan motiv och text för Intern admin och Marknad vid 320–1920 (Marknad-scenen flyttad 10 enheter upp för 4-kolumnsrutan). `npm run build` grönt. Mätfälla: när Browser-panelen är dold står `scroll-behavior: smooth` still (inga animationsrutor) — ankare såg ut att inte fungera i mobil; mät med `scrollIntoView({ behavior: 'instant' })`.
+- **Kvar (copy, Douglas):** /tjanster-sidans meta description nämner fortfarande "ekonomi … kvalitet"; Om oss (`AboutOffer.astro`) säger "Agenter för kundtjänst, sälj, ekonomi och kvalitetskontroll"; meningen med brygga till SEOS i Marknad-området (underlaget 1c) är inte skriven.
+
+---
+
 ## 2026-10-14 — problemsektion + statistikband (Douglas)
 
 - **Siffersektionen överst ersatt av problemsektionen** "Var tar tiden vägen?": `Stats.astro` → `Problems.astro` (git mv, samma layout: låst rubrik vänster, tre problem rullar förbi till höger, "Det är där vi kommer in." + text + knappar under). Ingen 01–03-numrering (problemen är ingen ordningsföljd; kubsektionen har 01–03 för stegen). Copy = Douglas.
@@ -11,7 +21,7 @@
 - **Siffrorna omverifierade 2026-10-14** mot SCB: "småföretag" → "företag med 10–49 anställda" (SCB:s population börjar vid 10), "3 av 4 … avstår" → "som övervägt AI utan att börja anger brist på expertis", ny: 18 % av svenskarna (16+) använder generativ AI i jobbet. McKinsey 60–70 % (2023) borttagen. **SCB publicerar It-användning i företag 2026 den 5 november** → uppdatera `STATS` i StatsBand.astro (en plats).
 - **Processbeskrivningen synkad (Douglas 2026-10-14):** startsidans kubsektion (StartProcess) och /tjanster (ServicesProcess) har nu SAMMA tre steg — Kartläggning · Prioritering · Bygg — kort på startsidan (stegen visas stort i låst läge; steg 3 + knapp + föreläsningsrad slutar 97 px över vyns kant vid 1280×720), längre på /tjanster. Förvaltning är inte längre ett eget steg på /tjanster utan en dämpad rad under stegen. Startsidans knapp "Boka en tid" → "Boka kartläggning". "Inget köptvång" struket.
 - Underlag och historik: `AI-Partner-startsida-problemsektion-2026-10-14.md` i Douglas SEOS-mapp.
-- Öppet: tjänsterutorna (Services) har kvar Ekonomi och Kvalitet & projekt — Douglas vill gå bort från ekonomi/fakturering mot intern admin, onboarding och marknad; förslag finns i samma underlag, ej infört.
+- ~~Öppet: tjänsterutorna (Services) har kvar Ekonomi och Kvalitet & projekt~~ → infört samma dag, se avsnittet ovan.
 
 ---
 

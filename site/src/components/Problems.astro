@@ -1,0 +1,332 @@
+---
+// Problems.astro – problemsektionen "Var tar tiden vägen?" (Douglas 2026-10-14).
+// Ersätter siffersektionen (Stats.astro, se git-historiken) på samma plats och i
+// samma layout (Björns v2): rubriken står LÅST till vänster medan de tre problemen
+// rullar förbi till höger, och "Det är där vi kommer in." + svaret + knapparna står
+// under. Siffrorna flyttade till StatsBand.astro, under tjänsterutorna: problem →
+// lösning → belägg.
+//
+// Inga 01–03-nummer på problemen: de är ingen ordningsföljd, och kubsektionen längre
+// ner använder 01–03 för de riktiga stegen.
+//
+// Copy = Douglas (v3 i AI-Partner-startsida-problemsektion-2026-10-14.md, SEOS-mappen;
+// texten under "Det är där vi kommer in." = Douglas 2026-10-14).
+//
+// Mobil (<860 px): vanligt flöde. Reduced motion / utan JS: allt synligt direkt.
+import Arrow from './Arrow.astro';
+
+const PROBLEMS = [
+  {
+    title: 'Intern admin och samma frågor',
+    body: 'Anteckningar ska bli uppgifter och rapporter ska sammanställas. Och så frågorna: Var hittar jag senaste prislistan? Var ligger avtalsmallen? Hur var det nu vi gjorde med returer?',
+  },
+  {
+    title: 'Marknadsföringen som blev sekundär',
+    body: 'Nyhetsbrevet, LinkedIn-inläggen, kundcaset, texterna till den nya tjänstesidan. Allt ligger på någon som egentligen har ett annat jobb. Och det ni skriver med AI är inte tillräckligt bra.',
+  },
+  {
+    title: 'Ni har ingen struktur för AI. Men alla använder det.',
+    body: 'Någon kör ChatGPT, någon Copilot, någon Claude. Alla hittar sina egna sätt, ingen delar det som fungerar, och ingen kan svara på frågan: Är det okej att ge AI tillgång till det här? Mycket AI, men inget arbetssätt.',
+  },
+];
+
+const STATEMENT = 'Det är där vi kommer in.'.split(' ');
+---
+
+<section id="problem" class="probs" aria-labelledby="probs-heading">
+  <div class="container">
+    <div class="probs__grid">
+      <div class="probs__side">
+        <div class="probs__sticky">
+          {/* Två bestämda rader, som den gamla siffersektionens rubrik. */}
+          <h2 id="probs-heading" class="h2 probs-h">
+            <span class="probs-h__line">Var tar</span>{' '}
+            <span class="probs-h__line">tiden vägen?</span>
+          </h2>
+        </div>
+      </div>
+
+      <ul class="ledger">
+        {PROBLEMS.map((p) => (
+          <li class="prob">
+            <span class="tick" aria-hidden="true"></span>
+            <h3 class="prob__title">{p.title}</h3>
+            <p class="prob__body">{p.body}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  {/* Varje ord i en egen mask och glider upp ur den, ett i taget (som Story). */}
+  <div class="statement-track">
+    <p class="statement">
+      {STATEMENT.map((w, i) => (
+        <>
+          <span class="statement__mask"><span class="statement__word" style={`--i: ${i}`}>{w}</span></span>
+          {i < STATEMENT.length - 1 && ' '}
+        </>
+      ))}
+    </p>
+    <div class="statement-more">
+      <p class="statement-more__text">
+        Vi bygger AI-agenter och automation som tar det repetitiva, så att era medarbetare
+        kan lägga tiden där den gör skillnad. Utgångspunkten är era egna processer och data.
+        Vi automatiserar enbart det som faktiskt lönar sig och sparar er tid – tack vare
+        rätt kontext, data och guardrails.
+      </p>
+      <div class="statement-more__cta">
+        <a class="btn btn-primary" href="/kontakt">Boka kartläggning <Arrow class="arrow" /></a>
+        <a class="btn btn-glass" href="/om-oss">Mer om oss <Arrow class="arrow" /></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Raised band — lyfter sektionen från void-sektionerna runtom. */
+  .probs {
+    padding: var(--section-py) 0;
+    background: var(--bg-raised);
+    border-block: 1px solid var(--border);
+  }
+  .container {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+  }
+
+  /* ---- Två kolumner: låst rubrik vänster, problemen rullar höger ---- */
+  .probs__grid {
+    --g: clamp(40px, 5vw, 64px); /* smal skärm; bred skärm sätts nedan */
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(40px, 6vw, 96px);
+    align-items: start;
+  }
+  .probs__side {
+    align-self: stretch; /* lika hög som listan → rubriken släpper i linje med sista problemet */
+    container-type: inline-size; /* rubrikens storlek räknas från kolumnens bredd */
+  }
+  /* Smal skärm: en kolumn, rubriken ovanför problemen och inte låst. */
+  @media (max-width: 859px) {
+    .probs__grid { grid-template-columns: minmax(0, 1fr); }
+    .probs__sticky { position: static !important; }
+  }
+  /* Bred skärm: något kortare luft än siffrorna hade (20svh) — textraderna är lägre
+     än de stora siffrorna, och rubriken får ändå en sträcka att stå låst. */
+  @media (min-width: 860px) {
+    .probs__grid { --g: clamp(80px, 15svh, 168px); }
+  }
+  .probs__sticky {
+    position: sticky;
+    top: clamp(110px, 16vh, 150px); /* under nav-pillen */
+  }
+  /* Storleken = det minsta av sajtens h2 och vad som får plats: den längre raden
+     ("tiden vägen?") är ~4,3 em bred → 100cqi / 4.5 fyller kolumnen med marginal. */
+  .probs-h {
+    margin: 0;
+    font-size: min(var(--fs-h2), calc(100cqi / 4.5));
+    text-box: trim-both cap alphabetic;
+  }
+  .probs-h__line {
+    display: block;
+    white-space: nowrap;
+  }
+
+  /* ---- Problemen ---- */
+  .ledger {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .prob {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--g) 0; /* lika luft över och under varje linje */
+  }
+  /* Linjer bara MELLAN problemen, med accentlinjen på varje (som siffrorna hade). */
+  .prob + .prob {
+    border-top: 1px solid var(--border-strong);
+  }
+  .prob:first-child .tick {
+    display: none;
+  }
+  /* Linjering mot rubriken: första problemets rubrik börjar i höjd med sektions-
+     rubrikens överkant, sista brödtextraden slutar i höjd med dess underkant när den
+     släpper. text-box beskär till versalhöjd resp. baslinje (Chrome/Edge/Safari). */
+  .prob:first-child {
+    padding-top: 0;
+  }
+  .prob:last-child {
+    padding-bottom: 0;
+  }
+  .prob__title {
+    text-box: trim-start cap alphabetic;
+  }
+  .prob__body {
+    text-box: trim-end cap alphabetic;
+  }
+  .tick {
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: min(100%, clamp(200px, 60%, 420px)); /* aldrig bredare än kolumnen */
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 84% / 0) 0%,
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 84% / 1) 6%,
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 80% / 0.7) 48%,
+      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 78% / 0) 100%
+    );
+  }
+
+  /* Problem som inte står mitt i vyn tonas ner (samma som siffrorna hade, Björn
+     2026-10-08). Ren CSS i takt med scrollen; utan stöd visas allt i full styrka. */
+  @media (min-width: 860px) and (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .prob__title,
+      .prob__body {
+        animation: probFocus linear both;
+        animation-timeline: view();
+        animation-range: cover 0% cover 100%;
+      }
+    }
+  }
+  @keyframes probFocus {
+    0% { opacity: 0.22; }
+    36% { opacity: 1; }
+    64% { opacity: 1; }
+    100% { opacity: 0.22; }
+  }
+  .prob__title {
+    font-stretch: 75%;
+    margin: 0;
+    font-weight: 700;
+    font-size: var(--fs-h3);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-tight);
+    color: var(--fg-1);
+    text-wrap: balance;
+  }
+  .prob__body {
+    max-width: 36em;
+    margin: 0;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+    text-wrap: pretty;
+  }
+
+  /* ---- Slutmeningen ---- */
+  .statement {
+    font-stretch: 75%;
+    margin: 0;
+    font-weight: 700;
+    font-size: var(--fs-h2); /* samma storlek som rubriken (Björn) */
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+    text-align: center;
+    text-wrap: balance;
+  }
+  /* Masken klipper ordet; lite luft nedtill så att å/ä/g inte klipps (som Story). */
+  .statement__mask {
+    display: inline-block;
+    overflow: clip;
+    vertical-align: top;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+  .statement__word {
+    display: inline-block;
+  }
+  .statement-more {
+    max-width: 44em;
+    margin: clamp(24px, 3vw, 40px) auto 0;
+    text-align: center;
+  }
+  .statement-more__text {
+    margin: 0;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+    text-wrap: pretty;
+  }
+  .statement-more__cta {
+    margin-top: var(--space-6);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-4);
+  }
+  /* Standard (mobil): vanlig rad med luft omkring. */
+  .statement-track {
+    padding: clamp(56px, 8vw, 112px) var(--space-5) 0;
+  }
+  /* Bred skärm: lika mycket luft ovanför meningen som under sektionen. */
+  @media (min-width: 860px) {
+    .probs {
+      --gap: var(--space-7);
+      --run: 16svh;
+      padding-bottom: calc(var(--gap) + var(--run));
+    }
+    .statement-track {
+      padding: calc(var(--gap) + var(--run)) var(--space-5) 0;
+    }
+    .statement {
+      white-space: nowrap;
+    }
+  }
+
+  /* ---- animation (bara när scriptet satt .will-reveal) — samma värden som Story ---- */
+  .statement-track.will-reveal .statement__word {
+    transform: translateY(125%);
+    transition: transform 0.9s var(--ease);
+    transition-delay: calc(0.1s + var(--i) * 0.11s);
+  }
+  /* Texten och knapparna tonas in en gång efter orden (ingen scrollanimation på
+     brödtext — Björns regel). */
+  .statement-track.will-reveal .statement-more {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+    transition-delay: 0.9s;
+  }
+  .statement-track.will-reveal.is-in .statement__word,
+  .statement-track.will-reveal.is-in .statement-more {
+    transform: none;
+    opacity: 1;
+  }
+</style>
+
+<script>
+  // Orden glider upp ur sina masker när meningen scrollas in (samma som Story).
+  // Utan JS och vid reduced motion syns meningen direkt; .will-reveal (dolt läge)
+  // sätts först när scriptet vet att det kan animera.
+  const track = document.querySelector<HTMLElement>('.probs .statement-track');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (track && !reduced && 'IntersectionObserver' in window) {
+    const statement = track.querySelector('.statement');
+    // Redan i vyn vid laddning → visa direkt, ingen animation.
+    const r = statement?.getBoundingClientRect();
+    if (statement && r && r.top > window.innerHeight * 0.85) {
+      track.classList.add('will-reveal');
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((e) => e.isIntersecting)) return;
+          track.classList.add('is-in');
+          io.disconnect();
+        },
+        // Startar när meningen nått ungefär 20 % upp i bild.
+        { rootMargin: '0px 0px -20% 0px' },
+      );
+      io.observe(statement);
+      document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
+    }
+  }
+</script>

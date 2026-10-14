@@ -1,0 +1,268 @@
+---
+// StatsBand.astro – "Hur långt har svenska företag kommit med AI?" (2026-10-14).
+// Siffrorna som stod överst på startsidan (Stats.astro, se git-historiken) flyttade
+// hit, under tjänsterutorna: problemen först, sedan lösningen, sedan beläggen. Bandet
+// leder in i kubsektionen ("Var börjar ni med AI?").
+//
+// Varje siffra har en mätare: 50 streck à 2 %, de tända visar andelen. Mätaren är
+// dekor för ögat (aria-hidden) — siffran och texten bär innehållet. Strecken tänds
+// ett i taget EN gång när bandet scrollas in (bandets enda rörelse); reduced motion /
+// utan JS = tända direkt.
+//
+// KÄLLDISCIPLIN: verifierade mot primärkälla 2026-10-14. Formuleringsvakter som MÅSTE
+// stå kvar: "10–49 anställda" (SCB:s population börjar vid 10 anställda — 0–9 ingår
+// inte), "av svenskarna" (befolkningen 16+, inte de anställda), "som övervägt AI utan
+// att börja" (gruppen siffran avser). Årtal i källraderna.
+// UPPDATERA när SCB publicerar It-användning i företag 2026 (planerat 2026-11-05):
+// bara STATS nedan behöver ändras (value = andelen i procent, styr mätaren).
+// Utgått: McKinsey 60–70 % (global teknisk potential, 2023 — för gammal och för
+// hajpig för startsidan).
+
+const STATS = [
+  {
+    value: 69.2, // 100 − 30,8 % (små företag 10–49 anställda som använder AI, 2025)
+    num: '7 av 10',
+    claim: 'svenska företag med 10–49 anställda använder ännu inte AI.',
+    href: 'https://www.scb.se/pressmeddelande/storre-foretag-anvander-ai-mer/',
+    source: 'SCB, 2025',
+  },
+  {
+    value: 18, // generativ AI för arbetsrelaterade ändamål, senaste 3 mån, 16+ år, 2025
+    num: '18 %',
+    claim: 'av svenskarna använder redan generativ AI i jobbet.',
+    href: 'https://www.scb.se/hitta-statistik/statistik-efter-amne/forskning-och-det-digitala-samhallet/ovrigt/artificiell-intelligens-i-sverige/pong/statistiknyhet/artificiell-intelligens-i-sverige-2026/',
+    source: 'SCB, 2025',
+  },
+  {
+    value: 74.7, // hinder "saknas relevant expertis", företag som övervägt AI, 2025
+    num: '3 av 4',
+    claim: 'företag som övervägt AI utan att börja anger brist på expertis som hinder.',
+    href: 'https://www.scb.se/hitta-statistik/statistik-efter-amne/forskning-och-det-digitala-samhallet/det-digitala-samhallet/it-anvandning-i-foretag/pong/statistiknyhet/it-anvandning-i-foretag-2025/',
+    source: 'SCB, 2025',
+  },
+];
+
+const TICKS = 50; // à 2 %
+const SOFT = new Set(['av', '%']); // dämpade delar av siffran (som förut)
+---
+
+<section id="statistik" class="band" aria-labelledby="band-heading">
+  <div class="container">
+    <h2 id="band-heading" class="band__h">Hur långt har svenska företag kommit med AI?</h2>
+
+    <ul class="facts" role="list">
+      {STATS.map((s) => {
+        const on = Math.round(s.value / (100 / TICKS));
+        const parts = s.num.split(' ');
+        return (
+          <li class="fact">
+            <span class="meter" aria-hidden="true">
+              {Array.from({ length: TICKS }, (_, i) => (
+                <i class={i < on ? 'on' : undefined} style={i < on ? `--i: ${i}` : undefined}></i>
+              ))}
+            </span>
+            <p class="num">
+              {parts.map((p, i) => (
+                <>
+                  {i > 0 && (p === '%' ? ' ' : ' ')}
+                  {SOFT.has(p) ? <span class="soft">{p}</span> : p}
+                </>
+              ))}
+            </p>
+            <p class="claim">{s.claim}</p>
+            <p class="src">
+              <a href={s.href} target="_blank" rel="noopener noreferrer">Källa: {s.source}</a>
+            </p>
+          </li>
+        );
+      })}
+    </ul>
+
+    <p class="band__close">
+      Det är fortfarande tidigt. Och det som oftast saknas är kunskap, inte verktyg.
+    </p>
+  </div>
+</section>
+
+<style>
+  /* Upphöjt band, som problemsektionen — kortare och tätare: en paus mellan
+     tjänsterutorna och kubsektionen, inte en egen kapitelstart. */
+  .band {
+    padding: clamp(64px, 7vw, 104px) 0;
+    background: var(--bg-raised);
+    border-block: 1px solid var(--border);
+  }
+  .container {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+  }
+
+  /* Rubriken i h3-storlek: bandet ska läsas som belägg, inte som ny sektion. */
+  .band__h {
+    font-stretch: 75%;
+    max-width: 16em;
+    margin: 0;
+    font-weight: 700;
+    font-size: var(--fs-h3);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-tight);
+    color: var(--fg-1);
+    text-wrap: balance;
+  }
+
+  /* ---- Tre kolumner med hårlinjer emellan (mobil: under varandra) ---- */
+  .facts {
+    list-style: none;
+    margin: clamp(40px, 5vw, 72px) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .fact {
+    display: flex;
+    flex-direction: column;
+    padding-inline: clamp(20px, 3vw, 44px);
+    border-left: 1px solid var(--border-strong);
+  }
+  .fact:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .fact:last-child {
+    padding-right: 0;
+  }
+  @media (max-width: 859px) {
+    .facts {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .fact,
+    .fact:first-child,
+    .fact:last-child {
+      padding: var(--space-7) 0;
+      border-left: 0;
+    }
+    .fact + .fact {
+      border-top: 1px solid var(--border-strong);
+    }
+    .fact:first-child {
+      padding-top: 0;
+    }
+    .fact:last-child {
+      padding-bottom: 0;
+    }
+  }
+
+  /* ---- Mätaren: 50 tunna streck, de tända i accenten ---- */
+  .meter {
+    display: grid;
+    grid-template-columns: repeat(50, minmax(0, 1fr));
+    gap: 2px;
+    height: 20px;
+    margin-bottom: clamp(24px, 2.6vw, 36px);
+  }
+  .meter i {
+    border-radius: 1px;
+    background: var(--border-strong);
+  }
+  .meter i.on {
+    background: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 80%);
+  }
+
+  /* ---- Siffran, påståendet, källan (samma typografi som den gamla siffersektionen) ---- */
+  .num {
+    font-stretch: 75%;
+    margin: 0;
+    font-weight: 700;
+    font-size: clamp(56px, 5.8vw, 88px);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    color: var(--fg-1);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .num .soft {
+    color: var(--fg-3);
+    font-weight: 500;
+  }
+  .claim {
+    font-stretch: 75%;
+    max-width: 26ch;
+    margin: var(--space-4) 0 0;
+    font-size: clamp(18px, 1.5vw, 21px);
+    font-weight: 500;
+    line-height: 1.45;
+    color: var(--fg-1);
+    text-wrap: pretty;
+  }
+  /* Källan längst ner i kolumnen → källraderna linjerar även när påståendena är
+     olika långa. */
+  .src {
+    font-stretch: 75%;
+    margin: auto 0 0;
+    padding-top: var(--space-5);
+    font-size: var(--fs-small);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .src a {
+    color: var(--fg-3);
+    text-decoration: underline;
+    text-decoration-color: var(--border-strong);
+    text-underline-offset: 3px;
+    transition: color var(--dur-fast) var(--ease), text-decoration-color var(--dur-fast) var(--ease);
+  }
+  .src a:hover {
+    color: var(--fg-2);
+    text-decoration-color: var(--fg-3);
+  }
+  .src a:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-radius: 2px;
+  }
+
+  .band__close {
+    max-width: 40em;
+    margin: clamp(48px, 5.6vw, 80px) 0 0;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+    text-wrap: pretty;
+  }
+
+  /* ---- Tändningen (bara när scriptet satt .will-reveal) ---- */
+  .band.will-reveal .meter i.on {
+    background: var(--border-strong);
+    transition: background 0.35s var(--ease);
+    transition-delay: calc(0.15s + var(--i) * 22ms);
+  }
+  .band.will-reveal.is-in .meter i.on {
+    background: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 80%);
+  }
+</style>
+
+<script>
+  // Mätarnas streck tänds ett i taget när bandet scrollas in (en gång).
+  // Utan JS, vid reduced motion eller om bandet redan syns vid laddning: tända direkt.
+  const band = document.querySelector<HTMLElement>('.band');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (band && !reduced && 'IntersectionObserver' in window) {
+    const meters = band.querySelector('.facts');
+    const r = meters?.getBoundingClientRect();
+    if (meters && r && r.top > window.innerHeight * 0.85) {
+      band.classList.add('will-reveal');
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((e) => e.isIntersecting)) return;
+          band.classList.add('is-in');
+          io.disconnect();
+        },
+        { rootMargin: '0px 0px -25% 0px' },
+      );
+      io.observe(meters);
+      document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
+    }
+  }
+</script>

@@ -1,0 +1,71 @@
+---
+// /404 – egen felsida (2026-10-14). Vercel visar den för alla adresser som saknas, i
+// stället för sin standardsida. noindex: ska aldrig hamna i sökresultat eller sitemap.
+// Texten är ett utkast – Douglas äger copyn.
+import Layout from '../layouts/Layout.astro';
+import Footer from '../components/Footer.astro';
+import Arrow from '../components/Arrow.astro';
+---
+
+<Layout
+  title="Sidan finns inte – AI Partner"
+  description="Sidan du letar efter finns inte på aipartner.se."
+  noindex
+>
+  <main class="nf">
+    <div class="container">
+      <p class="nf__code">404</p>
+      <h1 class="nf__h">Sidan finns inte</h1>
+      <p class="nf__lead">
+        Länken kan vara gammal eller felskriven. Börja från startsidan eller hitta rätt
+        guide i kunskapsbanken.
+      </p>
+      <div class="nf__actions">
+        <a class="btn btn-glass" href="/">Till startsidan <Arrow class="arrow" /></a>
+        <a class="btn btn-glass" href="/kunskapsbank">Kunskapsbanken <Arrow class="arrow" /></a>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .nf {
+    /* Överst: luft för nav-pillen. Nederst: luft för footerns klot (som /kunskapsbank). */
+    padding: clamp(140px, 13vw, 190px) 0 clamp(200px, 20vw, 280px);
+  }
+  .container {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+  }
+  .nf__code {
+    margin: 0;
+    font-stretch: 75%;
+    font-size: var(--fs-small);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 80%);
+  }
+  .nf__h {
+    margin: var(--space-3) 0 0;
+    font-weight: 700;
+    font-size: var(--fs-h2);
+    line-height: var(--lh-display);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+  }
+  .nf__lead {
+    max-width: 34em;
+    margin: var(--space-5) 0 0;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+  }
+  .nf__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+</style>

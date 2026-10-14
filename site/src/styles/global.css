@@ -9,8 +9,8 @@
    ============================================================= */
 
 /* Mona Sans (GitHubs variabla grotesque). Pinnas till Narrow-bredden
-   (wdth 75) via font-stretch: 75% nedan — matchar seosdesign.se. */
-@import url("https://fonts.googleapis.com/css2?family=Mona+Sans:ital,wdth,wght@0,75..125,200..900;1,75..125,200..900&display=swap");
+   (wdth 75) via font-stretch: 75% nedan — matchar seosdesign.se.
+   Själva fonten laddas med <link> i Layout.astro (snabbare än @import här). */
 
 /* ---------------------------------------------------------------
    Design tokens

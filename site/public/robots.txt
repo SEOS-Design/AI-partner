@@ -1,0 +1,5 @@
+# aipartner.se – alla sökmotorer och AI-sökare välkomna (AEO är en del av erbjudandet).
+User-agent: *
+Allow: /
+
+Sitemap: https://www.aipartner.se/sitemap.xml

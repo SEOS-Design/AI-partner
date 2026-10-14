@@ -1,8 +1,11 @@
 ---
 // StatsBand.astro – "Hur långt har svenska företag kommit med AI?" (2026-10-14).
-// Siffrorna som stod överst på startsidan (Stats.astro, se git-historiken) flyttade
-// hit, under tjänsterutorna: problemen först, sedan lösningen, sedan beläggen. Bandet
-// leder in i kubsektionen ("Var börjar ni med AI?").
+// KOMPAKT och INUTI problemsektionen (Douglas 2026-10-14, v2): ligger mellan de tre
+// problemen och "Det är där vi kommer in." — siffrorna belägger problemen direkt
+// innan svaret. v1 var ett eget, högt band under tjänsterutorna (se git-historiken,
+// 32eb834); samma design, ungefär en fjärdedel så hög (Douglas: "äääännu lite mindre").
+// Rubriken är ett påstående, inte en fråga (Douglas). Avslutningsraden ("Det är
+// fortfarande tidigt …") struken: "Det är där vi kommer in." gör nu det jobbet.
 //
 // Varje siffra har en mätare: 50 streck à 2 %, de tända visar andelen. Mätaren är
 // dekor för ögat (aria-hidden) — siffran och texten bär innehållet. Strecken tänds
@@ -46,9 +49,10 @@ const TICKS = 50; // à 2 %
 const SOFT = new Set(['av', '%']); // dämpade delar av siffran (som förut)
 ---
 
-<section id="statistik" class="band" aria-labelledby="band-heading">
+<div id="statistik" class="band" role="group" aria-labelledby="band-heading">
   <div class="container">
-    <h2 id="band-heading" class="band__h">Hur långt har svenska företag kommit med AI?</h2>
+    {/* h3: bandet är en del av problemsektionen ("Var tar tiden vägen?" = h2). */}
+    <h3 id="band-heading" class="band__h">Så långt har svenska företag kommit med AI</h3>
 
     <ul class="facts" role="list">
       {STATS.map((s) => {
@@ -77,34 +81,27 @@ const SOFT = new Set(['av', '%']); // dämpade delar av siffran (som förut)
         );
       })}
     </ul>
-
-    <p class="band__close">
-      Det är fortfarande tidigt. Och det som oftast saknas är kunskap, inte verktyg.
-    </p>
   </div>
-</section>
+</div>
 
 <style>
-  /* Upphöjt band, som problemsektionen — kortare och tätare: en paus mellan
-     tjänsterutorna och kubsektionen, inte en egen kapitelstart. */
+  /* Ingen egen bakgrund — ligger på problemsektionens upphöjda yta. En hårlinje
+     ovanför skiljer bandet från sista problemet. */
   .band {
-    padding: clamp(64px, 7vw, 104px) 0;
-    background: var(--bg-raised);
-    border-block: 1px solid var(--border);
+    margin-top: clamp(56px, 9svh, 104px);
   }
   .container {
     max-width: var(--maxw-content);
     margin-inline: auto;
     padding-inline: var(--space-5);
   }
-
-  /* Rubriken i h3-storlek: bandet ska läsas som belägg, inte som ny sektion. */
   .band__h {
     font-stretch: 75%;
-    max-width: 16em;
     margin: 0;
+    padding-top: clamp(22px, 2.2vw, 30px);
+    border-top: 1px solid var(--border-strong);
     font-weight: 700;
-    font-size: var(--fs-h3);
+    font-size: clamp(17px, 1.35vw, 20px);
     line-height: var(--lh-heading);
     letter-spacing: var(--tracking-tight);
     color: var(--fg-1);
@@ -114,7 +111,7 @@ const SOFT = new Set(['av', '%']); // dämpade delar av siffran (som förut)
   /* ---- Tre kolumner med hårlinjer emellan (mobil: under varandra) ---- */
   .facts {
     list-style: none;
-    margin: clamp(40px, 5vw, 72px) 0 0;
+    margin: clamp(18px, 1.8vw, 26px) 0 0;
     padding: 0;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -122,8 +119,8 @@ const SOFT = new Set(['av', '%']); // dämpade delar av siffran (som förut)
   .fact {
     display: flex;
     flex-direction: column;
-    padding-inline: clamp(20px, 3vw, 44px);
-    border-left: 1px solid var(--border-strong);
+    padding-inline: clamp(14px, 2vw, 28px);
+    border-left: 1px solid var(--border);
   }
   .fact:first-child {
     padding-left: 0;
@@ -139,11 +136,11 @@ const SOFT = new Set(['av', '%']); // dämpade delar av siffran (som förut)
     .fact,
     .fact:first-child,
     .fact:last-child {
-      padding: var(--space-7) 0;
+      padding: var(--space-4) 0;
       border-left: 0;
     }
     .fact + .fact {
-      border-top: 1px solid var(--border-strong);
+      border-top: 1px solid var(--border);
     }
     .fact:first-child {
       padding-top: 0;
@@ -158,8 +155,8 @@ const SOFT = new Set(['av', '%']); // dämpade delar av siffran (som förut)
     display: grid;
     grid-template-columns: repeat(50, minmax(0, 1fr));
     gap: 2px;
-    height: 20px;
-    margin-bottom: clamp(24px, 2.6vw, 36px);
+    height: 8px;
+    margin-bottom: var(--space-3);
   }
   .meter i {
     border-radius: 1px;
@@ -169,12 +166,12 @@ const SOFT = new Set(['av', '%']); // dämpade delar av siffran (som förut)
     background: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 80%);
   }
 
-  /* ---- Siffran, påståendet, källan (samma typografi som den gamla siffersektionen) ---- */
+  /* ---- Siffran, påståendet, källan ---- */
   .num {
     font-stretch: 75%;
     margin: 0;
     font-weight: 700;
-    font-size: clamp(56px, 5.8vw, 88px);
+    font-size: clamp(32px, 2.7vw, 42px);
     line-height: 0.98;
     letter-spacing: -0.03em;
     color: var(--fg-1);
@@ -187,12 +184,12 @@ const SOFT = new Set(['av', '%']); // dämpade delar av siffran (som förut)
   }
   .claim {
     font-stretch: 75%;
-    max-width: 26ch;
-    margin: var(--space-4) 0 0;
-    font-size: clamp(18px, 1.5vw, 21px);
+    max-width: 32ch;
+    margin: var(--space-2) 0 0;
+    font-size: clamp(14px, 1vw, 15px);
     font-weight: 500;
     line-height: 1.45;
-    color: var(--fg-1);
+    color: var(--fg-2);
     text-wrap: pretty;
   }
   /* Källan längst ner i kolumnen → källraderna linjerar även när påståendena är
@@ -200,8 +197,8 @@ const SOFT = new Set(['av', '%']); // dämpade delar av siffran (som förut)
   .src {
     font-stretch: 75%;
     margin: auto 0 0;
-    padding-top: var(--space-5);
-    font-size: var(--fs-small);
+    padding-top: var(--space-2);
+    font-size: 11px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
@@ -220,15 +217,6 @@ const SOFT = new Set(['av', '%']); // dämpade delar av siffran (som förut)
     outline: none;
     box-shadow: var(--focus-ring);
     border-radius: 2px;
-  }
-
-  .band__close {
-    max-width: 40em;
-    margin: clamp(48px, 5.6vw, 80px) 0 0;
-    font-size: var(--fs-lead);
-    line-height: var(--lh-body);
-    color: var(--fg-2);
-    text-wrap: pretty;
   }
 
   /* ---- Tändningen (bara när scriptet satt .will-reveal) ---- */

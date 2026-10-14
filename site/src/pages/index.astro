@@ -6,10 +6,10 @@ import Hero from '../components/Hero.astro';
 // Problems. Komponenten finns kvar — punktrutnätet (meshen) ska flyttas till en annan sida.
 // import Positionering from '../components/Positionering.astro';
 // Problems ("Var tar tiden vägen?") ersätter siffersektionen Stats på samma plats
-// (2026-10-14, Douglas). Siffrorna ligger nu i StatsBand under tjänsterutorna:
-// problem → lösning → belägg. Stats.astro döptes om till Problems.astro (git-historiken).
+// (2026-10-14, Douglas). Siffrorna (StatsBand) ligger i kompakt form INUTI Problems,
+// mellan problemen och "Det är där vi kommer in." (v2 samma dag; v1 var ett eget band
+// under tjänsterutorna). Stats.astro döptes om till Problems.astro (git-historiken).
 import Problems from '../components/Problems.astro';
-import StatsBand from '../components/StatsBand.astro';
 // Tjänsterutorna (Services) ersätter Departments sedan 2026-09-25. Departments.astro
 // (agentkort + lightbox) finns kvar: återställ genom att avkommentera importen och
 // byta <Services /> mot <Departments /> nedan.
@@ -48,7 +48,6 @@ import Layout from '../layouts/Layout.astro';
       sektion, INTE i stacken. Bygg-läget i flödet: Ingång → Bygg → avslutande
       stack-berättelse. (Tidigare: <Departments />, se importen.) */}
   <Services />
-  <StatsBand />
   <StartFlow />
   {/* Story och avslutningen som fristående sektioner (ingen kortstapel). FAQ är
       parkerad (flyttas till /om-oss). */}

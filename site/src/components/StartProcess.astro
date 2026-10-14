@@ -32,10 +32,12 @@
 import Arrow from './Arrow.astro';
 
 const BOOK = '/kontakt';
+// STEGEN (Douglas 2026-10-14): samma tre steg som ServicesProcess på /tjanster, här
+// i kort form — stegen visas stort i den låsta vyn, håll texterna korta.
 const STEPS = [
-  { h: 'Kartläggning på plats', t: 'Vi går igenom era processer på plats. Vad tar tid i dag, och vad återkommer varje vecka?' },
-  { h: 'Prioritering', t: 'Var ger AI och automation störst effekt, och var gör den det inte? Vi är ärliga med båda.' },
-  { h: 'Åtgärdsplan', t: 'Konkret och prioriterad. Inget köptvång, ni bestämmer själva om ni går vidare.' },
+  { h: 'Kartläggning', t: 'Vi analyserar era processer och informationsflöden. Var går tiden, och vad görs för hand?' },
+  { h: 'Prioritering', t: 'Vi identifierar vilka steg som kan digitaliseras och automatiseras – och var det inte lönar sig.' },
+  { h: 'Bygg', t: 'Vi utvecklar lösningar som frigör tid för människan att tänka kreativt och strategiskt, och bidrar med bättre överblick och kontroll.' },
 ];
 ---
 
@@ -60,7 +62,7 @@ const STEPS = [
                   <p class="pstep__t">{s.t}</p>
                   {i === STEPS.length - 1 && (
                     <div class="pstep__cta">
-                      <a class="btn btn-primary" href={BOOK}>Boka en tid <Arrow class="arrow" /></a>
+                      <a class="btn btn-primary" href={BOOK}>Boka kartläggning <Arrow class="arrow" /></a>
                       <p class="pstep__note">Vill ni förstå AI först? Vi kan också komma ut och föreläsa för ert team.</p>
                     </div>
                   )}

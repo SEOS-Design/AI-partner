@@ -1,25 +1,28 @@
 ---
-// ServicesProcess.astro – "Hur går det till?" på /tjanster (2026-09-30): kartläggning,
-// bygg, förvaltning i tre steg, direkt under heron.
+// ServicesProcess.astro – "Hur går det till?" på /tjanster (2026-09-30), direkt under
+// heron.
 // (Statementet "Vi börjar med er vardag. / Inte med en produktlista." som låg här
 // ovanför togs bort, Björn: upprepade heron och stegen. Budskapet bor i herons ingress.)
-// Copy = utkast (Douglas granskar).
+//
+// 2026-10-14 (Douglas): SAMMA tre steg som startsidans kubsektion (StartProcess) —
+// kartläggning, prioritering, bygg — här i längre form. Förvaltning är inte längre ett
+// eget steg (lästes som obligatoriskt) utan en rad under stegen.
 
 const STEPS = [
   {
     n: '01',
     title: 'Kartläggning',
-    text: 'Vi går igenom era processer tillsammans och hittar var tiden går. Kostnadsfritt, och ni bestämmer själva om ni går vidare.',
+    text: 'Vi analyserar era processer och informationsflöden tillsammans med er: var tiden går, var samma uppgifter förs in i flera system och vad som återkommer varje vecka. Kostnadsfritt.',
   },
   {
     n: '02',
-    title: 'Bygg',
-    text: 'Vi börjar med det som ger mest effekt och kopplar lösningen till systemen ni redan har.',
+    title: 'Prioritering',
+    text: 'Vi identifierar vilka steg som kan digitaliseras och automatiseras, och vad varje förändring skulle ge. Ni får en prioriterad åtgärdsplan med ett ärligt besked om var AI inte lönar sig.',
   },
   {
     n: '03',
-    title: 'Förvaltning',
-    text: 'Vi följer upp, justerar och sköter driften. Ni har samma kontakt hela vägen.',
+    title: 'Bygg',
+    text: 'Vi börjar med det som ger mest effekt och kopplar lösningen till systemen ni redan har. Lösningarna frigör tid för era medarbetare att tänka kreativt och strategiskt, och bidrar med bättre överblick och kontroll.',
   },
 ];
 ---
@@ -36,6 +39,10 @@ const STEPS = [
         </li>
       ))}
     </ol>
+    <p class="process__after">
+      Efter lansering kan vi förvalta lösningen – följa upp, justera och sköta driften.
+      Ni äger allt och kan ta över när ni vill.
+    </p>
   </div>
 </section>
 
@@ -95,6 +102,15 @@ const STEPS = [
     font-size: var(--fs-lead);
     line-height: var(--lh-body);
     color: var(--fg-2);
+  }
+  /* Förvaltningsraden: under stegen, dämpad — ett erbjudande, inte ett steg. */
+  .process__after {
+    max-width: 44em;
+    margin: clamp(32px, 4vw, 48px) 0 0;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-3);
+    text-wrap: pretty;
   }
   @media (max-width: 859px) {
     .process__list { grid-template-columns: minmax(0, 1fr); }

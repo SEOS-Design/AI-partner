@@ -1,18 +1,29 @@
 ---
 // AboutQuote.astro – den personliga sektionen på /om-oss (2026-09-28).
-// En person (Douglas), ett stort citat, inga foton. Björn: personligt men inte en kopia
-// av seosdesign.se (där står tre grundare med foto och ett gemensamt kundlöfte).
-// Rubriken finns bara för skärmläsare.
+// Ett stort citat. Björn: personligt men inte en kopia av seosdesign.se (där står tre
+// grundare med foto och ett gemensamt kundlöfte). Rubriken finns bara för skärmläsare.
+//
+// 2026-10-14 (Douglas): citatet kommer från HELA TEAMET, inte bara Douglas — fyra namn
+// under citatet (TEAM nedan).
+//
+// TEAMBILD (Elliot): lägg bilden i public/om-oss/ och sätt TEAM_PHOTO till sökvägen,
+// t.ex. '/om-oss/team.webp' (webp, ~2000 px bred). Då visas den mellan citatet och
+// namnen. Så länge TEAM_PHOTO är null visas ingen bild och ingen platshållare.
+// (Samma grepp som PHOTO i Story.astro.)
 //
 // Rörelse: orden tänds från grått till vitt i takt med scrollen. Utan JS / reduced
 // motion: hela citatet vitt.
 //
-// !! CITATET ÄR EN TILLFÄLLIG PLATSHÅLLARE skriven av Claude (2026-09-28, version 2), INTE
-// Douglas ord. Byt mot ett riktigt citat som Douglas godkänt innan publicering.
+// CITATTEXTEN = Douglas formulering (2026-10-14). Ersatte Claudes platshållare från
+// 2026-09-28 ("Vi mäter inte vårt arbete i hur mycket AI vi levererar …").
 
 const QUOTE =
-  'Vi mäter inte vårt arbete i hur mycket AI vi levererar. Vi mäter det i hur mycket tid våra kunder får tillbaka. Finns det inget att vinna säger vi det från början.';
+  'Vi mäter vårt arbete i hur mycket tid våra kunder får tillbaka, och skapar bara automationer som leder till tidsbesparing, inte mer underhåll.';
 const words = QUOTE.split(' ');
+
+const TEAM = ['Douglas Ekman', 'Anton Sahibzada', 'Björn Wildenstam', 'Elliot Eslander'];
+const teamText = `${TEAM.slice(0, -1).join(', ')} och ${TEAM[TEAM.length - 1]}`;
+const TEAM_PHOTO: string | null = null; // Elliot: '/om-oss/team.webp'
 ---
 
 <section class="aquote" aria-labelledby="aquote-title">
@@ -27,9 +38,18 @@ const words = QUOTE.split(' ');
         ))}<span aria-hidden="true">”</span>
       </p>
     </blockquote>
+    {TEAM_PHOTO && (
+      <img
+        class="aquote__photo"
+        src={TEAM_PHOTO}
+        alt={teamText}
+        loading="lazy"
+        decoding="async"
+      />
+    )}
     <figcaption class="aquote__cap">
-      <span class="aquote__name">Douglas Ekman</span>
-      <span class="aquote__role">VD och medgrundare, AI Partner och SEOS Design</span>
+      <span class="aquote__name">{teamText}</span>
+      <span class="aquote__role">Teamet bakom AI Partner</span>
     </figcaption>
   </figure>
 </section>
@@ -79,13 +99,26 @@ const words = QUOTE.split(' ');
     gap: var(--space-2);
     margin-top: var(--space-7);
   }
-  /* Namn och titel i större storlek (Björn 2026-09-28): namnet ~60 % av citatets storlek. */
+  /* Teambilden (när TEAM_PHOTO är satt): mellan citatet och namnen. */
+  .aquote__photo {
+    display: block;
+    width: 100%;
+    max-width: 880px;
+    height: auto;
+    margin: var(--space-8) auto 0;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+  }
+  /* Namn och titel i större storlek (Björn 2026-09-28): namnet ~60 % av citatets
+     storlek. Fyra namn sedan 2026-10-14 → balanserad radbrytning. */
   .aquote__name {
+    max-width: 30em;
     font-stretch: 75%;
     font-size: calc(var(--fs-h3) * 0.6);
     line-height: var(--lh-heading);
     font-weight: 700;
     color: var(--fg-1);
+    text-wrap: balance;
   }
   .aquote__role {
     font-size: var(--fs-lead);

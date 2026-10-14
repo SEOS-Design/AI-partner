@@ -1,6 +1,16 @@
 # Byggstatus — aipartner.se
 
-> Senast uppdaterad: 2026-10-08
+> Senast uppdaterad: 2026-10-14
+
+---
+
+## 2026-10-14 — problemsektion + statistikband (Douglas)
+
+- **Siffersektionen överst ersatt av problemsektionen** "Var tar tiden vägen?": `Stats.astro` → `Problems.astro` (git mv, samma layout: låst rubrik vänster, tre problem rullar förbi till höger, "Det är där vi kommer in." + text + knappar under). Ingen 01–03-numrering (problemen är ingen ordningsföljd; kubsektionen har 01–03 för stegen). Copy = Douglas.
+- **Siffrorna flyttade till nya `StatsBand.astro`**, direkt under tjänsterutorna: "Hur långt har svenska företag kommit med AI?" i h3-storlek, tre kolumner (7 av 10 · 18 % · 3 av 4) med hårlinjer emellan, en mätare per siffra (50 streck à 2 %, tänds en gång vid inscroll; reduced motion = tända direkt). Mobil <860 px: under varandra.
+- **Siffrorna omverifierade 2026-10-14** mot SCB: "småföretag" → "företag med 10–49 anställda" (SCB:s population börjar vid 10), "3 av 4 … avstår" → "som övervägt AI utan att börja anger brist på expertis", ny: 18 % av svenskarna (16+) använder generativ AI i jobbet. McKinsey 60–70 % (2023) borttagen. **SCB publicerar It-användning i företag 2026 den 5 november** → uppdatera `STATS` i StatsBand.astro (en plats).
+- Underlag och historik: `AI-Partner-startsida-problemsektion-2026-10-14.md` i Douglas SEOS-mapp.
+- Öppet: tjänsterutorna (Services) har kvar Ekonomi och Kvalitet & projekt — Douglas vill gå bort från ekonomi/fakturering mot intern admin, onboarding och marknad; förslag finns i samma underlag, ej infört.
 
 ---
 

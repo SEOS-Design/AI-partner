@@ -6,10 +6,9 @@
 // Statementet "Vi börjar med er vardag…" under heron togs bort samtidigt och bor nu
 // i ingressen.)
 //
-// Video (TEST 2026-10-08, Björn): MESHEN — punktrutnätet i våg (Wannathis "Wall",
-// public/pos-wall.mp4 + poster, sömlös loop, skarv 1,67) som låg under startsidans
-// hero i Positionering. Björn ville behålla meshen men flytta den; glasskivorna
-// "passade inte riktigt" här. Bara mp4 (webm blev större för fina prickar).
+// Video (2026-10-15, Björn): Cloth-glaset (Wannathis "Cloth_01", samma som
+// kunskapsbankens utvalda artikel hade) — bytt plats med meshen, som nu ligger i
+// kunskapsbankens kort. Meshen (public/pos-wall.mp4) testades här 2026-10-08.
 // Tidigare videor ligger kvar: glasskivorna public/tjanster-skivor.* (sömlös loop)
 // och Displacement public/tjanster-hero.* (lokalt, ej committad).
 // Postern = första rutan, visas innan videon laddat och vid reduced motion.
@@ -25,10 +24,11 @@
       muted
       loop
       playsinline
-      poster="/pos-wall-poster.webp"
+      poster="/kunskapsbank/utvald-cloth-poster.webp"
       aria-hidden="true"
     >
-      <source src="/pos-wall.mp4" type="video/mp4" />
+      <source src="/kunskapsbank/utvald-cloth.webm" type="video/webm" />
+      <source src="/kunskapsbank/utvald-cloth.mp4" type="video/mp4" />
     </video>
     <div class="shero__bg" aria-hidden="true"></div>
     <div class="shero__tint" aria-hidden="true"></div>
@@ -88,7 +88,7 @@
   }
   .shero__bg {
     z-index: 0;
-    background: url("/pos-wall-poster.webp") center / cover no-repeat;
+    background: url("/kunskapsbank/utvald-cloth-poster.webp") center / cover no-repeat;
   }
   .shero__video {
     z-index: 1;

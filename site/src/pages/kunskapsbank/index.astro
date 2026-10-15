@@ -52,8 +52,9 @@ const filters = (await getCollection('kategorier'))
 
       {featured && (
         <a class="kb-feat" href={featured.href}>
-          {/* Wannathis Glass "Cloth_01" (dark), 4K → 1600 px. Skarvkvot 1,22 (sömlös).
-              Spelar bara när den syns (inview-video). Postern vid reduced motion. */}
+          {/* Meshen — punktrutnätet i våg (Wannathis "Wall", sömlös loop). Bytt plats
+              med Cloth-glaset 2026-10-15, som nu ligger i /tjanster-heron. Spelar bara
+              när den syns (inview-video). Postern vid reduced motion. */}
           <video
             class="kb-feat__video"
             data-inview-video
@@ -61,11 +62,10 @@ const filters = (await getCollection('kategorier'))
             muted
             loop
             playsinline
-            poster="/kunskapsbank/utvald-cloth-poster.webp"
+            poster="/pos-wall-poster.webp"
             aria-hidden="true"
           >
-            <source src="/kunskapsbank/utvald-cloth.webm" type="video/webm" />
-            <source src="/kunskapsbank/utvald-cloth.mp4" type="video/mp4" />
+            <source src="/pos-wall.mp4" type="video/mp4" />
           </video>
           <span class="kb-feat__tint" aria-hidden="true"></span>
           <div class="kb-feat__text">
@@ -162,7 +162,10 @@ const filters = (await getCollection('kategorier'))
     overflow: hidden;
     border: 1px solid var(--border-strong);
     border-radius: 22px;
-    background: #06070a url('/kunskapsbank/utvald-cloth-poster.webp') center / cover no-repeat;
+    background: #06070a url('/pos-wall-poster.webp') center / cover no-repeat;
+    /* Postern bara innanför kanten: annars lyser punktmönstret igenom den
+       halvgenomskinliga kanten och den ser streckad ut (Björn 2026-10-15). */
+    background-clip: padding-box;
     color: inherit;
     text-decoration: none;
     outline: none;
@@ -258,7 +261,11 @@ const filters = (await getCollection('kategorier'))
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
-    padding: 9px 16px;
+    /* Hel pixelhöjd (var 43,8 px via radhöjden) → kanten ritas lika skarpt upptill
+       och nedtill även vid Windows-skalning. */
+    height: 44px;
+    padding: 0 16px;
+    line-height: 1;
     border: 1px solid var(--border-strong);
     border-radius: 999px;
     background: transparent;

@@ -56,6 +56,10 @@ const isHome = canonical === canonicalUrl('/');
   <body>
      <Nav/> 
      <slot />
+     {/* Rubrik-drapen: delar [data-split]-rubriker i ord (se global.css). */}
+     <script>
+       import '../scripts/split';
+     </script>
   </body>
 </html>
 

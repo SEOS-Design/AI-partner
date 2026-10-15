@@ -710,3 +710,50 @@ textarea {
   position: relative;
   padding: var(--section-py) 0;
 }
+
+/* ---------------------------------------------------------------
+   Rubrik-drape: orden glider upp ur en mask I TAKT MED SCROLLEN
+   (2026-10-15, samma teknik som seosdesign.se, uppmätt på deras
+   "Vi skapar skalbara hemsidor och varumärken").
+   Sätt `data-split` på en rubrik → scripts/split.ts delar den i ord
+   (.w med --i, rubriken får --n och klassen .split). Framåt och bakåt:
+   scrollar man upp glider orden ner igen.
+   Ren CSS (view-timeline) som animerar --scroll-progress 0 → 1 från att
+   rubriken kommer in nedtill tills den står 40vh in i vyn. Varje ord har
+   eget fönster (förskjutet med --i), kvadratisk utjämning.
+   --sp-a/--sp-b = SEOS "split--lead" (större förskjutning mellan orden).
+   Utan stöd för view() (Firefox) driver split.ts samma variabel vid scroll.
+   Utan JS / reduced motion: ingen .split → rubriken står bara där.
+--------------------------------------------------------------- */
+@property --scroll-progress {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+.split {
+  --sp-a: 3.3;
+  --sp-b: 2.2;
+}
+.split .w {
+  --k: clamp(0, calc(var(--scroll-progress, 1) * var(--sp-a) - var(--i, 0) / max(1, var(--n, 1) - 1) * var(--sp-b)), 1);
+  --r: calc((1 - var(--k)) * (1 - var(--k)));
+  display: inline-block;
+  translate: 0 calc(var(--r) * 100%);
+  opacity: calc(1 - var(--r));
+  /* luft upptill för Å/Ä-prickar och nedtill för g/j/å */
+  clip-path: inset(-0.25em 0 calc(var(--r) * 100% - 0.15em) 0);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .split {
+    animation-name: split-rise;
+    animation-duration: auto;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: view();
+    animation-range: entry contain 40vh;
+  }
+}
+@keyframes split-rise {
+  0% { --scroll-progress: 0; }
+  100% { --scroll-progress: 1; }
+}

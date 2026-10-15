@@ -43,7 +43,7 @@ const pages: [string, string][] = [
   <div class="container foot__top">
     <div class="foot__brand">
       <span class="foot__mark">AI PARTNER</span>
-      <p class="foot__lead">AI-agenter och automation för svenska företag.</p>
+      <p class="foot__lead">Vi bygger AI-agenter och automation som tar rutinarbetet.</p>
     </div>
 
     <nav class="foot__col" aria-label="Sidan">
@@ -205,16 +205,16 @@ const pages: [string, string][] = [
   .foot__hd {
     font-stretch: 75%; /* versal etikett: smal bredd */
     margin-bottom: var(--space-2);
-    font-size: var(--fs-eyebrow);
-    font-weight: 600;
+    font-size: var(--fs-small);
+    font-weight: 700;
     letter-spacing: var(--tracking-eyebrow);
     text-transform: uppercase;
-    color: var(--fg-4);
+    color: var(--fg-3);
   }
   .foot__col a,
   .foot__linkbtn {
     width: fit-content;
-    font-size: var(--fs-body);
+    font-size: var(--fs-lead);
     line-height: var(--lh-body);
     color: var(--fg-3);
     transition: color var(--dur-fast) var(--ease);
@@ -277,9 +277,9 @@ const pages: [string, string][] = [
     gap: var(--space-4);
     padding-top: 22px;
     padding-bottom: var(--space-5);
-    font-size: 13px;
+    font-size: var(--fs-small); /* samma storlek som "Sidan"/"Mer" (Björn 2026-10-15) */
     letter-spacing: 0.04em;
-    color: var(--fg-4);
+    color: var(--fg-3);
   }
   .foot__bottom-in a {
     color: var(--fg-3);

@@ -30,7 +30,7 @@ const areas = (await getCollection('tjanster')).sort((a, b) => a.data.order - b.
 <section class="areas" aria-labelledby="areas-title">
   <div class="container">
     <div class="areas__head">
-      <h2 id="areas-title" class="h2">Var brukar vi börja?</h2>
+      <h2 id="areas-title" class="h2" data-split>Var brukar vi börja?</h2>
       <p class="areas__lead">
         Fem områden där rutinarbetet oftast tar mest tid. Så här kan det se ut hos er.
       </p>
@@ -71,7 +71,7 @@ const areas = (await getCollection('tjanster')).sort((a, b) => a.data.order - b.
     </div>
 
     <div class="custom">
-      <h2 class="h2 custom__h">Hittar ni inte ert område?</h2>
+      <h2 class="h2 custom__h" data-split>Hittar ni inte ert område?</h2>
       <div class="custom__body">
         <p>
           Listan ovan är exempel, inte gränser. Beskriv vad som tar tid hos er, så tar vi

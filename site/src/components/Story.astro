@@ -4,10 +4,10 @@
 // en inblick i vilka som står bakom AI Partner, eftersom resten av startsidan
 // saknar personligt innehåll. Ordning: stora rubriker → berättelse → liten bio.
 //
-// Rubrikanimationen är inspirerad av seosdesign.se/om-oss: varje ord ligger i en
-// egen mask (overflow: clip) och glider upp ur den, ett ord i taget, när rubriken
-// scrollas in. Brödtexten har INGEN scrollanimation (Björn: sämre läsbarhet), den
-// tonas bara in en gång efter rubrikerna.
+// Rubriken har sajtens gemensamma rubrik-drape (data-split, se global.css): orden
+// glider upp i takt med scrollen, åt båda hållen (2026-10-15, som seosdesign.se).
+// Brödtexten har INGEN scrollanimation (Björn: sämre läsbarhet), den tonas bara in
+// en gång.
 //
 // Progressiv förbättring: utan JS och vid reduced motion syns allt direkt. Scriptet
 // sätter .will-reveal (dolt läge) först när det vet att det kan animera.
@@ -22,25 +22,14 @@
 // Tre rader: "Ett team. Två varumärken." blev för lång på en rad vid h2-storlek.
 const HEAD = ['Vår historia.', 'Ett team.', 'Två varumärken.'];
 const PHOTO: string | null = '/douglas.webp'; // från seosdesign.se (författarkortet i bloggen), beskuren 4:5
-
-// Ord → spans med förskjutning; räknas löpande över båda raderna.
-let wi = 0;
-const lines = HEAD.map((line) => line.split(' ').map((w) => ({ w, i: wi++ })));
 ---
 
 <section id="om-oss" class="story" aria-labelledby="story-title">
   <div class="container story__grid">
     <div class="story__main">
-      <h2 id="story-title" class="story__h">
-        {lines.map((words, li) => (
-          <span class:list={['story__line', li > 0 && 'story__line--dim']}>
-            {words.map(({ w, i }, k) => (
-              <>
-                <span class="story__mask"><span class="story__word" style={`--i: ${i}`}>{w}</span></span>
-                {k < words.length - 1 && ' '}
-              </>
-            ))}
-          </span>
+      <h2 id="story-title" class="story__h" data-split>
+        {HEAD.map((line, li) => (
+          <span class:list={['story__line', li > 0 && 'story__line--dim']}>{line}</span>
         ))}
       </h2>
 
@@ -103,17 +92,6 @@ const lines = HEAD.map((line) => line.split(' ').map((w) => ({ w, i: wi++ })));
   }
   .story__line--dim {
     color: #666;
-  }
-  /* Masken klipper ordet; lite luft nedtill så att å/ä/g inte klipps. */
-  .story__mask {
-    display: inline-block;
-    overflow: clip;
-    vertical-align: top;
-    padding-bottom: 0.08em;
-    margin-bottom: -0.08em;
-  }
-  .story__word {
-    display: inline-block;
   }
 
   /* ---- layout: text till vänster, porträtt till höger ---- */
@@ -206,12 +184,6 @@ const lines = HEAD.map((line) => line.split(' ').map((w) => ({ w, i: wi++ })));
   }
 
   /* ---- animation (bara när scriptet satt .will-reveal) ---- */
-  /* 125 %: vid 105 % kikade ä-prickar och punkter fram i maskens luft nedtill. */
-  .story.will-reveal .story__word {
-    transform: translateY(125%);
-    transition: transform 0.9s var(--ease);
-    transition-delay: calc(0.1s + var(--i) * 0.11s);
-  }
   .story.will-reveal .story__body,
   .story.will-reveal .story__person {
     opacity: 0;
@@ -224,7 +196,6 @@ const lines = HEAD.map((line) => line.split(' ').map((w) => ({ w, i: wi++ })));
   .story.will-reveal .story__person {
     transition-delay: 1.05s;
   }
-  .story.will-reveal.is-in .story__word,
   .story.will-reveal.is-in .story__body,
   .story.will-reveal.is-in .story__person {
     transform: none;

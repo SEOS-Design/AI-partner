@@ -13,6 +13,10 @@
 // texten under "Det är där vi kommer in." = Douglas 2026-10-14).
 //
 // Mobil (<860 px): vanligt flöde. Reduced motion / utan JS: allt synligt direkt.
+//
+// Rubriken och "Det är där vi kommer in." har sajtens rubrik-drape (data-split, se
+// global.css): orden följer scrollen åt båda hållen. Texten och knapparna under
+// meningen tonas in en gång.
 import Arrow from './Arrow.astro';
 import StatsBand from './StatsBand.astro';
 
@@ -31,7 +35,6 @@ const PROBLEMS = [
   },
 ];
 
-const STATEMENT = 'Det är där vi kommer in.'.split(' ');
 ---
 
 <section id="problem" class="probs" aria-labelledby="probs-heading">
@@ -40,7 +43,7 @@ const STATEMENT = 'Det är där vi kommer in.'.split(' ');
       <div class="probs__side">
         <div class="probs__sticky">
           {/* Två bestämda rader, som den gamla siffersektionens rubrik. */}
-          <h2 id="probs-heading" class="h2 probs-h">
+          <h2 id="probs-heading" class="h2 probs-h" data-split>
             <span class="probs-h__line">Var tar</span>{' '}
             <span class="probs-h__line">tiden vägen?</span>
           </h2>
@@ -62,16 +65,9 @@ const STATEMENT = 'Det är där vi kommer in.'.split(' ');
   {/* Siffrorna i kompakt form, efter att den låsta rubriken släppt. */}
   <StatsBand />
 
-  {/* Varje ord i en egen mask och glider upp ur den, ett i taget (som Story). */}
+  {/* Rubrik-drapen (data-split, global.css): orden glider upp i takt med scrollen. */}
   <div class="statement-track">
-    <p class="statement">
-      {STATEMENT.map((w, i) => (
-        <>
-          <span class="statement__mask"><span class="statement__word" style={`--i: ${i}`}>{w}</span></span>
-          {i < STATEMENT.length - 1 && ' '}
-        </>
-      ))}
-    </p>
+    <p class="statement" data-split>Det är där vi kommer in.</p>
     <div class="statement-more">
       <p class="statement-more__text">
         Vi bygger AI-agenter och automation som tar det repetitiva, så att era medarbetare
@@ -237,17 +233,6 @@ const STATEMENT = 'Det är där vi kommer in.'.split(' ');
     text-align: center;
     text-wrap: balance;
   }
-  /* Masken klipper ordet; lite luft nedtill så att å/ä/g inte klipps (som Story). */
-  .statement__mask {
-    display: inline-block;
-    overflow: clip;
-    vertical-align: top;
-    padding-bottom: 0.08em;
-    margin-bottom: -0.08em;
-  }
-  .statement__word {
-    display: inline-block;
-  }
   .statement-more {
     max-width: 44em;
     margin: clamp(24px, 3vw, 40px) auto 0;
@@ -286,21 +271,15 @@ const STATEMENT = 'Det är där vi kommer in.'.split(' ');
     }
   }
 
-  /* ---- animation (bara när scriptet satt .will-reveal) — samma värden som Story ---- */
-  .statement-track.will-reveal .statement__word {
-    transform: translateY(125%);
-    transition: transform 0.9s var(--ease);
-    transition-delay: calc(0.1s + var(--i) * 0.11s);
-  }
-  /* Texten och knapparna tonas in en gång efter orden (ingen scrollanimation på
-     brödtext — Björns regel). */
+  /* ---- animation (bara när scriptet satt .will-reveal) ---- */
+  /* Texten och knapparna tonas in en gång när meningen nått in i bild (ingen
+     scrollanimation på brödtext — Björns regel). */
   .statement-track.will-reveal .statement-more {
     opacity: 0;
     transform: translateY(12px);
     transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
     transition-delay: 0.9s;
   }
-  .statement-track.will-reveal.is-in .statement__word,
   .statement-track.will-reveal.is-in .statement-more {
     transform: none;
     opacity: 1;
@@ -308,8 +287,8 @@ const STATEMENT = 'Det är där vi kommer in.'.split(' ');
 </style>
 
 <script>
-  // Orden glider upp ur sina masker när meningen scrollas in (samma som Story).
-  // Utan JS och vid reduced motion syns meningen direkt; .will-reveal (dolt läge)
+  // Texten och knapparna under meningen tonas in när meningen scrollas in (orden
+  // sköts av rubrik-drapen). Utan JS och vid reduced motion syns meningen direkt; .will-reveal (dolt läge)
   // sätts först när scriptet vet att det kan animera.
   const track = document.querySelector<HTMLElement>('.probs .statement-track');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

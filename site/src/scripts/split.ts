@@ -37,10 +37,57 @@ function split(el: HTMLElement) {
   el.classList.add('split');
 }
 
+// Egen radbalansering (ersätter text-wrap: balance på delade rubriker, se
+// global.css): Safari räknade fel när varje ord är en inline-block och bröt t.ex.
+// "Det / är där vi kommer in." (Björn 2026-10-16). Rubriken görs så smal som
+// möjligt utan att få fler rader → jämna rader, samma resultat i alla webbläsare.
+// Centrerade rubriker centreras med auto-marginal. Rubriker med nowrap (fasta
+// brytningar) rörs inte.
+const countLines = (el: HTMLElement) =>
+  new Set(Array.from(el.querySelectorAll<HTMLElement>('.w'), (w) => w.offsetTop)).size;
+
+function balance(el: HTMLElement) {
+  el.style.maxWidth = '';
+  el.style.marginInline = '';
+  const cs = getComputedStyle(el);
+  if (cs.whiteSpace === 'nowrap') return;
+  const n = countLines(el);
+  if (n < 2) return;
+  let hi = el.clientWidth;
+  let lo = hi * 0.4;
+  for (let k = 0; k < 10 && hi - lo > 1; k++) {
+    const mid = (lo + hi) / 2;
+    el.style.maxWidth = `${mid}px`;
+    if (countLines(el) === n) hi = mid;
+    else lo = mid;
+  }
+  el.style.maxWidth = `${Math.ceil(hi) + 1}px`;
+  if (cs.textAlign === 'center') el.style.marginInline = 'auto';
+}
+
 const heads = Array.from(document.querySelectorAll<HTMLElement>('[data-split]'));
 
 if (heads.length && !reduced.matches) {
   heads.forEach(split);
+
+  const balanceAll = () => heads.forEach(balance);
+  balanceAll();
+  document.fonts?.ready.then(balanceAll);
+  let lastW = innerWidth;
+  let braf = 0;
+  addEventListener(
+    'resize',
+    () => {
+      // Bara breddändringar (mobilens adressfält ändrar höjden vid scroll).
+      if (innerWidth === lastW || braf) return;
+      lastW = innerWidth;
+      braf = requestAnimationFrame(() => {
+        braf = 0;
+        balanceAll();
+      });
+    },
+    { passive: true },
+  );
 
   if (!CSS.supports('animation-timeline', 'view()')) {
     // Bara rubriker som ligger under vyn vid laddning animeras (som SEOS);

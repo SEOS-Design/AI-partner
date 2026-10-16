@@ -226,12 +226,14 @@ const PROBLEMS = [
     font-stretch: 75%;
     margin: 0;
     font-weight: 700;
-    font-size: var(--fs-h2); /* samma storlek som rubriken (Björn) */
+    /* ALLTID EN RAD (Björn 2026-10-16: Safari bröt "Det / är där vi kommer in.").
+       Meningen är ~7,7 em bred → krymper med kolumnen när h2-storleken inte ryms. */
+    font-size: min(var(--fs-h2), calc(100cqi / 7.9));
+    white-space: nowrap;
     line-height: var(--lh-heading);
     letter-spacing: var(--tracking-display);
     color: var(--fg-1);
     text-align: center;
-    text-wrap: balance;
   }
   .statement-more {
     max-width: 44em;
@@ -254,6 +256,7 @@ const PROBLEMS = [
   }
   /* Standard (mobil): vanlig rad med luft omkring. */
   .statement-track {
+    container-type: inline-size; /* meningens storlek räknas mot sin bredd (cqi) */
     padding: clamp(56px, 8vw, 112px) var(--space-5) 0;
   }
   /* Bred skärm: lika mycket luft ovanför meningen som under sektionen. */

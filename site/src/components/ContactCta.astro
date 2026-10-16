@@ -17,7 +17,8 @@ import Arrow from './Arrow.astro';
 <section id="kontakt" class="cta" aria-labelledby="cta-title">
   <span id="boka" class="cta__anchor" aria-hidden="true"></span>
   <div class="cta__inner">
-    <h2 id="cta-title" class="cta__h" data-split>Börja med er största tidstjuv.</h2>
+    {/* Fast radbrytning: alltid två rader (Safari delade den på tre, Björn 2026-10-16). */}
+    <h2 id="cta-title" class="cta__h" data-split>Börja med er<br />största tidstjuv.</h2>
     <p class="cta__p">
       Berätta om en process som tar för mycket tid. Vi återkommer med vad som går att
       automatisera och vad det skulle ge.
@@ -43,17 +44,17 @@ import Arrow from './Arrow.astro';
     top: -80px;
   }
   .cta__inner {
+    container-type: inline-size; /* rubrikens storlek räknas mot bredden (cqi) */
     max-width: var(--maxw-content);
     margin-inline: auto;
     padding-inline: var(--space-5);
   }
   .cta__h {
     margin: 0 auto;
-    max-width: 14ch;
-    text-wrap: balance;
+    white-space: nowrap; /* bara den fasta brytningen; krymper hellre än bryter */
     font-family: var(--font-sans);
     font-weight: 700;
-    font-size: var(--fs-h2);
+    font-size: min(var(--fs-h2), calc(100cqi / 5.2)); /* längsta raden ~5 em */
     line-height: var(--lh-display);
     letter-spacing: var(--tracking-display);
     color: var(--fg-1);

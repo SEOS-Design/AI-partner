@@ -733,6 +733,10 @@ textarea {
 .split {
   --sp-a: 3.3;
   --sp-b: 2.2;
+  /* Ingen radbalansering: Safari räknar fel när varje ord är en inline-block och
+     bröt t.ex. "Det / är där vi kommer in." (Björn 2026-10-16, iPhone). Chrome
+     gjorde rätt. !important slår komponenternas egna text-wrap: balance. */
+  text-wrap: wrap !important;
 }
 .split .w {
   --k: clamp(0, calc(var(--scroll-progress, 1) * var(--sp-a) - var(--i, 0) / max(1, var(--n, 1) - 1) * var(--sp-b)), 1);

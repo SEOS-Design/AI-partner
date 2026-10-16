@@ -306,6 +306,9 @@ const services = [
       margin: 0 calc(var(--space-5) + 32px) var(--space-5) var(--space-5);
     }
     .svc-grid .cell .desc { max-height: none; margin-top: var(--space-2); }
+    /* Alltid framme här → läses som brödtext: full bredd (var smal 75 %, såg
+       mycket mindre ut än texten runt omkring på mobil). */
+    .svc-grid .cell .desc { font-stretch: 100%; }
   }
   /* Mobil: en kolumn. Rutorna aktiveras när de syns (scriptet) i stället för hover. */
   @media (max-width: 639px) {

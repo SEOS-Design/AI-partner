@@ -192,6 +192,14 @@ const SOFT = new Set(['av', '%']); // dämpade delar av siffran (som förut)
     color: var(--fg-2);
     text-wrap: pretty;
   }
+  /* Mobil: 14 px smal text blev svårläst; en kolumn har plats för mer (efter
+     grundregeln ovan, annars vinner den). */
+  @media (max-width: 859px) {
+    .claim {
+      max-width: none;
+      font-size: var(--fs-body);
+    }
+  }
   /* Källan längst ner i kolumnen → källraderna linjerar även när påståendena är
      olika långa. */
   .src {

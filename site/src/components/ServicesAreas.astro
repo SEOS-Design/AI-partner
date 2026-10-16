@@ -107,6 +107,9 @@ const areas = (await getCollection('tjanster')).sort((a, b) => a.data.order - b.
   .areas__list {
     margin-top: clamp(48px, 6vw, 88px);
     display: grid;
+    /* minmax(0, 1fr): annars växte kolumnen efter rubrikens minsta bredd och
+       korten stack ut i sidled på 320 px-mobil (2026-10-16). */
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-5);
   }
   .area {

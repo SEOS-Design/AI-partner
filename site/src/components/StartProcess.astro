@@ -24,8 +24,10 @@
 // Scrollmekaniken är oförändrad (stegen rullar förbi ett i taget).
 //
 // Låst läge slås på av scriptet (.is-pinned) bara på breda skärmar utan reduced
-// motion. Annars (och utan JS): vanligt flöde, stegen under varandra, kuben som
-// stillbild (sekvensen laddas bara i låst läge).
+// motion. Under 860 px (2026-10-16, Björn): samma uttryck med VANLIG scroll —
+// centrerad text, ett steg per skärmhöjd, kuben sticky bakom stegen och snurrande
+// i takt med scrollen (.is-flow, samma bildsekvens). Reduced motion / utan JS:
+// stegen under varandra, kuben som stillbild.
 //
 // Tidigare varianter finns kvar: StartFlowRail.astro, StartFlow.astro (vågen),
 // StartFlow.cascade.astro.bak. Växla i index.astro.
@@ -196,11 +198,11 @@ const STEPS = [
   .proc__canvas {
     grid-area: 1 / 1;
   }
-  .proc__canvas {
+  /* Canvasen bara när kuben snurrar (låst läge på desktop, .is-flow på mobil).
+     :not() ger högre specificitet än .proc__video (display: block längre ner), som
+     annars visade en tom ruta under stillbilden på mobil (uppmätt 2026-10-16). */
+  .proc:not(.is-pinned):not(.is-flow) .proc__canvas {
     display: none;
-  }
-  .is-pinned .proc__canvas {
-    display: block;
   }
   /* Stillbilden göms först när canvasen ritat sin första bild (scriptet). */
   .proc.has-frames .proc__poster {
@@ -209,6 +211,9 @@ const STEPS = [
   .proc__video {
     position: relative;
     width: 100%;
+    /* height: auto → kvadraten följer bredden (bildens height="720" gjorde annars
+       stillbilden 720 px hög på mobil). Låst läge sätter 100 %. */
+    height: auto;
     aspect-ratio: 1;
     object-fit: contain;
     display: block;
@@ -240,12 +245,57 @@ const STEPS = [
       grid-template-columns: minmax(0, 1fr);
       gap: 0;
     }
+    /* MOBIL/TABLET = desktopens uttryck med VANLIG scroll (Björn 2026-10-16):
+       centrerad text, ett steg per skärmhöjd, och kuben centrerad BAKOM stegen. Den
+       står kvar (sticky) medan stegen scrollar förbi och snurrar i takt med scrollen
+       (.is-flow, scriptet). Ingen låsning — texten följer tummen 1:1.
+       clip (inte hidden): skapar ingen scrollbehållare, så sticky fungerar. */
+    .proc { overflow-x: clip; --cube: min(92vw, 440px); }
+    .proc__grid {
+      position: relative;
+      isolation: isolate;
+    }
     .proc__text { display: contents; }
-    .proc__head { order: 1; }
-    .proc__visual { order: 2; }
-    .proc__viewport { order: 3; margin-top: 0; }
-    .proc__stage { margin-block: var(--space-5); }
-    .proc__video { max-width: 420px; }
+    .proc__head {
+      grid-row: 1;
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+    /* Kuben ligger i SAMMA rutnätscell som stegen (rad 2) och fyller dess höjd;
+       scenen inuti är sticky mitt i vyn. Då släpper kuben exakt vid sista steget
+       (med negativ marginal i stället följde den med in över nästa sektion). */
+    .proc__visual {
+      grid-row: 2;
+      grid-column: 1;
+      position: relative;
+      z-index: 0;
+      opacity: 0.28;
+      pointer-events: none;
+    }
+    .proc__stage {
+      position: sticky;
+      top: calc(50svh - var(--cube) / 2);
+      width: var(--cube);
+      height: var(--cube);
+      margin-inline: auto;
+    }
+    .proc__viewport { grid-row: 2; grid-column: 1; position: relative; z-index: 1; }
+    .pstep {
+      min-height: 72svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      border-top: 0;
+    }
+    .pstep__t { margin-inline: auto; }
+    .pstep__cta {
+      flex-direction: column;
+      justify-content: center;
+    }
+    /* Ljusare grå mot kubens reflexer: fg-3 gav 4,43:1 i värsta läget (krav 4,5). */
+    .pstep__note { color: color-mix(in srgb, var(--fg-3) 70%, var(--fg-1)); }
   }
 
   /* ============================================================
@@ -416,6 +466,9 @@ const STEPS = [
     const ctx = canvas.getContext('2d');
 
     let pinned = false;
+    // Mobil (smal, utan reduced motion): vanlig scroll, men kuben snurrar i takt
+    // med scrollen bakom stegen (CSS .is-flow).
+    let flow = false;
     let inView = false;
     let target = 0;
     let shown = 0;
@@ -436,6 +489,22 @@ const STEPS = [
       slot = Math.max(Math.round(vpH * 0.8), tallest + 48);
       section.style.setProperty('--slot', `${slot}px`);
       // Canvasens buffert = visad storlek × skärmens pixeltäthet (max bildernas 900 px).
+      const css = canvas.getBoundingClientRect().width;
+      const px = Math.round(Math.min(900, css * (window.devicePixelRatio || 1)));
+      if (px > 0 && canvas.width !== px) {
+        canvas.width = px;
+        canvas.height = px;
+      }
+    };
+
+    // Mobil: kubens varv = från att sektionens topp når vyns nederkant tills dess
+    // botten når vyns överkant.
+    const readFlowProgress = () => {
+      const r = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+      return clamp((vh - r.top) / (r.height + vh));
+    };
+    const sizeCanvas = () => {
       const css = canvas.getBoundingClientRect().width;
       const px = Math.round(Math.min(900, css * (window.devicePixelRatio || 1)));
       if (px > 0 && canvas.width !== px) {
@@ -523,15 +592,16 @@ const STEPS = [
 
     const tick = () => {
       raf = 0;
-      if (!pinned) return;
-      target = readProgress();
-      shown += (target - shown) * 0.14;
+      if (!pinned && !flow) return;
+      target = pinned ? readProgress() : readFlowProgress();
+      shown += (target - shown) * (pinned ? 0.14 : 0.25);
       if (Math.abs(target - shown) < 0.0005) shown = target;
-      render(shown);
+      if (pinned) render(shown);
+      else drawCube(shown);
       if (shown !== target) raf = requestAnimationFrame(tick);
     };
     const kick = () => {
-      if (pinned && inView && !raf) raf = requestAnimationFrame(tick);
+      if ((pinned || flow) && inView && !raf) raf = requestAnimationFrame(tick);
     };
 
     // Laddar sekvensen: först var 8:e bild (grovt men snabbt), sedan resten, med
@@ -553,6 +623,7 @@ const STEPS = [
             await img.decode();
             frames[idx] = img;
             if (pinned) render(shown);
+            else if (flow) drawCube(shown);
           } catch {
             // Enstaka bild som inte laddar: grannbilden används i stället.
           }
@@ -579,20 +650,26 @@ const STEPS = [
         section.classList.toggle('is-pinned', pinned);
         if (!pinned) clearInline();
       }
+      flow = !wide.matches && !reduced;
+      section.classList.toggle('is-flow', flow);
       if (pinned) {
         measure();
         shown = target = readProgress();
         render(shown);
+      } else if (flow) {
+        sizeCanvas();
+        shown = target = readFlowProgress();
+        drawCube(shown);
       }
     };
 
     const observers: IntersectionObserver[] = [];
 
-    // Ladda sekvensen först när sektionen närmar sig, och bara i låst läge
-    // (mobil och reduced motion visar stillbilden).
+    // Ladda sekvensen först när sektionen närmar sig, och bara när kuben snurrar
+    // (reduced motion visar stillbilden).
     const loader = new IntersectionObserver(
       (entries) => {
-        if (!entries.some((e) => e.isIntersecting) || !pinned) return;
+        if (!entries.some((e) => e.isIntersecting) || !(pinned || flow)) return;
         loader.disconnect();
         loadFrames();
       },
@@ -614,13 +691,17 @@ const STEPS = [
 
     const onScroll = () => kick();
     const onResize = () => {
-      if (!pinned) return;
-      measure();
-      render(shown);
+      if (pinned) {
+        measure();
+        render(shown);
+      } else if (flow) {
+        sizeCanvas();
+        drawCube(shown);
+      }
     };
     const onModeChange = () => {
       applyMode();
-      if (pinned && !loading && inView) loadFrames();
+      if ((pinned || flow) && !loading && inView) loadFrames();
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize);

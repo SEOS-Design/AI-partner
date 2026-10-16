@@ -757,3 +757,10 @@ textarea {
   0% { --scroll-progress: 0; }
   100% { --scroll-progress: 1; }
 }
+
+/* Mobil/tablet: menyn är ett fast piller upptill → ankarlänkar landar under det. */
+@media (max-width: 959px) {
+  html {
+    scroll-padding-top: 84px;
+  }
+}

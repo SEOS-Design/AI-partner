@@ -299,7 +299,10 @@ const schema = [
   }
   .art__body :global(a:hover) { text-decoration-color: currentColor; }
   .art__body :global(ul),
-  .art__body :global(ol) { padding-left: 1.3em; }
+  .art__body :global(ol) {
+    padding-left: 1.3em;
+    font-stretch: 100%; /* listor är brödtext → full bredd som <p> (var smal) */
+  }
   .art__body :global(li + li) { margin-top: 0.6em; }
   .art__body :global(li::marker) { color: var(--fg-3); }
   .art__body :global(blockquote) {

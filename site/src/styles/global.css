@@ -753,6 +753,15 @@ textarea {
     animation-range: entry contain 40vh;
   }
 }
+/* Mobil/tablet: klar redan när rubriken precis kommit in (+8vh). Med desktopens
+   40vh stod orden halvvägs uppe medan man läste rubriken långt ner i bild — det
+   såg ut som trasiga radbrytningar ("Börja / med / er största tidstjuv.",
+   Björn 2026-10-16). split.ts har samma värde för webbläsare utan view(). */
+@media (max-width: 859px) and (prefers-reduced-motion: no-preference) {
+  .split {
+    animation-range: entry contain 8vh;
+  }
+}
 @keyframes split-rise {
   0% { --scroll-progress: 0; }
   100% { --scroll-progress: 1; }

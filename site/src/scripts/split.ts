@@ -50,9 +50,11 @@ if (heads.length && !reduced.matches) {
     const update = () => {
       raf = 0;
       const vh = innerHeight;
+      // Samma sträcka som CSS:en: 40vh in i vyn på desktop, 8vh under 860 px.
+      const extra = innerWidth < 860 ? 0.08 : 0.4;
       for (const el of live) {
         const r = el.getBoundingClientRect();
-        const p = Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.4 + Math.min(r.height, vh))));
+        const p = Math.min(1, Math.max(0, (vh - r.top) / (vh * extra + Math.min(r.height, vh))));
         el.style.setProperty('--scroll-progress', p.toFixed(4));
       }
     };

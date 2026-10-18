@@ -757,13 +757,14 @@ textarea {
     animation-range: entry contain 40vh;
   }
 }
-/* Mobil/tablet: klar redan när rubriken precis kommit in (+8vh). Med desktopens
-   40vh stod orden halvvägs uppe medan man läste rubriken långt ner i bild — det
-   såg ut som trasiga radbrytningar ("Börja / med / er största tidstjuv.",
-   Björn 2026-10-16). split.ts har samma värde för webbläsare utan view(). */
+/* Mobil/tablet: klar när rubriken nått 30vh in i bild (desktop 40vh).
+   Historik: 2026-10-16 sattes 8vh när Björn såg "Börja / med / er största
+   tidstjuv." — men det var Safaris radbalansering (löst i split.ts), inte drapen.
+   Med 8vh var drapen klar innan man hann se den (Björn 2026-10-18: "drape-effekten
+   är inte på mobil"). split.ts har samma värde för webbläsare utan view(). */
 @media (max-width: 859px) and (prefers-reduced-motion: no-preference) {
   .split {
-    animation-range: entry contain 8vh;
+    animation-range: entry contain 30vh;
   }
 }
 @keyframes split-rise {

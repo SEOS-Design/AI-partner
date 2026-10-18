@@ -5,40 +5,86 @@
 // AboutQuote längre ner citerar teamet. Samma ordning som namnraden där: Douglas, Anton,
 // Björn, Elliot (2026-10-18).
 //
-// Formgrepp: personerna står som en lista över medverkande, inte som ett grundarblock.
-// Fyra SMÅ 4:5-porträtt (88 px mobil, 128 px från 720 px) står på en gemensam hårlinje.
-// På desktop bryts linjen av kolumnmellanrummen till fyra segment som läses som en linje.
-// Inga kort och inga boxar runt texten. Bara fotot har ram. Det är medvetet INTE
-// seosdesign.se:s "Tre grundare" med stora foton och citat (Björn förkastade den kopian).
-// Grått rakt igenom. Accentfärgen ägs av AboutOffer:s linje direkt under, så den
-// används inte här. Ingen hover: inget här är klickbart.
+// Formgrepp (2026-10-18, Elliots önskemål): en lodrät stapel, en person per rad, med
+// porträtt och text på växelvis sida (rad 1 foto till vänster, rad 2 foto till höger …).
+// OBS: det vänder det tidigare greppet, som var fyra SMÅ porträtt som en lista över
+// medverkande och medvetet inte ett grundarblock som seosdesign.se:s "Tre grundare" med
+// stora foton (Björn förkastade den kopian). Stäm av med Björn och Douglas.
+// Porträtten är ett riktigt format men ingen hero: ca 36 % av listans bredd, högst 380 px.
+// Ögonlinjen: fotona är beskurna så att ögonen ligger ca 40 % från överkanten. I en
+// 4:5-ram är det 0,4 × 1,25 × bredden = 0,5 × bredden, alltså --eye = 0,5 × --pw.
+// En hårlinje (li::before) ligger på den höjden. Den börjar vid porträttets innerkant,
+// korsar mellanrummet och textspalten, och namn + titel står på den (titelns baslinje
+// 16 px ovanför). Linjen kopplar ansiktet till namnet. Det är personens enda linje:
+// favoriterna har ingen egen, och mellan raderna finns bara luft (linjer i full bredd är
+// AboutOffer:s grepp).
+// Douglas står i rad 1 med fotot till VÄNSTER: han tittar åt höger, längs sin egen
+// ögonlinje in i namnet. Byt inte ordning utan att kolla blickriktningen på fotona.
+// Växlingen sker bara i CSS (:nth-child(even) byter spalter och areor). DOM-ordningen är
+// alltid foto, namn, titel, bio, favoriter, och texten är alltid vänsterställd.
+// Inga kort, boxar, nummer, bildtexter, vinjetter eller hover: inget här är klickbart.
+// Bara fotot har ram. Grått rakt igenom: accentfärgen ägs av AboutOffer:s linje direkt
+// under, så den används inte här.
 // Namn och titel är ett par i samma storlek, vitt över grått, som sektionens tvåtoniga
 // h2 i miniatyr.
 //
 // Favoriter (2026-10-18, Elliots önskemål): favoritverktyg + favoritautomation som en <dl>
-// under bion. Medvetet tystare än bion: 11 px versal etikett (sajtens eyebrow) + 14 px värde,
-// båda --fg-3. --fg-4 klarar inte AA för liten text (ca 2,6:1 mot canvasen, --fg-3 ca 8,3:1).
-// Ingen ikon, ingen accent, ingen linje: personens enda linje är hårlinjen överst.
-// Verktyget står FÖRST: det är alltid en rad, så automationsetiketten hamnar i linje i alla
-// fyra kolumner även när automationen bryts på två rader.
+// under bion. Medvetet tystare än bion: 11 px versal etikett (sajtens eyebrow) + 14–16 px
+// värde, båda --fg-3. --fg-4 klarar inte AA för liten text (ca 2,6:1 mot canvasen, --fg-3 ca 8,3:1).
+// Favoritverktyget visas som verktygets logotyp (2026-10-18, Elliot), alt = produktnamnet,
+// så skärmläsare läser samma värde som förut. Logotyperna ligger i public/logos/ (källor i
+// LOGOS nedan) och tonas till ljusgrått i CSS (.ateam__logo), så att de följer sidans
+// gråskala i stället för att bli fyra färgaccenter. Ingen accent, ingen egen linje:
+// personens enda linje är ögonlinjen.
+// Staplade under 720 px. Från 720 px två spalter: verktyget först, automationen bredvid.
 // Längd: verktyg ≤ ca 25 tecken (en rad), automation ≤ ca 55 tecken (högst två rader i
-// spalten på ca 220–240 px). Fragment utan punkt. Produktnamn som tillverkaren skriver dem.
+// spalten, som är ca 230 px vid 720 px). Fragment utan punkt. Produktnamn som tillverkaren
+// skriver dem.
 //
-// Layout: 1 kolumn (porträtt + namn bredvid, bio i full bredd under) → 2 kolumner från
-// 720 px (samma brytpunkt som AboutOffer) → 4 kolumner från 1024 px. Aldrig 3, eftersom
-// 3 + 1 lämnar en ensam person. Favoriterna står i linje med grannens från 720 px: i två
-// kolumner är biospåret 1fr, så favoriterna hamnar i botten av raden, och automationen
-// har alltid två raders höjd, så att blocken är lika höga. På desktop använder
-// varje person subgrid (fem rader: linje, porträtt, namn, bio, favoriter), så att namn,
-// titel, bio och favoriter börjar på samma linje i alla fyra kolumner även om en rad bryts.
+// Layout (brytpunkt 720 px, samma som AboutOffer; cqi räknas mot listan, som har
+// container-type):
+//   – Under 720 px, mini-zigzag: porträtt (44 % av listan, 120–220 px brett; 144 px vid
+//     375 px) med namn och titel bredvid, på ögonlinjen. Bio och favoriter i full bredd
+//     under porträttet.
+//   – Från 720 px: porträtt (36 % av listan, 240–380 px; 379 px från 1100 px, 259 px vid
+//     768 px) och all text bredvid, mellanrum 32–80 px. Namn/titel slutar på ögonlinjen,
+//     under linjen kommer bio och favoriter. Ett 1fr-spår sist tar resten av porträttets
+//     höjd. Blir texten högre än porträttet (720–860 px med långa bios) växer raden bara.
+//   – Jämna rader: textspalten börjar vid listans vänsterkant, samma axel som h2:an.
+//   – Mellan raderna: clamp(64px, 9vw, 120px) luft.
 //
-// Rörelse (en gång per person, när personen scrollas in): hårlinjen ritas från vänster,
-// sedan glider porträttet upp i sin ram (samma grammatik som rubrikorden i AboutStory,
-// men bara transform), och till sist tonas texten in, favoriterna ett steg efter bion.
-// Rubriken har sajtens gemensamma rubrik-drape (data-split, se global.css "Rubrik-drape"
-// och scripts/split.ts), som AboutStory och AboutOffer (2026-10-18; tidigare animerades
-// den inte här). Utan JS, vid reduced motion eller om personen redan syns vid laddning:
-// allt syns direkt.
+// Rörelse (en gång per rad, när fotot når 80 % av vyns höjd; tidsstyrd, inte scrollstyrd):
+//   1. fotot avtäcks från sidans ytterkant in mot texten (clip-path på img:n) medan det
+//      sätter sig i skala (1,06 → 1, mot innerkanten i ögonhöjd),
+//   2. en 1 px skannlinje rider på avtäckningskanten, på den mörka sidan,
+//   3. ögonlinjen ritas från porträttets innerkant ut över texten,
+//   4. namnet och sedan titeln stiger ur en fast mask (rubrik-drapens matematik, i tid),
+//   5. bion och sedan favoriterna tonas upp. Raden är i vila efter ca 1,6 s.
+// Udda rader går vänster → höger, jämna spegelvänt. Rader som tänds samtidigt förskjuts
+// 0,15 s. Under 720 px väntar bion på att själv komma in i bild, men startar aldrig före
+// namnet: scriptet räknar ner bions försprång (LEAD) från när raden tändes.
+// Varför inte scrollstyrt: ett scrubbat avtäckande stannar där läsaren stannar (ett
+// halvt avtäckt ansikte, en halvtonad bio), och scrollanimerad brödtext är bortvald
+// (docs/progress.md). /om-oss har redan tre scrollstyrda system (h2-drapen, AboutOffer:s
+// linje, AboutQuote:s ord). Rubriken här har sajtens gemensamma rubrik-drape (data-split,
+// se global.css "Rubrik-drape" och scripts/split.ts), som AboutStory och AboutOffer.
+// Ingen parallax eller drift på fotona.
+// Teknik: animationerna står pausade på tid 0 med fill-mode backwards, så första
+// nyckelbilden ÄR det dolda läget. Scriptet startar dem med .is-in / .is-in-body.
+// Efter slutet tas effekten bort (inte both/forwards), så ingen clip-path ligger kvar och
+// klipper Å/Ö eller g/j. Fotot avtäcks först när bilden är avkodad (högst 0,8 s väntan),
+// aldrig in i en tom ram. Utan JS, vid reduced motion, vid utskrift eller om raden redan
+// syns vid laddning: allt syns direkt.
+// loading="lazy" + avtäckningen: Chromes lazy-laddare räknar även img:ns EGET klipp, inte
+// bara förfädernas. Under .will-reveal står fotot helt klippt (första nyckelbilden), så
+// utan hjälp hämtas bilden först när avtäckningen redan gått klart (uppmätt 2026-10-18:
+// rad 2–4 hämtades ca 640 px ovanför vyn, och raden avtäcktes in i en tom ram). Scriptet
+// byter därför till loading="eager" när raden är ca 1,5 skärmhöjder bort (ungefär Chromes
+// egen lazy-marginal), och ready() gör samma byte som reserv. Utan .will-reveal (inget
+// JS, reduced motion, raden syns redan) finns inget klipp och vanlig lazy gäller.
+// Ta inte bort förladdningen så länge klippet sitter på img:n, och lägg inga klipp eller
+// overflow-ändringar på .ateam__photo eller .ateam__fill: förladdningen observerar
+// .ateam__photo. Förfäderna får bara skala.
 //
 // Copy = PLATSHÅLLARE (Douglas granskar): ingressen, alla bios och alla titlar utom
 // Douglas.
@@ -46,7 +92,8 @@
 // begäran (Elliot 2026-10-18), inte fakta om personen eller om bolagets verktyg. Verktygen
 // läses som bolagets egen stack: byt till det personen faktiskt använder. Favoriterna ska
 // INTE in i Person-JSON-LD, inte ens när titlarna är bekräftade.
-// Bios: en mening per person, ungefär lika långa (2–3 rader i fyra kolumner, spalten är ca 220–240 px).
+// Bios: en mening per person, ungefär lika långa, ≤ ca 110 tecken, så att bion får plats
+// bredvid porträttet även vid 720–860 px (där textspalten är smalast, ca 390 px).
 // Första ledet är bekräftat. Resten är en allmän rollbeskrivning skriven av Claude, inte
 // fakta om personen. Inga pronomen (han/hon) – skriv om med namnet om det behövs.
 // OBS: "Medgrundare" ensamt på AI Partners sida kan läsas som medgrundare av
@@ -56,27 +103,51 @@
 //
 // FOTO: lägg bilderna i site/public/team/ och sätt photo per person, t.ex.
 // photo: '/team/anton.webp'. Använd ASCII i filnamnen: douglas, anton, elliot, bjorn.
+// Varje foto finns i två storlekar, båda 4:5 WebP med samma beskärning: namn.webp
+// (960×1200) och namn-480.webp (480×600). at480() nedan härleder det lilla namnet, så
+// båda filerna MÅSTE finnas. srcset/sizes ger 1×-skärmar och alla telefoner upp till 3×
+// 480-filen och 2×-skärmar på desktop 960-filen.
 // photo: null → monogram (platshållare). Ramen är lika stor i båda lägena, så bytet ger
 // ingen layoutförskjutning.
-//   – 4:5, exportera 480×600 px WebP (q ≈ 78–80, ≤ ~30 kB). Det räcker för 3× skärm vid 128 px.
-//   – Huvud och axlar, ögonen ca 35 % från överkanten.
+//   – Huvud och axlar, ögonen ca 40 % från överkanten. Det bär ögonlinjen (--eye ovan):
+//     beskär nya foton på exakt samma sätt.
 //   – Samma bakgrund (neutral, mörkgrå), samma ljus och samma avstånd för alla fyra.
 //   – Gråskala läggs på i CSS (--ateam-photo-filter nedan). Sätt den till none för färg.
+//     Färg eller gråskala är inte bestämt än; layouten är gjord för att fungera i båda.
 //   – focus (valfritt) = object-position om ansiktet hamnar fel i beskärningen, t.ex. '50% 20%'.
-//   – public/douglas.webp finns (600×750, 4:5) men är från en annan fotografering.
-//     Byt alla fyra SAMTIDIGT: ett riktigt foto bredvid tre monogram ser ofärdigt ut.
+//   – 2026-10-18: alla fyra foton på plats (samma fotografering, Elliot). Beskurna från
+//     originalen till samma huvudstorlek och ögonlinje (~40 % från överkanten) så de
+//     läses som en serie. Byt alla fyra samtidigt om de ersätts.
 
 type Person = {
   name: string;
   title: string;
   bio: string;
-  tool: string; // favoritverktyg – produktnamnet, en rad (≤ ca 25 tecken)
+  tool: string; // favoritverktyg – produktnamnet exakt som nyckeln i LOGOS (visas som logotyp)
   automation: string; // favoritautomation – vad som händer, ≤ ca 55 tecken, ingen punkt
   photo: string | null;
   focus?: string;
 };
 
-// Ordning = namnraden i AboutQuote.astro.
+// Logotyp per favoritverktyg. w/h = SVG:ns egna mått (bildförhållandet), h = renderad höjd i px,
+// optiskt avvägd så att ordmärkena väger lika (ikonen behöver mer höjd än ett ordmärke).
+// mono: 'flat' = hela logotypen blir en ljusgrå ton (för färgade ordmärken),
+//       'gray' = gråskala och lite dämpad (Notion-ikonen, som redan är svartvit).
+// Källor (hämtade 2026-10-18): HubSpot = Wikimedia Commons "HubSpot Logo.svg" (viewBox tillagd),
+// n8n = svgl.app n8n-wordmark-dark, Claude = svgl.app claude-ai-wordmark-icon_dark (det finns
+// ingen fristående Claude Code-logotyp, så Claude-logotypen används; alt säger "Claude Code"),
+// Notion = svgl.app notion (ikonen är Notions huvudlogotyp, inget ordmärke publicerat).
+// center: logotypen centreras under etiketten (för en liten fyrkantig ikon, som annars
+// hamnar ensam längst till vänster under den bredare etiketten).
+type Logo = { src: string; w: number; h: number; height: number; mono: 'flat' | 'gray'; center?: boolean };
+const LOGOS: Record<string, Logo> = {
+  HubSpot: { src: '/logos/hubspot.svg', w: 106, h: 31, height: 22, mono: 'flat' },
+  n8n: { src: '/logos/n8n.svg', w: 87, h: 24, height: 20, mono: 'flat' },
+  'Claude Code': { src: '/logos/claude-wordmark.svg', w: 512, h: 110, height: 20, mono: 'flat' },
+  Notion: { src: '/logos/notion.svg', w: 256, h: 268, height: 36, mono: 'gray', center: true },
+};
+
+// Ordning = namnraden i AboutQuote.astro. Douglas först (fotot till vänster, se Formgrepp).
 // Favoriterna täcker fyra olika avdelningar (sälj & offert, marknad, intern admin,
 // kundtjänst) och fyra olika slags verktyg (CRM, flödesbyggare, kodagent, kunskapsbas).
 const TEAM: Person[] = [
@@ -89,7 +160,7 @@ const TEAM: Person[] = [
     tool: 'HubSpot',
     // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
     automation: 'Anteckningar från kundmötet blir ett offertutkast',
-    photo: null,
+    photo: '/team/douglas.webp',
   },
   {
     name: 'Anton Sahibzada',
@@ -100,7 +171,7 @@ const TEAM: Person[] = [
     tool: 'n8n',
     // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
     automation: 'Kundcaset skrivs fram direkt när projektet är klart',
-    photo: null,
+    photo: '/team/anton.webp',
   },
   {
     name: 'Björn Wildenstam',
@@ -111,7 +182,7 @@ const TEAM: Person[] = [
     tool: 'Claude Code',
     // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
     automation: 'Veckans ändringar på hemsidan sammanfattas i klartext',
-    photo: null,
+    photo: '/team/bjorn.webp',
   },
   {
     name: 'Elliot Eslander',
@@ -122,7 +193,7 @@ const TEAM: Person[] = [
     tool: 'Notion',
     // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
     automation: 'Vanliga kundfrågor besvaras, resten går till rätt person',
-    photo: null,
+    photo: '/team/elliot.webp',
   },
 ];
 
@@ -131,6 +202,15 @@ const initials = (name: string) =>
     .split(' ')
     .map((part) => part[0])
     .join('');
+
+// '/team/anton.webp' → '/team/anton-480.webp' (se FOTO överst).
+const at480 = (s: string) => s.replace(/\.webp$/, '-480.webp');
+// Porträttets renderade bredd per brytpunkt, samma som --pw i CSS:en nedan (listan är
+// viewporten minus 2 × 24 px, högst 1052 px). "auto" först: webbläsare som kan det mäter
+// själva, men bara så länge bilden är lazy. Efter scriptets byte till eager (se Teknik
+// överst) och i övriga webbläsare hoppas "auto" över och listan efter gäller.
+const SIZES =
+  'auto, (min-width: 1100px) 379px, (min-width: 720px) calc(36vw - 17px), (min-width: 548px) 220px, calc(44vw - 21px)';
 ---
 
 <section id="teamet" class="ateam" aria-labelledby="ateam-title">
@@ -150,15 +230,18 @@ const initials = (name: string) =>
         <li class="ateam__person">
           <div class="ateam__photo">
             <div class="ateam__fill">
-              {/* alt="": h3:an direkt efter namnger redan personen. Ingen loading="lazy":
-                  fotot ligger utanför ramens clip tills .is-in, så lazy-laddaren skulle
-                  aldrig se det och hämta bilden först under glidningen. */}
+              {/* alt="": h3:an direkt efter namnger redan personen. loading="lazy":
+                  scriptet byter till eager i förväg för rader som avtäcks, eftersom
+                  avtäckningens klipp annars stoppar lazy-laddningen (se Teknik överst). */}
               {p.photo ? (
                 <img
-                  src={p.photo}
+                  src={at480(p.photo)}
+                  srcset={`${at480(p.photo)} 480w, ${p.photo} 960w`}
+                  sizes={SIZES}
                   alt=""
                   width="480"
                   height="600"
+                  loading="lazy"
                   decoding="async"
                   style={p.focus ? `--focus: ${p.focus}` : undefined}
                 />
@@ -173,9 +256,23 @@ const initials = (name: string) =>
           </div>
           <p class="ateam__bio">{p.bio}</p>
           <dl class="ateam__facts">
-            <div class="ateam__fact">
+            <div class:list={['ateam__fact', LOGOS[p.tool]?.center && 'ateam__fact--center']}>
               <dt>Favoritverktyg</dt>
-              <dd>{p.tool}</dd>
+              <dd class="ateam__tool">
+                {LOGOS[p.tool] ? (
+                  <img
+                    class:list={['ateam__logo', `ateam__logo--${LOGOS[p.tool].mono}`]}
+                    src={LOGOS[p.tool].src}
+                    alt={p.tool}
+                    width={Math.round((LOGOS[p.tool].height * LOGOS[p.tool].w) / LOGOS[p.tool].h)}
+                    height={LOGOS[p.tool].height}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  p.tool
+                )}
+              </dd>
             </div>
             <div class="ateam__fact">
               <dt>Favoritautomation</dt>
@@ -193,6 +290,10 @@ const initials = (name: string) =>
     /* Fotobehandling: gråskala gör fyra foton från olika tillfällen till en serie och
        håller sidan grå. Douglas beslut – sätt till none för färgfoton. */
     --ateam-photo-filter: grayscale(1) contrast(1.04);
+    /* Rörelsens kurvor (se Rörelse överst). */
+    --scan-ease: cubic-bezier(0.65, 0, 0.35, 1); /* avtäckning + skannlinje: jämn in och ut */
+    --settle-ease: cubic-bezier(0.22, 1, 0.36, 1); /* fotots skala, namn, titel: mjuk landning */
+    --rule-ease: cubic-bezier(0.16, 1, 0.3, 1); /* ögonlinjen: snabb start, lång utklingning */
     padding: var(--section-py) 0;
   }
   .container {
@@ -203,7 +304,7 @@ const initials = (name: string) =>
 
   /* ---- rubrik + ingress: staplat och vänsterställt som AboutOffer ---- */
   .ateam__head {
-    margin-bottom: clamp(40px, 5vw, 64px);
+    margin-bottom: clamp(48px, 6vw, 96px);
   }
   .ateam__h {
     margin: 0;
@@ -226,47 +327,95 @@ const initials = (name: string) =>
     text-wrap: balance; /* en mening: jämna rader i stället för ett ensamt ordpar */
   }
 
-  /* ---- listan, mobil först: porträtt + namn i en rad, bio i full bredd under,
-     favoriter under bion ---- */
+  /* ---- listan: en person per rad, bara luft emellan (inga skiljelinjer) ---- */
   .ateam__list {
-    --pw: 88px; /* porträttets bredd */
+    container-type: inline-size; /* cqi nedan räknas mot listans bredd */
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    row-gap: var(--space-7);
+    row-gap: clamp(64px, 9vw, 120px);
   }
+
+  /* ---- mobil först (< 720 px), mini-zigzag: porträtt + namn/titel bredvid varandra med
+     ögonlinjen, bio och favoriter i full bredd under ---- */
   .ateam__person {
-    --d: calc(var(--n, 0) * 0.1s); /* förskjutning, --n sätts av scriptet */
+    --pw: clamp(120px, 44cqi, 220px); /* porträttets bredd: 144 × 180 vid 375, 120 vid 320, tak 220 från ca 548 */
+    --gap: var(--space-4);
+    --eye: calc(var(--pw) * 0.5); /* ögonen 40 % ned i en 4:5-ram = halva bredden */
+    --inner: 100%; /* porträttets innerkant (mot texten): udda rader har fotot till vänster */
+    --rule-origin: left;
+    --d: calc(var(--n, 0) * 0.15s); /* förskjutning, --n sätts av scriptet */
+    --body-lead: 0.82s; /* bio/favoriter efter namnet; kortare när bion tänds för sig (mobil), se LEAD i scriptet */
     display: grid;
+    column-gap: var(--gap);
     grid-template-columns: var(--pw) minmax(0, 1fr);
+    /* Rad 1 = ögonhöjden (namn/titel står i botten av den), rad 2 = linjen + resten av
+       porträttet. Raderna under porträttet: bio, favoriter. */
+    grid-template-rows: minmax(var(--eye), auto) 1fr auto auto;
     grid-template-areas:
-      'rail  rail'
       'photo id'
+      'photo rule'
       'bio   bio'
       'facts facts';
-    column-gap: var(--space-4);
-    /* li sträcks till radens höjd i 2 kolumner. Där tar biospåret (1fr) överskottet, se
-       720 px-blocket. Detta är skyddsnätet: utan det skulle överskottet fördelas på
-       auto-raderna och den med kortare bio hamna några px lägre än grannen. */
-    align-content: start;
   }
-  /* Hårlinjen ovanför varje person. På desktop läses de fyra segmenten som en linje. */
+  .ateam__person:nth-child(even) {
+    --inner: 0%;
+    --rule-origin: right;
+    grid-template-columns: minmax(0, 1fr) var(--pw);
+    grid-template-areas:
+      'id    photo'
+      'rule  photo'
+      'bio   bio'
+      'facts facts';
+  }
+  /* Ögonlinjen: ett eget rutnätsobjekt i ögonhöjd. Den negativa marginalen tar den över
+     mellanrummet, så att den börjar exakt vid porträttets innerkant. */
   .ateam__person::before {
     content: '';
-    grid-area: rail;
+    grid-area: rule;
+    align-self: start;
     height: 1px;
-    margin-bottom: var(--space-5);
+    margin-inline: calc(-1 * var(--gap)) 0;
     background: var(--border-strong);
-    transform-origin: left;
+    transform-origin: var(--rule-origin) center;
+  }
+  .ateam__person:nth-child(even)::before {
+    margin-inline: 0 calc(-1 * var(--gap));
+  }
+
+  /* ---- från 720 px: porträtt + all text bredvid ---- */
+  @media (min-width: 720px) {
+    .ateam__person {
+      --pw: clamp(240px, 36cqi, 380px); /* 379 × 474 från 1100, 351 vid 1024, 259 vid 768, 242 vid 720 */
+      --gap: clamp(32px, 6cqi, 80px); /* 63 vid 1440, 59 vid 1024, 40 vid 720 */
+      /* ögonhöjd, linje, bio, favoriter, och sist ett 1fr-spår som tar resten av
+         porträttets höjd. Är texten högre än porträttet växer raden. */
+      grid-template-rows: minmax(var(--eye), auto) auto auto auto 1fr;
+      grid-template-areas:
+        'photo id'
+        'photo rule'
+        'photo bio'
+        'photo facts'
+        'photo .';
+    }
+    .ateam__person:nth-child(even) {
+      grid-template-areas:
+        'id    photo'
+        'rule  photo'
+        'bio   photo'
+        'facts photo'
+        '.     photo';
+    }
   }
 
   /* ---- porträtt: samma ram för foto och platshållare ---- */
   .ateam__photo {
     grid-area: photo;
+    align-self: start;
+    width: 100%;
     position: relative;
-    width: var(--pw);
     aspect-ratio: 4 / 5;
     border-radius: var(--radius-lg);
     overflow: clip;
@@ -284,15 +433,18 @@ const initials = (name: string) =>
     pointer-events: none;
   }
   /* Mörk studiobakgrund med mjukt toppljus. Det är platshållaren, och bakom ett riktigt
-     foto är det också laddningsläget. Ta inte bort den när fotona kommer. */
+     foto är det också laddningsläget. Ta inte bort den när fotona kommer.
+     transform-origin: innerkanten i ögonhöjd, så att fotot sätter sig in mot texten. */
   .ateam__fill {
     position: absolute;
     inset: 0;
+    transform-origin: var(--inner) 40%;
     background:
       radial-gradient(120% 80% at 50% 0%, rgba(255, 255, 255, 0.06), transparent 62%),
       var(--bg-raised);
   }
   .ateam__fill img {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -318,17 +470,18 @@ const initials = (name: string) =>
     content: attr(data-initials);
   }
 
-  /* ---- namn + titel: samma storlek, vitt över grått ---- */
+  /* ---- namn + titel: samma storlek, vitt över grått, står på ögonlinjen ---- */
   .ateam__id {
-    --fs-id: clamp(22px, 1.8vw, 24px); /* smal bredd ser mindre ut – ett steg över biotexten */
+    --fs-id: clamp(20px, 6cqi, 24px);
     grid-area: id;
-    align-self: end; /* mobil: som en bildtext vid porträttets fot */
+    align-self: end; /* i botten av ögonhöjdsraden */
+    padding-bottom: var(--space-4);
   }
   .ateam__name {
     margin: 0;
     font-size: var(--fs-id);
     font-weight: 600;
-    line-height: 1.2;
+    line-height: 1.15;
     letter-spacing: var(--tracking-tight);
     color: var(--fg-1);
   }
@@ -337,24 +490,24 @@ const initials = (name: string) =>
     font-stretch: 75%; /* p är bred som standard, men titeln hör till namnet */
     font-size: var(--fs-id);
     font-weight: 400;
-    line-height: 1.2;
+    line-height: 1.15;
     color: var(--fg-3);
-    /* Baslinjen exakt i nivå med porträttets underkant (där det stöds). */
+    /* Boxen slutar på baslinjen, så att baslinjen står exakt 16 px (padding ovan) över
+       ögonlinjen (där det stöds). */
     text-box: trim-end cap alphabetic;
   }
   .ateam__bio {
     grid-area: bio;
-    margin: var(--space-4) 0 0;
-    max-width: 34em;
-    font-size: var(--fs-body);
+    margin: var(--space-5) 0 0;
+    max-width: 30em;
+    font-size: var(--fs-lead);
     line-height: 1.6;
-    color: var(--fg-3);
+    color: var(--fg-2);
     text-wrap: pretty;
   }
 
   /* ---- favoriterna: etikett + värde, tystare än bion ---- */
   .ateam__facts {
-    --lag: 0.12s; /* tonas in ett steg efter texten, se rörelsen nedan */
     grid-area: facts;
     display: grid;
     row-gap: var(--space-4);
@@ -363,6 +516,7 @@ const initials = (name: string) =>
   .ateam__fact {
     display: grid;
     row-gap: var(--space-1);
+    align-content: start;
   }
   /* Sajtens eyebrow-stil. Smal bredd ärvs från html-regeln. --fg-3, inte --fg-4 (AA). */
   .ateam__facts dt {
@@ -373,105 +527,204 @@ const initials = (name: string) =>
     text-transform: uppercase;
     color: var(--fg-3);
   }
-  /* Värdet är liten brödtext: full bredd som <p> (dd ärver annars 75 %). Samma grå som bion
-     men mindre, så att favoriterna läses efter bion och inte före. */
+  /* Värdet är liten brödtext: full bredd som <p> (dd ärver annars 75 %). Samma grå som
+     etiketten och mindre än bion, så att favoriterna läses efter bion och inte före. */
   .ateam__facts dd {
     margin: 0;
     font-stretch: 100%;
-    font-size: var(--fs-small);
+    font-size: clamp(14px, 1.25vw, 16px);
     line-height: 1.5;
     color: var(--fg-3);
     text-wrap: balance;
   }
 
-  /* ---- från 720 px: två kolumner, porträtt överst ---- */
+  /* Logotypen i stället för verktygsnamnet. Raden är lika hög som en textrad i värdet
+     (1,5 × dd-storleken), så etiketterna och automationstexten bredvid står kvar i linje. */
+  .ateam__tool {
+    display: flex;
+    align-items: center;
+    min-height: 1.5em;
+  }
+  .ateam__logo {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    /* höjden kommer från height-attributet (LOGOS[…].height) */
+  }
+  /* Centrerad logotyp: blocket krymper till etikettens bredd och ikonen centreras under den. */
+  .ateam__fact--center {
+    justify-self: start;
+    width: fit-content;
+    justify-items: center;
+  }
+  /* Färgade ordmärken → en ton, ca --fg-2 (#e6e6e6): svärta allt, invertera till 90 %. */
+  .ateam__logo--flat {
+    filter: brightness(0) invert(0.9);
+  }
+  /* Notion-ikonen är redan svartvit: bara dämpa det vita till samma ton. */
+  .ateam__logo--gray {
+    filter: grayscale(1) brightness(0.9);
+  }
+
   @media (min-width: 720px) {
-    .ateam__list {
-      --pw: 128px;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      column-gap: var(--space-6);
-      row-gap: var(--space-8);
-    }
-    .ateam__person {
-      grid-template-columns: minmax(0, 1fr);
-      grid-template-areas: 'rail' 'photo' 'id' 'bio' 'facts';
-      /* Bion tar överskottet (1fr), så favoriterna hamnar i botten av li:n och därmed i
-         linje med grannens även när biorna har olika antal rader. Samma som fallbacken
-         från 1024 px. */
-      grid-template-rows: auto auto auto 1fr auto;
-    }
     .ateam__id {
-      align-self: start;
-      margin-top: var(--space-5);
+      --fs-id: clamp(26px, 3.2cqi, 36px); /* ca 34 px vid 1440, ett steg under AboutOffer:s h3 */
     }
-    /* Namnets versalhöjd börjar exakt 24 px under porträttet (där det stöds). */
-    .ateam__name {
+    /* Versalhöjden börjar exakt 24 px under ögonlinjen (där det stöds). */
+    .ateam__bio {
       text-box: trim-start cap alphabetic;
     }
-    .ateam__title {
-      text-box: normal;
-    }
-    /* Automationen får alltid två raders höjd (max enligt längdregeln ovan), så att
-       favoritblocken är lika höga och etiketterna hamnar i linje även när den ena bryts
-       och den andra inte gör det. I 2 kolumner står favoriterna i botten (1fr ovan). */
-    .ateam__fact + .ateam__fact dd {
-      min-height: calc(2 * 1.5em); /* 2 rader × line-height 1,5 */
+    .ateam__facts {
+      grid-template-columns: minmax(8em, max-content) minmax(0, 1fr);
+      column-gap: var(--space-6);
+      max-width: 34em;
+      margin-top: var(--space-6);
     }
   }
 
-  /* ---- från 1024 px: fyra kolumner på en rad, rader delade via subgrid ---- */
-  @media (min-width: 1024px) {
-    .ateam__list {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      row-gap: 0;
+  /* ---- rörelse: en gång per rad, tidsstyrd (bara när scriptet satt .will-reveal) ----
+     Pausad på tid 0 med fill-mode backwards = första nyckelbilden = dolt läge. Inget annat
+     dolt läge finns. .is-in / .is-in-body sätter dem igång. Allt ligger i ett block, så
+     reduced motion och utskrift får ingenting av det. */
+  @media screen and (prefers-reduced-motion: no-preference) {
+    /* 1. avtäckning från ytterkanten in mot texten. Klippet sitter på img:n, så scriptet
+       förladdar bilden (lazy-laddaren räknar klippet, se Teknik överst). */
+    .ateam__person.will-reveal .ateam__fill img {
+      animation: ateam-wipe-ltr 0.8s var(--scan-ease) var(--d) backwards paused;
     }
-    .ateam__person {
-      grid-row: span 5;
-      /* Utan subgrid: bion tar överskottet, favoriterna hamnar i botten och därmed i linje. */
-      grid-template-rows: auto auto auto 1fr auto;
-      grid-template-rows: subgrid;
+    .ateam__person.will-reveal:nth-child(even) .ateam__fill img {
+      animation-name: ateam-wipe-rtl;
+    }
+    /* fotot sätter sig i skala, mot innerkanten i ögonhöjd */
+    .ateam__person.will-reveal .ateam__fill {
+      animation: ateam-settle 1.4s var(--settle-ease) var(--d) backwards paused;
+    }
+    /* 2. skannlinjen: samma tid och kurva som avtäckningen, inne i samma skalade ruta,
+       så att den ligger pixelexakt på kanten, på den mörka sidan */
+    .ateam__person.will-reveal .ateam__fill::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      box-shadow: inset 1px 0 0 rgb(255 255 255 / 0.45);
+      animation:
+        ateam-scan-ltr 0.8s var(--scan-ease) var(--d) backwards paused,
+        ateam-scan-fade 0.8s linear var(--d) backwards paused;
+    }
+    .ateam__person.will-reveal:nth-child(even) .ateam__fill::after {
+      box-shadow: inset -1px 0 0 rgb(255 255 255 / 0.45);
+      animation-name: ateam-scan-rtl, ateam-scan-fade;
+    }
+    /* 3. ögonlinjen, när skannen är ca 90 % över */
+    .ateam__person.will-reveal::before {
+      animation: ateam-rule 0.9s var(--rule-ease) calc(var(--d) + 0.55s) backwards paused;
+    }
+    /* 4. namn, sedan titel, ur masken */
+    .ateam__person.will-reveal .ateam__name {
+      animation: ateam-rise 0.8s var(--settle-ease) calc(var(--d) + 0.62s) backwards paused;
+    }
+    .ateam__person.will-reveal .ateam__title {
+      animation: ateam-rise 0.8s var(--settle-ease) calc(var(--d) + 0.7s) backwards paused;
+    }
+    /* 5. bio, sedan favoriter */
+    .ateam__person.will-reveal .ateam__bio {
+      animation: ateam-fade 0.7s var(--ease) calc(var(--d) + var(--body-lead)) backwards paused;
+    }
+    .ateam__person.will-reveal .ateam__facts {
+      animation: ateam-fade 0.7s var(--ease) calc(var(--d) + var(--body-lead) + 0.1s) backwards
+        paused;
+    }
+    /* Start. Måste stå EFTER reglerna ovan (lika hög eller högre specificitet). */
+    .ateam__person.will-reveal.is-in :is(.ateam__fill, .ateam__fill img, .ateam__name, .ateam__title),
+    .ateam__person.will-reveal.is-in .ateam__fill::after,
+    .ateam__person.will-reveal.is-in::before {
+      animation-play-state: running;
+    }
+    .ateam__person.will-reveal.is-in-body :is(.ateam__bio, .ateam__facts) {
+      animation-play-state: running;
     }
   }
 
-  /* ---- rörelse (bara när scriptet satt .will-reveal på personen) ---- */
-  /* Dolt läge UTAN transition: scriptet har redan beräknat stilarna (getBoundingClientRect)
-     när .will-reveal sätts, så en transition här skulle animera UT de personer som ligger
-     strax under 85 %-gränsen. Övergångarna ligger bara på .is-in. */
-  .ateam__person.will-reveal::before {
-    transform: scaleX(0);
+  /* Prefix ateam-: Astro scopar inte @keyframes. */
+  @keyframes ateam-wipe-ltr {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0);
+    }
   }
-  /* Porträttet glider upp i sin ram. Ramens hårstreck syns från start. */
-  .ateam__person.will-reveal .ateam__fill {
-    transform: translateY(101%);
+  @keyframes ateam-wipe-rtl {
+    from {
+      clip-path: inset(0 0 0 100%);
+    }
+    to {
+      clip-path: inset(0);
+    }
   }
-  .ateam__person.will-reveal :is(.ateam__id, .ateam__bio, .ateam__facts) {
-    opacity: 0;
-    transform: translateY(10px);
+  @keyframes ateam-scan-ltr {
+    from {
+      translate: 0 0;
+    }
+    to {
+      translate: 100% 0;
+    }
   }
-  .ateam__person.will-reveal.is-in::before {
-    transform: none;
-    transition: transform 0.8s var(--ease) var(--d);
+  @keyframes ateam-scan-rtl {
+    from {
+      translate: 0 0;
+    }
+    to {
+      translate: -100% 0;
+    }
   }
-  .ateam__person.will-reveal.is-in .ateam__fill {
-    transform: none;
-    transition: transform 0.9s var(--ease) calc(var(--d) + 0.12s);
+  @keyframes ateam-scan-fade {
+    0% {
+      opacity: 0;
+    }
+    8% {
+      opacity: 1;
+    }
+    80% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
   }
-  .ateam__person.will-reveal.is-in :is(.ateam__id, .ateam__bio, .ateam__facts) {
-    opacity: 1;
-    transform: none;
-    transition:
-      opacity 0.7s var(--ease) calc(var(--d) + 0.3s + var(--lag, 0s)),
-      transform 0.7s var(--ease) calc(var(--d) + 0.3s + var(--lag, 0s));
+  @keyframes ateam-settle {
+    from {
+      scale: 1.06;
+    }
   }
-
-  @media (prefers-reduced-motion: reduce) {
-    .ateam__person.will-reveal.is-in::before,
-    .ateam__person.will-reveal.is-in :is(.ateam__fill, .ateam__id, .ateam__bio, .ateam__facts) {
-      transition: none;
+  @keyframes ateam-rule {
+    from {
+      scale: 0 1;
+    }
+  }
+  /* Rubrik-drapens matematik i tid: maskens underkant står still (boxens botten + 0,3 em)
+     medan texten stiger. Luft upptill för Å/Ä/Ö-prickar och nedtill för g/j. */
+  @keyframes ateam-rise {
+    from {
+      translate: 0 100%;
+      clip-path: inset(-0.3em 0 calc(100% - 0.3em) 0);
+      opacity: 0;
+    }
+    to {
+      translate: 0 0;
+      clip-path: inset(-0.3em 0 -0.3em 0);
+      opacity: 1;
+    }
+  }
+  @keyframes ateam-fade {
+    from {
+      opacity: 0;
+      translate: 0 12px;
     }
   }
 
-  /* Tvingade färger tar bort box-shadow (ramen) och gör bakgrunder till Canvas (hårlinjen).
+  /* Tvingade färger tar bort box-shadow (ramen) och gör bakgrunder till Canvas (linjen).
      Återställ båda med systemfärg så att listan behåller sin struktur. */
   @media (forced-colors: active) {
     .ateam__person::before {
@@ -485,37 +738,111 @@ const initials = (name: string) =>
 </style>
 
 <script>
-  // Progressiv förbättring: utan JS / vid reduced motion syns allt direkt. Varje person
-  // observeras för sig, så på mobil tänds de i takt med scrollen. Personer som redan
-  // syns vid laddning (t.ex. omladdning mitt i sektionen) visas direkt.
+  // Progressiv förbättring: utan JS / vid reduced motion får ingen rad .will-reveal och
+  // allt syns direkt. Rader som redan ligger ovanför 80 %-linjen vid laddning (t.ex. omladdning mitt
+  // i sektionen) visas också direkt. Tidsstyrt, inte scrollstyrt (se Rörelse överst), så
+  // ingen view-timeline och ingen Firefox-reserv behövs. Lenis behöver ingen koppling:
+  // IntersectionObserver ser den riktiga fönsterscrollen.
   const sec = document.querySelector<HTMLElement>('.ateam');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (sec && !reduced && 'IntersectionObserver' in window) {
-    const limit = window.innerHeight * 0.85;
-    const people = Array.from(sec.querySelectorAll<HTMLElement>('.ateam__person')).filter(
-      (el) => el.getBoundingClientRect().top > limit,
+    const wide = window.matchMedia('(min-width: 720px)');
+    const line = window.innerHeight * 0.8;
+    // Rader som redan syns får aldrig .will-reveal.
+    const rows = Array.from(sec.querySelectorAll<HTMLElement>('.ateam__person')).filter(
+      (li) => li.getBoundingClientRect().top > line,
     );
 
-    if (people.length) {
-      people.forEach((el) => el.classList.add('will-reveal'));
-      const io = new IntersectionObserver(
-        (entries) => {
-          // Ordning inom samma omgång: personer som kommer in samtidigt förskjuts 0,1 s,
-          // en ensam person (mobil) startar direkt.
-          let n = 0;
-          for (const e of entries) {
-            if (!e.isIntersecting) continue;
-            const el = e.target as HTMLElement;
-            el.style.setProperty('--n', String(n++));
-            el.classList.add('is-in');
-            io.unobserve(el);
+    // Bions försprång efter radens start, samma som --body-lead i CSS:en (namnets 0,62 s
+    // + titeln, så att bion kommer efter dem).
+    const LEAD = 0.82;
+
+    // Förladdning: avtäckningens klipp på img:n gör att lazy-laddaren ser bilden som
+    // osynlig (se Teknik överst). Byt till eager när raden är 1,5 skärmhöjder bort, ungefär
+    // Chromes egen lazy-marginal, så att bilden är avkodad när raden når 80 %-linjen.
+    const preload = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          preload.unobserve(e.target);
+          const img = e.target.querySelector('img');
+          if (img) img.loading = 'eager';
+        }
+      },
+      { rootMargin: '0px 0px 150% 0px' },
+    );
+
+    // Avtäck aldrig in i en tom ram: vänta på avkodad bild, högst 0,8 s. Byt till eager
+    // även här, som reserv om raden nås innan förladdningen hunnit (t.ex. ett hopp).
+    const ready = (li: HTMLElement): Promise<unknown> => {
+      const img = li.querySelector('img');
+      if (!img) return Promise.resolve();
+      img.loading = 'eager';
+      if (img.complete) return Promise.resolve();
+      return Promise.race([
+        img.decode().catch(() => {}),
+        new Promise((r) => setTimeout(r, 800)),
+      ]);
+    };
+
+    const head = new WeakMap<HTMLElement, Promise<unknown>>();
+    const started = new WeakMap<HTMLElement, number>(); // när .is-in sattes (performance.now)
+    const body = new WeakSet<HTMLElement>();
+    const io = new IntersectionObserver(
+      (entries) => {
+        // Rader som kommer in i samma omgång förskjuts 0,15 s (--n), en ensam rad startar direkt.
+        let n = 0;
+        const batch = new Set<HTMLElement>();
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          const el = e.target as HTMLElement;
+          const li = el.closest<HTMLElement>('.ateam__person')!;
+          io.unobserve(el);
+          if (!head.has(li)) {
+            li.style.setProperty('--n', String(n++));
+            head.set(
+              li,
+              ready(li).then(() => {
+                started.set(li, performance.now());
+                li.classList.add('is-in');
+              }),
+            );
+            batch.add(li);
           }
-        },
-        { rootMargin: '0px 0px -15% 0px' },
-      );
-      people.forEach((el) => io.observe(el));
-      document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
-    }
+          // Sida vid sida: en enda gest. Staplat: bion väntar på att själv komma in i bild.
+          // Kommer den senare än fotot får den bara det som är kvar av försprånget, så att
+          // den aldrig startar före namnet (0 s när namn och titel redan landat).
+          if ((wide.matches || el.classList.contains('ateam__bio')) && !body.has(li)) {
+            body.add(li);
+            const alone = !batch.has(li);
+            head.get(li)!.then(() => {
+              if (alone) {
+                const elapsed = (performance.now() - started.get(li)!) / 1000;
+                li.style.setProperty('--body-lead', `${Math.max(0, LEAD - elapsed).toFixed(3)}s`);
+              }
+              li.classList.add('is-in-body');
+            });
+          }
+        }
+      },
+      { rootMargin: '0px 0px -20% 0px' },
+    );
+
+    rows.forEach((li) => {
+      li.classList.add('will-reveal');
+      const photo = li.querySelector<HTMLElement>('.ateam__photo')!;
+      if (photo.querySelector('img')) preload.observe(photo);
+      io.observe(photo);
+      io.observe(li.querySelector('.ateam__bio')!);
+    });
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        preload.disconnect();
+        io.disconnect();
+      },
+      { once: true },
+    );
   }
 </script>

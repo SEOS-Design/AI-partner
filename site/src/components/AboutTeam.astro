@@ -1,0 +1,521 @@
+---
+// AboutTeam.astro – "Vilka står bakom / AI Partner?" på /om-oss (2026-10-12).
+// Ligger direkt efter AboutStory, som slutar "Samma team, samma tekniska grund …":
+// här visas det teamet, innan AboutOffer. Läsaren har då redan sett alla fyra när
+// AboutQuote längre ner citerar teamet. Samma ordning som namnraden där: Douglas, Anton,
+// Björn, Elliot (2026-10-18).
+//
+// Formgrepp: personerna står som en lista över medverkande, inte som ett grundarblock.
+// Fyra SMÅ 4:5-porträtt (88 px mobil, 128 px från 720 px) står på en gemensam hårlinje.
+// På desktop bryts linjen av kolumnmellanrummen till fyra segment som läses som en linje.
+// Inga kort och inga boxar runt texten. Bara fotot har ram. Det är medvetet INTE
+// seosdesign.se:s "Tre grundare" med stora foton och citat (Björn förkastade den kopian).
+// Grått rakt igenom. Accentfärgen ägs av AboutOffer:s linje direkt under, så den
+// används inte här. Ingen hover: inget här är klickbart.
+// Namn och titel är ett par i samma storlek, vitt över grått, som sektionens tvåtoniga
+// h2 i miniatyr.
+//
+// Favoriter (2026-10-18, Elliots önskemål): favoritverktyg + favoritautomation som en <dl>
+// under bion. Medvetet tystare än bion: 11 px versal etikett (sajtens eyebrow) + 14 px värde,
+// båda --fg-3. --fg-4 klarar inte AA för liten text (ca 2,6:1 mot canvasen, --fg-3 ca 8,3:1).
+// Ingen ikon, ingen accent, ingen linje: personens enda linje är hårlinjen överst.
+// Verktyget står FÖRST: det är alltid en rad, så automationsetiketten hamnar i linje i alla
+// fyra kolumner även när automationen bryts på två rader.
+// Längd: verktyg ≤ ca 25 tecken (en rad), automation ≤ ca 55 tecken (högst två rader i
+// spalten på ca 220–240 px). Fragment utan punkt. Produktnamn som tillverkaren skriver dem.
+//
+// Layout: 1 kolumn (porträtt + namn bredvid, bio i full bredd under) → 2 kolumner från
+// 720 px (samma brytpunkt som AboutOffer) → 4 kolumner från 1024 px. Aldrig 3, eftersom
+// 3 + 1 lämnar en ensam person. Favoriterna står i linje med grannens från 720 px: i två
+// kolumner är biospåret 1fr, så favoriterna hamnar i botten av raden, och automationen
+// har alltid två raders höjd, så att blocken är lika höga. På desktop använder
+// varje person subgrid (fem rader: linje, porträtt, namn, bio, favoriter), så att namn,
+// titel, bio och favoriter börjar på samma linje i alla fyra kolumner även om en rad bryts.
+//
+// Rörelse (en gång per person, när personen scrollas in): hårlinjen ritas från vänster,
+// sedan glider porträttet upp i sin ram (samma grammatik som rubrikorden i AboutStory,
+// men bara transform), och till sist tonas texten in, favoriterna ett steg efter bion.
+// Rubriken har sajtens gemensamma rubrik-drape (data-split, se global.css "Rubrik-drape"
+// och scripts/split.ts), som AboutStory och AboutOffer (2026-10-18; tidigare animerades
+// den inte här). Utan JS, vid reduced motion eller om personen redan syns vid laddning:
+// allt syns direkt.
+//
+// Copy = PLATSHÅLLARE (Douglas granskar): ingressen, alla bios och alla titlar utom
+// Douglas.
+// Favoriterna = PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen. Påhittade på
+// begäran (Elliot 2026-10-18), inte fakta om personen eller om bolagets verktyg. Verktygen
+// läses som bolagets egen stack: byt till det personen faktiskt använder. Favoriterna ska
+// INTE in i Person-JSON-LD, inte ens när titlarna är bekräftade.
+// Bios: en mening per person, ungefär lika långa (2–3 rader i fyra kolumner, spalten är ca 220–240 px).
+// Första ledet är bekräftat. Resten är en allmän rollbeskrivning skriven av Claude, inte
+// fakta om personen. Inga pronomen (han/hon) – skriv om med namnet om det behövs.
+// OBS: "Medgrundare" ensamt på AI Partners sida kan läsas som medgrundare av
+// AI Partner. Bekräftat är bara att Anton och Elliot är med och grundade SEOS Design
+// (seosdesign.se/om-oss). Douglas väljer "Medgrundare" eller t.ex. "Medgrundare, SEOS Design".
+// Lägg INTE in Person-JSON-LD förrän titlarna är bekräftade.
+//
+// FOTO: lägg bilderna i site/public/team/ och sätt photo per person, t.ex.
+// photo: '/team/anton.webp'. Använd ASCII i filnamnen: douglas, anton, elliot, bjorn.
+// photo: null → monogram (platshållare). Ramen är lika stor i båda lägena, så bytet ger
+// ingen layoutförskjutning.
+//   – 4:5, exportera 480×600 px WebP (q ≈ 78–80, ≤ ~30 kB). Det räcker för 3× skärm vid 128 px.
+//   – Huvud och axlar, ögonen ca 35 % från överkanten.
+//   – Samma bakgrund (neutral, mörkgrå), samma ljus och samma avstånd för alla fyra.
+//   – Gråskala läggs på i CSS (--ateam-photo-filter nedan). Sätt den till none för färg.
+//   – focus (valfritt) = object-position om ansiktet hamnar fel i beskärningen, t.ex. '50% 20%'.
+//   – public/douglas.webp finns (600×750, 4:5) men är från en annan fotografering.
+//     Byt alla fyra SAMTIDIGT: ett riktigt foto bredvid tre monogram ser ofärdigt ut.
+
+type Person = {
+  name: string;
+  title: string;
+  bio: string;
+  tool: string; // favoritverktyg – produktnamnet, en rad (≤ ca 25 tecken)
+  automation: string; // favoritautomation – vad som händer, ≤ ca 55 tecken, ingen punkt
+  photo: string | null;
+  focus?: string;
+};
+
+// Ordning = namnraden i AboutQuote.astro.
+// Favoriterna täcker fyra olika avdelningar (sälj & offert, marknad, intern admin,
+// kundtjänst) och fyra olika slags verktyg (CRM, flödesbyggare, kodagent, kunskapsbas).
+const TEAM: Person[] = [
+  {
+    name: 'Douglas Ekman',
+    title: 'VD och medgrundare', // bekräftad (Story.astro, AboutQuote.astro)
+    // PLATSHÅLLARE — Douglas granskar
+    bio: 'Douglas leder AI Partner och SEOS Design och ser till att varje projekt börjar med ett tydligt mål.',
+    // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
+    tool: 'HubSpot',
+    // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
+    automation: 'Anteckningar från kundmötet blir ett offertutkast',
+    photo: null,
+  },
+  {
+    name: 'Anton Sahibzada',
+    title: 'Medgrundare', // PLATSHÅLLARE — Douglas granskar
+    // PLATSHÅLLARE — Douglas granskar
+    bio: 'Anton var med och grundade SEOS Design och vill att det vi bygger fungerar i vardagen, inte bara i en demo.',
+    // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
+    tool: 'n8n',
+    // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
+    automation: 'Kundcaset skrivs fram direkt när projektet är klart',
+    photo: null,
+  },
+  {
+    name: 'Björn Wildenstam',
+    title: 'Utvecklare', // PLATSHÅLLARE — Douglas granskar
+    // PLATSHÅLLARE — Douglas granskar
+    bio: 'Björn bygger AI Partners hemsida och tekniken bakom den, med fokus på snabbhet och tillgänglighet.',
+    // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
+    tool: 'Claude Code',
+    // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
+    automation: 'Veckans ändringar på hemsidan sammanfattas i klartext',
+    photo: null,
+  },
+  {
+    name: 'Elliot Eslander',
+    title: 'Medgrundare', // PLATSHÅLLARE — Douglas granskar
+    // PLATSHÅLLARE — Douglas granskar
+    bio: 'Elliot är en av grundarna av SEOS Design och vill att kunden förstår vad lösningen gör och varför.',
+    // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
+    tool: 'Notion',
+    // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
+    automation: 'Vanliga kundfrågor besvaras, resten går till rätt person',
+    photo: null,
+  },
+];
+
+const initials = (name: string) =>
+  name
+    .split(' ')
+    .map((part) => part[0])
+    .join('');
+---
+
+<section id="teamet" class="ateam" aria-labelledby="ateam-title">
+  <div class="container">
+    <header class="ateam__head">
+      <h2 id="ateam-title" class="ateam__h" data-split>
+        Vilka står bakom <br /><span class="ateam__dim">AI Partner?</span>
+      </h2>
+      {/* PLATSHÅLLARE — Douglas granskar */}
+      <p class="ateam__intro">
+        AI Partner drivs från Stockholm av teamet bakom webbyrån SEOS Design.
+      </p>
+    </header>
+
+    <ul class="ateam__list" role="list">
+      {TEAM.map((p) => (
+        <li class="ateam__person">
+          <div class="ateam__photo">
+            <div class="ateam__fill">
+              {/* alt="": h3:an direkt efter namnger redan personen. Ingen loading="lazy":
+                  fotot ligger utanför ramens clip tills .is-in, så lazy-laddaren skulle
+                  aldrig se det och hämta bilden först under glidningen. */}
+              {p.photo ? (
+                <img
+                  src={p.photo}
+                  alt=""
+                  width="480"
+                  height="600"
+                  decoding="async"
+                  style={p.focus ? `--focus: ${p.focus}` : undefined}
+                />
+              ) : (
+                <span class="ateam__initials" data-initials={initials(p.name)} aria-hidden="true"></span>
+              )}
+            </div>
+          </div>
+          <div class="ateam__id">
+            <h3 class="ateam__name">{p.name}</h3>
+            <p class="ateam__title">{p.title}</p>
+          </div>
+          <p class="ateam__bio">{p.bio}</p>
+          <dl class="ateam__facts">
+            <div class="ateam__fact">
+              <dt>Favoritverktyg</dt>
+              <dd>{p.tool}</dd>
+            </div>
+            <div class="ateam__fact">
+              <dt>Favoritautomation</dt>
+              <dd>{p.automation}</dd>
+            </div>
+          </dl>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .ateam {
+    /* Fotobehandling: gråskala gör fyra foton från olika tillfällen till en serie och
+       håller sidan grå. Douglas beslut – sätt till none för färgfoton. */
+    --ateam-photo-filter: grayscale(1) contrast(1.04);
+    padding: var(--section-py) 0;
+  }
+  .container {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+  }
+
+  /* ---- rubrik + ingress: staplat och vänsterställt som AboutOffer ---- */
+  .ateam__head {
+    margin-bottom: clamp(40px, 5vw, 64px);
+  }
+  .ateam__h {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--fs-h2);
+    line-height: var(--lh-display);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+  }
+  .ateam__dim {
+    color: #666; /* 3,45:1, AA stor text – samma dämpade andra rad som övriga sektioner */
+  }
+  .ateam__intro {
+    margin: clamp(24px, 3vw, 40px) 0 0;
+    max-width: 34em;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+    text-wrap: balance; /* en mening: jämna rader i stället för ett ensamt ordpar */
+  }
+
+  /* ---- listan, mobil först: porträtt + namn i en rad, bio i full bredd under,
+     favoriter under bion ---- */
+  .ateam__list {
+    --pw: 88px; /* porträttets bredd */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-7);
+  }
+  .ateam__person {
+    --d: calc(var(--n, 0) * 0.1s); /* förskjutning, --n sätts av scriptet */
+    display: grid;
+    grid-template-columns: var(--pw) minmax(0, 1fr);
+    grid-template-areas:
+      'rail  rail'
+      'photo id'
+      'bio   bio'
+      'facts facts';
+    column-gap: var(--space-4);
+    /* li sträcks till radens höjd i 2 kolumner. Där tar biospåret (1fr) överskottet, se
+       720 px-blocket. Detta är skyddsnätet: utan det skulle överskottet fördelas på
+       auto-raderna och den med kortare bio hamna några px lägre än grannen. */
+    align-content: start;
+  }
+  /* Hårlinjen ovanför varje person. På desktop läses de fyra segmenten som en linje. */
+  .ateam__person::before {
+    content: '';
+    grid-area: rail;
+    height: 1px;
+    margin-bottom: var(--space-5);
+    background: var(--border-strong);
+    transform-origin: left;
+  }
+
+  /* ---- porträtt: samma ram för foto och platshållare ---- */
+  .ateam__photo {
+    grid-area: photo;
+    position: relative;
+    width: var(--pw);
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-lg);
+    overflow: clip;
+  }
+  /* Hårstreck OVANPÅ innehållet, så att mörkt hår och mörk bakgrund på ett foto inte
+     smälter in i canvasen. Svag ljuskant upptill. */
+  .ateam__photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow:
+      inset 0 0 0 1px var(--border),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    pointer-events: none;
+  }
+  /* Mörk studiobakgrund med mjukt toppljus. Det är platshållaren, och bakom ett riktigt
+     foto är det också laddningsläget. Ta inte bort den när fotona kommer. */
+  .ateam__fill {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgba(255, 255, 255, 0.06), transparent 62%),
+      var(--bg-raised);
+  }
+  .ateam__fill img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--focus, 50% 30%);
+    filter: var(--ateam-photo-filter);
+  }
+  /* Monogram i ansiktshöjd (lyft ~7 %), så att blickpunkten inte flyttar sig när fotot kommer. */
+  .ateam__initials {
+    position: absolute;
+    inset: 0 0 14% 0;
+    display: grid;
+    place-items: center;
+    font-stretch: 75%;
+    font-weight: 700;
+    font-size: calc(var(--pw) * 0.3);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    color: var(--fg-4);
+    user-select: none;
+  }
+  /* Initialerna via CSS, så att de inte hamnar i sidans text ("DE Douglas Ekman …"). */
+  .ateam__initials::before {
+    content: attr(data-initials);
+  }
+
+  /* ---- namn + titel: samma storlek, vitt över grått ---- */
+  .ateam__id {
+    --fs-id: clamp(22px, 1.8vw, 24px); /* smal bredd ser mindre ut – ett steg över biotexten */
+    grid-area: id;
+    align-self: end; /* mobil: som en bildtext vid porträttets fot */
+  }
+  .ateam__name {
+    margin: 0;
+    font-size: var(--fs-id);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: var(--tracking-tight);
+    color: var(--fg-1);
+  }
+  .ateam__title {
+    margin: 2px 0 0;
+    font-stretch: 75%; /* p är bred som standard, men titeln hör till namnet */
+    font-size: var(--fs-id);
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--fg-3);
+    /* Baslinjen exakt i nivå med porträttets underkant (där det stöds). */
+    text-box: trim-end cap alphabetic;
+  }
+  .ateam__bio {
+    grid-area: bio;
+    margin: var(--space-4) 0 0;
+    max-width: 34em;
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--fg-3);
+    text-wrap: pretty;
+  }
+
+  /* ---- favoriterna: etikett + värde, tystare än bion ---- */
+  .ateam__facts {
+    --lag: 0.12s; /* tonas in ett steg efter texten, se rörelsen nedan */
+    grid-area: facts;
+    display: grid;
+    row-gap: var(--space-4);
+    margin: var(--space-5) 0 0;
+  }
+  .ateam__fact {
+    display: grid;
+    row-gap: var(--space-1);
+  }
+  /* Sajtens eyebrow-stil. Smal bredd ärvs från html-regeln. --fg-3, inte --fg-4 (AA). */
+  .ateam__facts dt {
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+  /* Värdet är liten brödtext: full bredd som <p> (dd ärver annars 75 %). Samma grå som bion
+     men mindre, så att favoriterna läses efter bion och inte före. */
+  .ateam__facts dd {
+    margin: 0;
+    font-stretch: 100%;
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: var(--fg-3);
+    text-wrap: balance;
+  }
+
+  /* ---- från 720 px: två kolumner, porträtt överst ---- */
+  @media (min-width: 720px) {
+    .ateam__list {
+      --pw: 128px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--space-6);
+      row-gap: var(--space-8);
+    }
+    .ateam__person {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: 'rail' 'photo' 'id' 'bio' 'facts';
+      /* Bion tar överskottet (1fr), så favoriterna hamnar i botten av li:n och därmed i
+         linje med grannens även när biorna har olika antal rader. Samma som fallbacken
+         från 1024 px. */
+      grid-template-rows: auto auto auto 1fr auto;
+    }
+    .ateam__id {
+      align-self: start;
+      margin-top: var(--space-5);
+    }
+    /* Namnets versalhöjd börjar exakt 24 px under porträttet (där det stöds). */
+    .ateam__name {
+      text-box: trim-start cap alphabetic;
+    }
+    .ateam__title {
+      text-box: normal;
+    }
+    /* Automationen får alltid två raders höjd (max enligt längdregeln ovan), så att
+       favoritblocken är lika höga och etiketterna hamnar i linje även när den ena bryts
+       och den andra inte gör det. I 2 kolumner står favoriterna i botten (1fr ovan). */
+    .ateam__fact + .ateam__fact dd {
+      min-height: calc(2 * 1.5em); /* 2 rader × line-height 1,5 */
+    }
+  }
+
+  /* ---- från 1024 px: fyra kolumner på en rad, rader delade via subgrid ---- */
+  @media (min-width: 1024px) {
+    .ateam__list {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      row-gap: 0;
+    }
+    .ateam__person {
+      grid-row: span 5;
+      /* Utan subgrid: bion tar överskottet, favoriterna hamnar i botten och därmed i linje. */
+      grid-template-rows: auto auto auto 1fr auto;
+      grid-template-rows: subgrid;
+    }
+  }
+
+  /* ---- rörelse (bara när scriptet satt .will-reveal på personen) ---- */
+  /* Dolt läge UTAN transition: scriptet har redan beräknat stilarna (getBoundingClientRect)
+     när .will-reveal sätts, så en transition här skulle animera UT de personer som ligger
+     strax under 85 %-gränsen. Övergångarna ligger bara på .is-in. */
+  .ateam__person.will-reveal::before {
+    transform: scaleX(0);
+  }
+  /* Porträttet glider upp i sin ram. Ramens hårstreck syns från start. */
+  .ateam__person.will-reveal .ateam__fill {
+    transform: translateY(101%);
+  }
+  .ateam__person.will-reveal :is(.ateam__id, .ateam__bio, .ateam__facts) {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  .ateam__person.will-reveal.is-in::before {
+    transform: none;
+    transition: transform 0.8s var(--ease) var(--d);
+  }
+  .ateam__person.will-reveal.is-in .ateam__fill {
+    transform: none;
+    transition: transform 0.9s var(--ease) calc(var(--d) + 0.12s);
+  }
+  .ateam__person.will-reveal.is-in :is(.ateam__id, .ateam__bio, .ateam__facts) {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 0.7s var(--ease) calc(var(--d) + 0.3s + var(--lag, 0s)),
+      transform 0.7s var(--ease) calc(var(--d) + 0.3s + var(--lag, 0s));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ateam__person.will-reveal.is-in::before,
+    .ateam__person.will-reveal.is-in :is(.ateam__fill, .ateam__id, .ateam__bio, .ateam__facts) {
+      transition: none;
+    }
+  }
+
+  /* Tvingade färger tar bort box-shadow (ramen) och gör bakgrunder till Canvas (hårlinjen).
+     Återställ båda med systemfärg så att listan behåller sin struktur. */
+  @media (forced-colors: active) {
+    .ateam__person::before {
+      forced-color-adjust: none;
+      background: CanvasText;
+    }
+    .ateam__photo::after {
+      border: 1px solid CanvasText;
+    }
+  }
+</style>
+
+<script>
+  // Progressiv förbättring: utan JS / vid reduced motion syns allt direkt. Varje person
+  // observeras för sig, så på mobil tänds de i takt med scrollen. Personer som redan
+  // syns vid laddning (t.ex. omladdning mitt i sektionen) visas direkt.
+  const sec = document.querySelector<HTMLElement>('.ateam');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (sec && !reduced && 'IntersectionObserver' in window) {
+    const limit = window.innerHeight * 0.85;
+    const people = Array.from(sec.querySelectorAll<HTMLElement>('.ateam__person')).filter(
+      (el) => el.getBoundingClientRect().top > limit,
+    );
+
+    if (people.length) {
+      people.forEach((el) => el.classList.add('will-reveal'));
+      const io = new IntersectionObserver(
+        (entries) => {
+          // Ordning inom samma omgång: personer som kommer in samtidigt förskjuts 0,1 s,
+          // en ensam person (mobil) startar direkt.
+          let n = 0;
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            const el = e.target as HTMLElement;
+            el.style.setProperty('--n', String(n++));
+            el.classList.add('is-in');
+            io.unobserve(el);
+          }
+        },
+        { rootMargin: '0px 0px -15% 0px' },
+      );
+      people.forEach((el) => io.observe(el));
+      document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
+    }
+  }
+</script>

@@ -188,13 +188,15 @@ const PHOTO: string | null = '/douglas.webp'; // från seosdesign.se (författar
   .story.will-reveal .story__person {
     opacity: 0;
     transform: translateY(12px);
+    /* Kort väntan (var 0.9/1.05 s + 0.8 s ton — läste som en bugg på mobil,
+       Björn 2026-10-18). Samma värden som texten under "Det är där vi kommer in." */
     transition:
-      opacity 0.8s var(--ease),
-      transform 0.8s var(--ease);
-    transition-delay: 0.9s;
+      opacity 0.6s var(--ease),
+      transform 0.6s var(--ease);
+    transition-delay: 0.15s;
   }
   .story.will-reveal .story__person {
-    transition-delay: 1.05s;
+    transition-delay: 0.25s;
   }
   .story.will-reveal.is-in .story__body,
   .story.will-reveal.is-in .story__person {
@@ -219,8 +221,8 @@ const PHOTO: string | null = '/douglas.webp'; // från seosdesign.se (författar
           story.classList.add('is-in');
           io.disconnect();
         },
-        // Startar när rubriken nått ungefär 20 % upp i bild.
-        { rootMargin: '0px 0px -20% 0px' },
+        // Startar när rubriken nått ungefär 10 % upp i bild (var 20 %).
+        { rootMargin: '0px 0px -10% 0px' },
       );
       io.observe(head);
       document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });

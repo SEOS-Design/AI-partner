@@ -777,3 +777,9 @@ textarea {
     scroll-padding-top: 84px;
   }
 }
+
+/* Lenis (scripts/smooth.ts) sköter den mjuka scrollen själv — webbläsarens egen
+   scroll-behavior: smooth på html skulle annars utjämna en gång till. */
+html.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}

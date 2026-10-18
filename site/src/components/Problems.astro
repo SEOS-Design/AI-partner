@@ -1,9 +1,18 @@
 ---
 // Problems.astro – problemsektionen "Var tar tiden vägen?" (Douglas 2026-10-14).
-// Ersätter siffersektionen (Stats.astro, se git-historiken) på samma plats och i
-// samma layout (Björns v2): rubriken står LÅST till vänster medan de tre problemen
-// rullar förbi till höger, och "Det är där vi kommer in." + svaret + knapparna står
-// under. Mellan problemen och den meningen ligger siffrorna i kompakt form
+// Ersätter siffersektionen (Stats.astro, se git-historiken) på samma plats.
+//
+// SICKSACK (2026-10-18, Björns idé efter att kortstapeln förkastats — "ingen finess"):
+// rubriken centrerad på EN rad, under den de tre problemen omväxlande till vänster
+// och höger. Varje problem glider in från sin egen sida och tonas fram I TAKT MED
+// SCROLLEN (GSAP scrub) — och ut igen om man scrollar upp, som rubrik-drapen. Ingen
+// låsning, inga lådor. TRÅDEN (2026-10-18, Björn: "som vågen vi gjorde tidigt",
+// StartFlow.astro): en glödande linje slingrar sig från rubriken genom mitten, förbi
+// varje problem och vidare ned, och RITAS FRAM I TAKT MED SCROLLEN. En punkt tänds
+// vid varje problem när linjen når fram. Banan räknas ut i JS efter layouten
+// (bygger om vid breddändring). Samma glödlager som vågen: glow · halo · core.
+// Sedan, som förut: siffrorna i kompakt form och "Det är där vi kommer in." + svaret
+// + knapparna. Problem → belägg → svaret
 // (StatsBand.astro, Douglas 2026-10-14 v2): problem → belägg → svaret.
 //
 // Inga 01–03-nummer på problemen: de är ingen ordningsföljd, och kubsektionen längre
@@ -12,7 +21,9 @@
 // Copy = Douglas (v3 i AI-Partner-startsida-problemsektion-2026-10-14.md, SEOS-mappen;
 // texten under "Det är där vi kommer in." = Douglas 2026-10-14).
 //
-// Mobil (<860 px): vanligt flöde. Reduced motion / utan JS: allt synligt direkt.
+// Mobil: tråden blir en rak linje längs vänsterkanten med punkterna (ingen plats för
+// en slinga), problemen under varandra med kortare glidning.
+// Reduced motion / utan JS: problemen står på plats direkt.
 //
 // Rubriken och "Det är där vi kommer in." har sajtens rubrik-drape (data-split, se
 // global.css): orden följer scrollen åt båda hållen. Texten och knapparna under
@@ -38,22 +49,21 @@ const PROBLEMS = [
 ---
 
 <section id="problem" class="probs" aria-labelledby="probs-heading">
-  <div class="container">
-    <div class="probs__grid">
-      <div class="probs__side">
-        <div class="probs__sticky">
-          {/* Två bestämda rader, som den gamla siffersektionens rubrik. */}
-          <h2 id="probs-heading" class="h2 probs-h" data-split>
-            <span class="probs-h__line">Var tar</span>{' '}
-            <span class="probs-h__line">tiden vägen?</span>
-          </h2>
-        </div>
-      </div>
+  <div class="container probs__wrap">
+    <h2 id="probs-heading" class="h2 probs-h" data-split>Var tar tiden vägen?</h2>
+
+    <div class="probs__list">
+      {/* Tråden + punkterna: banan sätts av scriptet (dekor, aria-hidden). */}
+      <svg class="thread" aria-hidden="true">
+        <path class="thread__glow"></path>
+        <path class="thread__halo"></path>
+        <path class="thread__core"></path>
+      </svg>
+      {PROBLEMS.map(() => <span class="node" aria-hidden="true"></span>)}
 
       <ul class="ledger">
         {PROBLEMS.map((p) => (
           <li class="prob">
-            <span class="tick" aria-hidden="true"></span>
             <h3 class="prob__title">{p.title}</h3>
             <p class="prob__body">{p.body}</p>
           </li>
@@ -62,7 +72,7 @@ const PROBLEMS = [
     </div>
   </div>
 
-  {/* Siffrorna i kompakt form, efter att den låsta rubriken släppt. */}
+  {/* Siffrorna i kompakt form. */}
   <StatsBand />
 
   {/* Rubrik-drapen (data-split, global.css): orden glider upp i takt med scrollen. */}
@@ -96,111 +106,44 @@ const PROBLEMS = [
     padding-inline: var(--space-5);
   }
 
-  /* ---- Två kolumner: låst rubrik vänster, problemen rullar höger ---- */
-  .probs__grid {
-    --g: clamp(40px, 5vw, 64px); /* smal skärm; bred skärm sätts nedan */
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: clamp(40px, 6vw, 96px);
-    align-items: start;
+  /* ---- Rubriken: centrerad, EN rad ---- */
+  .probs__wrap {
+    container-type: inline-size; /* rubrikens storlek räknas mot bredden (cqi) */
   }
-  .probs__side {
-    align-self: stretch; /* lika hög som listan → rubriken släpper i linje med sista problemet */
-    container-type: inline-size; /* rubrikens storlek räknas från kolumnens bredd */
-  }
-  /* Smal skärm: en kolumn, rubriken ovanför problemen och inte låst. */
-  @media (max-width: 859px) {
-    .probs__grid { grid-template-columns: minmax(0, 1fr); }
-    .probs__sticky { position: static !important; }
-  }
-  /* Bred skärm: något kortare luft än siffrorna hade (20svh) — textraderna är lägre
-     än de stora siffrorna, och rubriken får ändå en sträcka att stå låst. */
-  @media (min-width: 860px) {
-    .probs__grid { --g: clamp(80px, 15svh, 168px); }
-  }
-  .probs__sticky {
-    position: sticky;
-    top: clamp(110px, 16vh, 150px); /* under nav-pillen */
-  }
-  /* Storleken = det minsta av sajtens h2 och vad som får plats: den längre raden
-     ("tiden vägen?") är ~4,3 em bred → 100cqi / 4.5 fyller kolumnen med marginal. */
+  /* ~6,75 em bred → krymper med bredden när h2-storleken inte ryms. */
   .probs-h {
     margin: 0;
-    font-size: min(var(--fs-h2), calc(100cqi / 4.5));
-    text-box: trim-both cap alphabetic;
-  }
-  .probs-h__line {
-    display: block;
+    font-size: min(var(--fs-h2), calc(100cqi / 6.9));
+    line-height: 1.1;
     white-space: nowrap;
+    text-align: center;
+  }
+  .probs {
+    overflow-x: clip; /* problemen glider in från utanför kanten */
   }
 
-  /* ---- Problemen ---- */
+  /* ---- Sicksack ---- */
+  .probs__list {
+    position: relative;
+    margin-top: clamp(56px, 8vw, 120px);
+  }
   .ledger {
+    position: relative;
+    z-index: 1;
     list-style: none;
     margin: 0;
     padding: 0;
+    display: grid;
+    gap: clamp(64px, 8vw, 128px);
   }
+  /* Smalare block än halva bredden → en mittgata där tråden slingrar sig. */
   .prob {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-    padding: var(--g) 0; /* lika luft över och under varje linje */
+    width: min(100%, 40%, 30rem);
+    will-change: transform, opacity;
   }
-  /* Linjer bara MELLAN problemen, med accentlinjen på varje (som siffrorna hade). */
-  .prob + .prob {
-    border-top: 1px solid var(--border-strong);
-  }
-  .prob:first-child .tick {
-    display: none;
-  }
-  /* Linjering mot rubriken: första problemets rubrik börjar i höjd med sektions-
-     rubrikens överkant, sista brödtextraden slutar i höjd med dess underkant när den
-     släpper. text-box beskär till versalhöjd resp. baslinje (Chrome/Edge/Safari). */
-  .prob:first-child {
-    padding-top: 0;
-  }
-  .prob:last-child {
-    padding-bottom: 0;
-  }
-  .prob__title {
-    text-box: trim-start cap alphabetic;
-  }
-  .prob__body {
-    text-box: trim-end cap alphabetic;
-  }
-  .tick {
-    position: absolute;
-    top: -1px;
-    left: 0;
-    width: min(100%, clamp(200px, 60%, 420px)); /* aldrig bredare än kolumnen */
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 84% / 0) 0%,
-      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 84% / 1) 6%,
-      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 80% / 0.7) 48%,
-      hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 78% / 0) 100%
-    );
-  }
-
-  /* Problem som inte står mitt i vyn tonas ner (samma som siffrorna hade, Björn
-     2026-10-08). Ren CSS i takt med scrollen; utan stöd visas allt i full styrka. */
-  @media (min-width: 860px) and (prefers-reduced-motion: no-preference) {
-    @supports (animation-timeline: view()) {
-      .prob__title,
-      .prob__body {
-        animation: probFocus linear both;
-        animation-timeline: view();
-        animation-range: cover 0% cover 100%;
-      }
-    }
-  }
-  @keyframes probFocus {
-    0% { opacity: 0.22; }
-    36% { opacity: 1; }
-    64% { opacity: 1; }
-    100% { opacity: 0.22; }
+  .prob:nth-child(even) {
+    justify-self: end;
   }
   .prob__title {
     font-stretch: 75%;
@@ -213,12 +156,79 @@ const PROBLEMS = [
     text-wrap: balance;
   }
   .prob__body {
-    max-width: 36em;
-    margin: 0;
+    margin: var(--space-4) 0 0;
     font-size: var(--fs-lead);
     line-height: var(--lh-body);
     color: var(--fg-2);
     text-wrap: pretty;
+  }
+
+  /* ---- Tråden (samma glödlager som vågen i StartFlow.astro) ---- */
+  .thread {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .thread path {
+    fill: none;
+    stroke-linecap: round;
+    /* Längden sätts av scriptet (dasharray = banans längd i px); utan JS döljs
+       tråden helt (se .has-thread). */
+  }
+  .thread__glow {
+    stroke: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 58% / 0.16);
+    stroke-width: 14;
+    filter: blur(6px);
+  }
+  .thread__halo {
+    stroke: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 62% / 0.35);
+    stroke-width: 4;
+  }
+  .thread__core {
+    stroke: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 82%);
+    stroke-width: 1.5;
+    filter: drop-shadow(0 0 4px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 66% / 0.9));
+  }
+  /* Punkten vid varje problem: släckt tills linjen når fram (.is-lit). */
+  .node {
+    position: absolute;
+    z-index: 0;
+    left: 0;
+    top: 0;
+    width: 12px;
+    height: 12px;
+    margin: -6px 0 0 -6px;
+    border-radius: 50%;
+    background: #1c1b2c;
+    border: 1px solid hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 70% / 0.45);
+    transition: background-color 0.35s var(--ease), box-shadow 0.35s var(--ease), border-color 0.35s var(--ease);
+  }
+  .node.is-lit {
+    background: hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 92%);
+    border-color: #fff;
+    box-shadow:
+      0 0 0 4px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 60% / 0.18),
+      0 0 14px 3px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 62% / 0.8),
+      0 0 30px 6px hsl(var(--arc-hue) calc(var(--arc-sat) * 100%) 56% / 0.45);
+  }
+  /* Utan JS: ingen bana → dölj tråd och punkter. */
+  .probs__list:not(.has-thread) .thread,
+  .probs__list:not(.has-thread) .node {
+    display: none;
+  }
+
+  /* Mobil: problemen under varandra, tråden rak längs vänsterkanten. */
+  @media (max-width: 859px) {
+    .ledger { padding-left: 32px; }
+    .prob,
+    .prob:nth-child(even) {
+      width: 100%;
+      justify-self: stretch;
+    }
   }
 
   /* ---- Slutmeningen ---- */
@@ -290,6 +300,134 @@ const PROBLEMS = [
 </style>
 
 <script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Sicksacken: varje problem glider in från sin sida (udda vänster, jämna höger)
+  // och tonas fram i takt med scrollen — och ut igen åt andra hållet.
+  // Tråden: banan räknas ut från problemrubrikernas lägen och ritas fram i takt med
+  // scrollen; punkten vid varje problem tänds när linjen passerat den.
+  const list = document.querySelector<HTMLElement>('.probs .probs__list');
+  const ledger = list?.querySelector<HTMLElement>('.ledger');
+  if (list && ledger) {
+    const probs = Array.from(ledger.querySelectorAll<HTMLElement>('.prob'));
+    const titles = probs.map((p) => p.querySelector<HTMLElement>('.prob__title')!);
+    const nodes = Array.from(list.querySelectorAll<HTMLElement>('.node'));
+    const paths = Array.from(list.querySelectorAll<SVGPathElement>('.thread path'));
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let fracs: number[] = [];
+    let drawn = reduced ? 1 : 0;
+    let total = 0;
+    let nodeY: number[] = []; // punkternas y i listan — styr när tråden ritas
+
+    // Ritar fram p (0–1) av tråden: dashoffset i riktiga px. (GSAP avrundar px-värden
+    // till hela pixlar — med pathLength=1 hoppade tråden direkt från 0 till 1, Björn:
+    // "dyker bara upp helt plötsligt". Därför sätts värdet här, inte via en tween.)
+    const draw = (p: number) => {
+      drawn = p;
+      const off = (total * (1 - p)).toFixed(1);
+      paths.forEach((el) => (el.style.strokeDashoffset = off));
+      // Första punkten tänds när tråden börjar, de andra när den når fram.
+      nodes.forEach((n, i) =>
+        n.classList.toggle('is-lit', i === 0 ? p > 0 : p >= (fracs[i] ?? 2) - 0.002),
+      );
+    };
+
+    // Bygger banan i listans koordinater (bredd/höjd i px = SVG:ns egna enheter).
+    const build = () => {
+      // offset* (layoutläget), inte getBoundingClientRect: blocken kan vara förskjutna
+      // av glidanimationen just när banan byggs.
+      const wide = window.innerWidth >= 860;
+      const pts = probs.map((p, i) => {
+        const fs = parseFloat(getComputedStyle(titles[i]).fontSize);
+        const y = ledger.offsetTop + p.offsetTop + titles[i].offsetTop + fs * 0.55; // rubrikens första rad
+        // Desktop: punkten på blockets insida (mot mitten); mobil: vänsterkanten.
+        const left = ledger.offsetLeft + p.offsetLeft;
+        const x = !wide ? 8 : i % 2 ? left - 36 : left + p.offsetWidth + 36;
+        return { x, y };
+      });
+      // Tråden går från första till sista punkten (Björn 2026-10-18).
+      const all = pts;
+      const start = pts[0];
+      nodeY = pts.map((p) => p.y);
+      let d = `M${start.x},${start.y}`;
+      for (let i = 1; i < all.length; i++) {
+        const a = all[i - 1];
+        const b = all[i];
+        const k = (b.y - a.y) * 0.5; // lodräta tangenter → mjuk S mellan punkterna
+        d += ` C${a.x},${a.y + k} ${b.x},${b.y - k} ${b.x},${b.y}`;
+      }
+      paths.forEach((p) => p.setAttribute('d', d));
+      // Hur långt längs banan varje punkt ligger (0–1).
+      const probe = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      probe.setAttribute('d', d);
+      total = probe.getTotalLength();
+      paths.forEach((el) => (el.style.strokeDasharray = `${total} ${total}`));
+      let acc = `M${start.x},${start.y}`;
+      fracs = pts.map((_, i) => {
+        if (i === 0) return 0;
+        const a = all[i - 1];
+        const b = all[i];
+        const k = (b.y - a.y) * 0.5;
+        acc += ` C${a.x},${a.y + k} ${b.x},${b.y - k} ${b.x},${b.y}`;
+        probe.setAttribute('d', acc);
+        return probe.getTotalLength() / total;
+      });
+      nodes.forEach((n, i) => {
+        n.style.left = `${pts[i].x}px`;
+        n.style.top = `${pts[i].y}px`;
+      });
+      list.classList.add('has-thread');
+      draw(drawn);
+    };
+
+    build();
+    document.fonts?.ready.then(() => { build(); ScrollTrigger.refresh(); });
+    let lastW = window.innerWidth;
+    window.addEventListener('resize', () => {
+      if (window.innerWidth === lastW) return;
+      lastW = window.innerWidth;
+      build();
+    });
+
+    const mm = gsap.matchMedia();
+    mm.add(
+      {
+        wide: '(min-width: 860px) and (prefers-reduced-motion: no-preference)',
+        narrow: '(max-width: 859px) and (prefers-reduced-motion: no-preference)',
+      },
+      (ctx) => {
+        const dist = ctx.conditions?.wide ? 140 : 48; // px — kortare på mobil
+        probs.forEach((el, i) => {
+          gsap.fromTo(
+            el,
+            { x: (ctx.conditions?.wide && i % 2 ? 1 : -1) * dist, opacity: 0 },
+            {
+              x: 0,
+              opacity: 1,
+              ease: 'power2.out',
+              scrollTrigger: { trigger: el, start: 'top 92%', end: 'top 58%', scrub: true },
+            },
+          );
+        });
+        // Linjen: från att första punkten når 75 % av vyn tills sista punkten når
+        // 50 %. Progressen direkt (Lenis jämnar redan ut scrollen med mus/styrplatta).
+        const st = ScrollTrigger.create({
+          trigger: list,
+          start: () => `top+=${nodeY[0] ?? 0} 75%`,
+          end: () => `top+=${nodeY[nodeY.length - 1] ?? 0} 50%`,
+          onUpdate: (self) => draw(self.progress),
+          onRefresh: (self) => draw(self.progress),
+        });
+        draw(st.progress);
+        return () => draw(1); // lämnar läget (t.ex. reduced motion) → färdigritad
+      },
+    );
+    window.addEventListener('load', () => { build(); ScrollTrigger.refresh(); }, { once: true });
+    document.addEventListener('astro:before-swap', () => mm.revert(), { once: true });
+  }
+
   // Texten och knapparna under meningen tonas in när meningen scrollas in (orden
   // sköts av rubrik-drapen). Utan JS och vid reduced motion syns meningen direkt; .will-reveal (dolt läge)
   // sätts först när scriptet vet att det kan animera.

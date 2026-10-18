@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import 'lenis/dist/lenis.css'; /* Lenis grund-CSS (mjuk scroll, scripts/smooth.ts) */
 import Nav from '../components/Nav.astro';
 import { canonicalUrl, siteSchema } from '../lib/site';
 
@@ -59,6 +60,7 @@ const isHome = canonical === canonicalUrl('/');
      {/* Rubrik-drapen: delar [data-split]-rubriker i ord (se global.css). */}
      <script>
        import '../scripts/split';
+       import '../scripts/smooth';
      </script>
   </body>
 </html>

@@ -101,7 +101,7 @@ const SOFT = new Set(['av', '%']); // dämpade delar av siffran (som förut)
     padding-top: clamp(22px, 2.2vw, 30px);
     border-top: 1px solid var(--border-strong);
     font-weight: 700;
-    font-size: clamp(17px, 1.35vw, 20px);
+    font-size: var(--fs-h3); /* sajtens mellanrubrik (var 17–20 px, Björn 2026-10-18) */
     line-height: var(--lh-heading);
     letter-spacing: var(--tracking-tight);
     color: var(--fg-1);
@@ -171,7 +171,7 @@ const SOFT = new Set(['av', '%']); // dämpade delar av siffran (som förut)
     font-stretch: 75%;
     margin: 0;
     font-weight: 700;
-    font-size: clamp(32px, 2.7vw, 42px);
+    font-size: clamp(44px, 4.6vw, 68px); /* större med texten runt (var 32–42 px) */
     line-height: 0.98;
     letter-spacing: -0.03em;
     color: var(--fg-1);
@@ -182,31 +182,24 @@ const SOFT = new Set(['av', '%']); // dämpade delar av siffran (som förut)
     color: var(--fg-3);
     font-weight: 500;
   }
+  /* Brödtext: sajtens ingresstorlek och full bredd (var 14–15 px smal). */
   .claim {
-    font-stretch: 75%;
-    max-width: 32ch;
-    margin: var(--space-2) 0 0;
-    font-size: clamp(14px, 1vw, 15px);
-    font-weight: 500;
+    font-stretch: 100%;
+    max-width: 26em;
+    margin: var(--space-3) 0 0;
+    font-size: var(--fs-lead);
+    font-weight: 400;
     line-height: 1.45;
     color: var(--fg-2);
     text-wrap: pretty;
-  }
-  /* Mobil: 14 px smal text blev svårläst; en kolumn har plats för mer (efter
-     grundregeln ovan, annars vinner den). */
-  @media (max-width: 859px) {
-    .claim {
-      max-width: none;
-      font-size: var(--fs-body);
-    }
   }
   /* Källan längst ner i kolumnen → källraderna linjerar även när påståendena är
      olika långa. */
   .src {
     font-stretch: 75%;
     margin: auto 0 0;
-    padding-top: var(--space-2);
-    font-size: 11px;
+    padding-top: var(--space-3);
+    font-size: var(--fs-small); /* var 11 px */
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }

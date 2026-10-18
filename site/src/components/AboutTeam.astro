@@ -86,20 +86,13 @@
 // overflow-ändringar på .ateam__photo eller .ateam__fill: förladdningen observerar
 // .ateam__photo. Förfäderna får bara skala.
 //
-// Copy = PLATSHÅLLARE (Douglas granskar): ingressen, alla bios och alla titlar utom
-// Douglas.
-// Favoriterna = PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen. Påhittade på
-// begäran (Elliot 2026-10-18), inte fakta om personen eller om bolagets verktyg. Verktygen
-// läses som bolagets egen stack: byt till det personen faktiskt använder. Favoriterna ska
-// INTE in i Person-JSON-LD, inte ens när titlarna är bekräftade.
-// Bios: en mening per person, ungefär lika långa, ≤ ca 110 tecken, så att bion får plats
-// bredvid porträttet även vid 720–860 px (där textspalten är smalast, ca 390 px).
-// Första ledet är bekräftat. Resten är en allmän rollbeskrivning skriven av Claude, inte
-// fakta om personen. Inga pronomen (han/hon) – skriv om med namnet om det behövs.
-// OBS: "Medgrundare" ensamt på AI Partners sida kan läsas som medgrundare av
-// AI Partner. Bekräftat är bara att Anton och Elliot är med och grundade SEOS Design
-// (seosdesign.se/om-oss). Douglas väljer "Medgrundare" eller t.ex. "Medgrundare, SEOS Design".
-// Lägg INTE in Person-JSON-LD förrän titlarna är bekräftade.
+// Copy GODKÄND av Douglas 2026-10-19 (via Elliot): ingressen, titlarna, bios och
+// favoriterna. Texterna och favoriterna skrevs först av Claude som utkast.
+// Vid ändringar: bios en mening per person, ungefär lika långa, ≤ ca 110 tecken, så att
+// bion får plats bredvid porträttet även vid 720–860 px (där textspalten är smalast,
+// ca 390 px). Inga pronomen (han/hon) – skriv om med namnet om det behövs.
+// Favoritverktyget måste finnas som nyckel i LOGOS (annars visas namnet som text).
+// Person-JSON-LD finns inte; lägg inte in favoriterna i strukturerad data.
 //
 // FOTO: lägg bilderna i site/public/team/ och sätt photo per person, t.ex.
 // photo: '/team/anton.webp'. Använd ASCII i filnamnen: douglas, anton, elliot, bjorn.
@@ -153,45 +146,33 @@ const LOGOS: Record<string, Logo> = {
 const TEAM: Person[] = [
   {
     name: 'Douglas Ekman',
-    title: 'VD och medgrundare', // bekräftad (Story.astro, AboutQuote.astro)
-    // PLATSHÅLLARE — Douglas granskar
+    title: 'VD och medgrundare', // godkänd av Douglas 2026-10-19
     bio: 'Douglas leder AI Partner och SEOS Design och ser till att varje projekt börjar med ett tydligt mål.',
-    // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
     tool: 'HubSpot',
-    // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
     automation: 'Anteckningar från kundmötet blir ett offertutkast',
     photo: '/team/douglas.webp',
   },
   {
     name: 'Anton Sahibzada',
-    title: 'Medgrundare', // PLATSHÅLLARE — Douglas granskar
-    // PLATSHÅLLARE — Douglas granskar
+    title: 'Medgrundare', // godkänd av Douglas 2026-10-19
     bio: 'Anton var med och grundade SEOS Design och vill att det vi bygger fungerar i vardagen, inte bara i en demo.',
-    // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
     tool: 'n8n',
-    // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
     automation: 'Kundcaset skrivs fram direkt när projektet är klart',
     photo: '/team/anton.webp',
   },
   {
     name: 'Björn Wildenstam',
-    title: 'Utvecklare', // PLATSHÅLLARE — Douglas granskar
-    // PLATSHÅLLARE — Douglas granskar
+    title: 'Utvecklare', // godkänd av Douglas 2026-10-19
     bio: 'Björn bygger AI Partners hemsida och tekniken bakom den, med fokus på snabbhet och tillgänglighet.',
-    // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
     tool: 'Claude Code',
-    // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
     automation: 'Veckans ändringar på hemsidan sammanfattas i klartext',
     photo: '/team/bjorn.webp',
   },
   {
     name: 'Elliot Eslander',
-    title: 'Medgrundare', // PLATSHÅLLARE — Douglas granskar
-    // PLATSHÅLLARE — Douglas granskar
+    title: 'Medgrundare', // godkänd av Douglas 2026-10-19
     bio: 'Elliot är en av grundarna av SEOS Design och vill att kunden förstår vad lösningen gör och varför.',
-    // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
     tool: 'Notion',
-    // PLATSHÅLLARE — föreslaget av Claude, bekräfta med personen
     automation: 'Vanliga kundfrågor besvaras, resten går till rätt person',
     photo: '/team/elliot.webp',
   },
@@ -219,7 +200,6 @@ const SIZES =
       <h2 id="ateam-title" class="ateam__h" data-split>
         Vilka står bakom <br /><span class="ateam__dim">AI Partner?</span>
       </h2>
-      {/* PLATSHÅLLARE — Douglas granskar */}
       <p class="ateam__intro">
         AI Partner drivs från Stockholm av teamet bakom webbyrån SEOS Design.
       </p>

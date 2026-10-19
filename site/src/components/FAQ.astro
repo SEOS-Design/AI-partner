@@ -2,8 +2,8 @@
 // FAQ.astro – sektion "Vanliga frågor" (AEO-accordion).
 // Centrerad kolumn (rubrik + frågelista mitt på sidan); svarstexten hålls
 // vänsterställd i varje rad för läsbarhet. Single-open accordion, första
-// frågan öppen som default. DS-tokens. Genererar FAQPage-strukturdata (JSON-LD)
-// så frågorna blir maskinläsbara för Google (rich results) + AI-modeller.
+// frågan öppen som default. DS-tokens. FAQPage-schemat ligger sedan 2026-10-19 i sidans
+// graf (sidan skickar faqPage(url, items) till Layout, se lib/site.ts), inte här.
 
 const FAQS = [
   {
@@ -46,17 +46,6 @@ interface Props {
   beforeFooter?: boolean;
 }
 const { heading = 'Det ni undrar, rakt på sak.', items = FAQS, beforeFooter = true } = Astro.props;
-
-// FAQPage-strukturdata (schema.org) — AEO: maskinläsbart för sök + AI-modeller.
-const faqSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: items.map((f) => ({
-    '@type': 'Question',
-    name: f.q,
-    acceptedAnswer: { '@type': 'Answer', text: f.a },
-  })),
-};
 ---
 
 <section id="faq" class:list={['section faq', beforeFooter && 'faq--before-footer']} aria-labelledby="faq-heading">
@@ -88,8 +77,6 @@ const faqSchema = {
       ))}
     </div>
   </div>
-
-  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />
 </section>
 
 <style>

@@ -14,6 +14,8 @@ import ServicesAreas from '../../components/ServicesAreas.astro';
 import FAQ from '../../components/FAQ.astro';
 import ContactCta from '../../components/ContactCta.astro';
 import Footer from '../../components/Footer.astro';
+import { getCollection } from 'astro:content';
+import { canonicalUrl, faqPage, ORG_ID } from '../../lib/site';
 
 // Frågor om hur ett uppdrag går till. Blir FAQPage-schema.
 const FAQS = [
@@ -38,11 +40,37 @@ const FAQS = [
     a: 'För de flesta processer går det bra att använda AI. Vissa användningar, till exempel gallring av CV:n, räknas som högrisk – de kraven börjar gälla den 2 december 2027 och innebär dokumentation och mänsklig kontroll. Vi hjälper er att sätta en policy och följa regelverket.',
   },
 ];
+
+// Strukturerad data (2026-10-19): CollectionPage med ItemList av de fem områdena som
+// Service (@id /tjanster#<id>, samma ankare som sektionerna) + FAQPage. Texterna är
+// kollektionens egna fält – ingen separat copy att underhålla.
+const pageUrl = canonicalUrl('/tjanster');
+const areas = (await getCollection('tjanster')).sort((a, b) => a.data.order - b.data.order);
+const services = areas.map((a) => ({
+  '@type': 'Service',
+  '@id': `${pageUrl}#${a.id}`,
+  name: a.data.name,
+  serviceType: a.data.name,
+  description: a.data.build,
+  url: `${pageUrl}#${a.id}`,
+  provider: { '@id': ORG_ID },
+  areaServed: { '@type': 'Country', name: 'Sverige' },
+}));
+const serviceList = {
+  '@type': 'ItemList',
+  '@id': `${pageUrl}#tjanster`,
+  name: 'Tjänsteområden',
+  itemListElement: services.map((s, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@id': s['@id'] } })),
+};
 ---
 
 <Layout
   title="Tjänster – AI-agenter och AI-automatisering | AI Partner"
   description="Vi kartlägger var tiden går och bygger AI-agenter och automation för kundtjänst, sälj, marknad och intern administration – från kartläggning till drift."
+  pageType="CollectionPage"
+  breadcrumb={[{ name: 'Tjänster' }]}
+  mainEntity={serviceList['@id']}
+  schema={[serviceList, ...services, faqPage(pageUrl, FAQS)]}
 >
   <ServicesHero />
   <ServicesProcess />

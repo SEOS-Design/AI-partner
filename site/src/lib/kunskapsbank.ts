@@ -5,16 +5,9 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 
 export type Article = CollectionEntry<'kunskapsbank'>;
 
-// Gamla artiklar på aipartner.se som ska flyttas över som de är men ännu inte finns
-// i repot (docs/innehall-utan-cms.md, punkt 5). Länkar dit godkänns tills de finns.
-// Ta bort en rad när artikeln är inlagd.
-const PENDING_LEGACY = new Set([
-  'ai-for-smaforetag',
-  'ai-policy-i-foretag-darfor-behover-ni-en-strategi-for-ansvarsfull-ai',
-  'ai-seo-framtidssakra-din-synlighet-i-en-ai-driven-sokvarld',
-  'ai-strategi-for-ditt-foretag',
-  'sa-anvander-foretag-ai-i-redovisning-hr-och-marknadsforing',
-]);
+// De fem gamla artiklarna på aipartner.se som inte flyttades över 301:ar via vercel.json
+// (2026-10-19). Länka till redirect-målen, aldrig till de gamla adresserna.
+const PENDING_LEGACY = new Set<string>();
 
 /** Publicerade artiklar, nyast först (samma dag: alfabetiskt på rubriken). */
 export async function getArticles(): Promise<Article[]> {

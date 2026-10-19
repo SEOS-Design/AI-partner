@@ -1,7 +1,7 @@
 ---
-title: "Vad är AI? Förklarat utan hajp – för dig som driver företag"
+title: "Vad är AI – och vad betyder AI? Förklarat utan hajp"
 description: "Vad är AI egentligen? En rak förklaring utan hype – vad AI är, hur det fungerar och vad det faktiskt betyder för dig som driver företag i Sverige."
-h1: "Vad är AI? Förklarat utan hajp – för dig som driver företag"
+h1: "Vad är AI – och vad betyder det för ditt företag?"
 category: ai-grunder
 publishedAt: 2026-08-04
 ---
@@ -22,9 +22,9 @@ Den definitionen är inte vår egen. EU:s AI-förordning definierar ett AI-syste
 
 Du använder redan AI varje dag, förmodligen utan att tänka på det: spamfiltret i mejlen, produktrekommendationer i webbutiker, röstassistenten i telefonen, ansiktsigenkänningen som låser upp mobilen och navigeringen som räknar om rutten när det är kö. Inget av det kallades "AI" i marknadsföringen när det kom. Det bara fungerade.
 
-## Vad står AI för?
+## Vad betyder AI – och vad står det för?
 
-AI står för artificiell intelligens, på engelska artificial intelligence. Begreppet syftar på maskiner och program som utför uppgifter vilka normalt kräver mänsklig intelligens – att tolka språk, känna igen mönster, dra slutsatser och fatta beslut. På svenska används "AI" och "artificiell intelligens" synonymt, och den engelska förkortningen är den etablerade även i svensk text.
+AI betyder artificiell intelligens – på engelska artificial intelligence. Begreppet syftar på maskiner och program som utför uppgifter vilka normalt kräver mänsklig intelligens – att tolka språk, känna igen mönster, dra slutsatser och fatta beslut. På svenska används "AI" och "artificiell intelligens" synonymt, och den engelska förkortningen är den etablerade även i svensk text.
 
 ## AI, maskininlärning, generativ AI och AI-agenter – vad är skillnaden?
 

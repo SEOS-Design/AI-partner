@@ -100,7 +100,7 @@ För ett företag spelar den exakta myndighetskartan mindre roll just nu. Kraven
 1. **Inventera er AI-användning.** Lista alla AI-verktyg och AI-inslag i era system – även de inofficiella, som medarbetares egna ChatGPT-konton. Det man inte vet om kan man inte klassificera.
 2. **Klassificera mot riskklasserna.** Placera varje användning i tabellen ovan. De flesta hamnar i minimal eller begränsad risk. Flagga allt som rör rekrytering, kredit eller beslut om enskilda personer.
 3. **Uppfyll AI-kunskapskravet.** En grundutbildning för dem som använder AI i arbetet, anpassad efter roll. Kravet gäller sedan februari 2025 – det här är den enklaste punkten att bocka av.
-4. **Skriv eller uppdatera er AI-policy.** En policy som beskriver tillåten användning, dataregler och ansvar är det praktiska navet för efterlevnad. Vi har skrivit mer om [varför företag behöver en strategi för ansvarsfull AI](/kunskapsbank/ai-policy-i-foretag-darfor-behover-ni-en-strategi-for-ansvarsfull-ai), och hjälper till med [AI-policy och rådgivning](/kontakt) som tjänst.
+4. **Skriv eller uppdatera er AI-policy.** En policy som beskriver tillåten användning, dataregler och ansvar är det praktiska navet för efterlevnad. Vi har skrivit mer om [skugg-AI och varför företag behöver en AI-policy](/kunskapsbank/skugg-ai), och hjälper till med [AI-policy och rådgivning](/kontakt) som tjänst.
 5. **Använder ni högrisk-AI: börja dokumentera nu.** Den 2 december 2027 låter avlägset, men kraven på dokumentation, datakvalitet och mänsklig kontroll tar tid att bygga upp. Sexton månader går fortare än man tror – särskilt om leverantören av ert rekryterings- eller kreditsystem också ska hinna anpassa sig.
 
 ## Vanliga frågor om AI-förordningen

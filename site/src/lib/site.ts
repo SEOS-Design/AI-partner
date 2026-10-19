@@ -2,13 +2,12 @@
 // datan (Organization på startsidan, utgivare på artiklarna) läser HÄRIFRÅN, så att de
 // aldrig visar olika uppgifter.
 //
-// KONTAKTUPPGIFTER = PLATSHÅLLARE från SEOS (Björn): e-post kontakt@seosdesign.se
-// (troligen kontakt@aipartner.se senare), telefon och kontor som SEOS.
+// Kontaktuppgifter (Douglas 2026-10-19): e-post kontakt@aipartner.se, telefon och kontor som SEOS.
 
 export const SITE_URL = 'https://www.aipartner.se';
 
 export const CONTACT = {
-  email: 'kontakt@seosdesign.se',
+  email: 'kontakt@aipartner.se',
   phone: '+46 8 490 096 20',
   phoneHref: 'tel:+46849009620',
   street: 'Fridhemsgatan 45',

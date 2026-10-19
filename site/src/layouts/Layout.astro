@@ -2,7 +2,7 @@
 import '../styles/global.css';
 import 'lenis/dist/lenis.css'; /* Lenis grund-CSS (mjuk scroll, scripts/smooth.ts) */
 import Nav from '../components/Nav.astro';
-import { canonicalUrl, siteSchema } from '../lib/site';
+import { canonicalUrl, siteSchema, SITE_URL } from '../lib/site';
 
 interface Props {
   title?: string;
@@ -10,14 +10,18 @@ interface Props {
   /** og:type — "article" på artiklar, annars "website". */
   ogType?: "website" | "article";
   noindex?: boolean;
+  /** Delningsbild (absolut sökväg under public/). Standard: /og-default.png, 1200×630. */
+  image?: string;
 }
 
 const {
-  title = 'AI Partner – AI-automatisering, agenter och RAG-system',
-  description = 'AI Partner bygger AI som gör jobbet. Automationer, agenter och RAG-system – ansvar från strategi till driftsatt lösning.',
+  title = 'AI Partner – AI-byrå för AI-agenter och automation',
+  description = 'AI Partner är AI-byrån som bygger AI-agenter och automation åt svenska företag – från kostnadsfri kartläggning till en lösning i drift.',
   ogType = "website",
   noindex = false,
+  image = '/og-default.png',
 } = Astro.props;
+const imageUrl = new URL(image, SITE_URL).href;
 
 // Canonical + og:url: www-adressen utan avslutande snedstreck (lib/site.ts).
 const canonical = canonicalUrl(Astro.url.pathname);
@@ -31,6 +35,8 @@ const isHome = canonical === canonicalUrl('/');
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#0a0a0a" />
     {/* Mona Sans laddas här i stället för @import i global.css: en @import i den
         buntade CSS:en hittas först när den filen laddats, vilket skjuter upp texten. */}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -49,6 +55,14 @@ const isHome = canonical === canonicalUrl('/');
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content="sv_SE" />
     <meta property="og:site_name" content="AI Partner" />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="AI Partner – vi bygger AI-agenter och automation som tar rutinarbetet." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
     {/* Organization + WebSite på startsidan (lib/site.ts). */}
     {isHome && <script type="application/ld+json" set:html={JSON.stringify(siteSchema)} is:inline />}
     {/* Sidspecifikt i <head>, t.ex. strukturerad data (JSON-LD) på artiklar. */}

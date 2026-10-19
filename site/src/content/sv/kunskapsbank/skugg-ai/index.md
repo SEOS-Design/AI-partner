@@ -93,7 +93,7 @@ Fråga dem – utan konsekvenser. En anonym enkät om vilka verktyg som används
 
 ### Vad ska en AI-policy innehålla?
 
-En användbar AI-policy ryms på en sida: vilka verktyg som är godkända, vilken data som aldrig får matas in, krav på granskning av AI-genererat material innan det når kund, och vem medarbetare frågar vid osäkerhet. Vi har skrivit en egen genomgång i [AI-policy i företag – därför behöver ni en strategi för ansvarsfull AI](/kunskapsbank/ai-policy-i-foretag-darfor-behover-ni-en-strategi-for-ansvarsfull-ai).
+En användbar AI-policy ryms på en sida: vilka verktyg som är godkända, vilken data som aldrig får matas in, krav på granskning av AI-genererat material innan det når kund, och vem medarbetare frågar vid osäkerhet. Vad regelverket kräver av policyn står i vår guide till [AI-förordningen](/kunskapsbank/ai-forordningen).
 
 ### Vad kostar det att ta fram en AI-policy?
 

@@ -1,0 +1,208 @@
+---
+// /integritetspolicy (2026-10-19). Krävs eftersom kontaktformuläret samlar personuppgifter.
+// TEXTEN ÄR ETT UTKAST byggt på seosdesign.se/integritetspolicy, anpassat till att
+// AI Partner är ett varumärke inom SEOS Design AB och att hemsidan bara använder Google
+// Analytics 4 bakom samtycke (ingen GTM, ingen Clarity, ingen annonsmätning). Douglas äger
+// copyn. Cookierutan läggs in av kollegan – avsnittet om den hålls därför allmänt.
+import Layout from '../layouts/Layout.astro';
+import Footer from '../components/Footer.astro';
+import { CONTACT } from '../lib/site';
+
+const UPDATED = '2026-10-19';
+---
+
+<Layout
+  title="Integritetspolicy – så behandlar vi personuppgifter | AI Partner"
+  description="AI Partners integritetspolicy. Inget mäts innan du samtyckt. Här står vad som behandlas när du läser en sida, när du skickar formuläret och vilka rättigheter du har."
+>
+  <main class="legal">
+    <div class="container">
+      <header class="legal__head">
+        <h1 class="legal__h">Integritetspolicy</h1>
+        <p class="legal__meta">Senast uppdaterad <time datetime={UPDATED}>19 oktober 2026</time></p>
+      </header>
+
+      <div class="legal__body">
+        <p>
+          Den här webbplatsen behandlar så lite om dig som det går. <strong>Innan du har svarat på
+          frågan om cookies mäts ingenting.</strong> Säger du ja till statistik tillkommer det som
+          står under <a href="#statistik">Om du samtycker till statistik</a>. Säger du nej behandlas
+          bara det som krävs för att sidan ska kunna levereras.
+        </p>
+
+        <h2 id="ansvarig">Vem som är ansvarig</h2>
+        <p>
+          AI Partner är ett varumärke inom SEOS Design AB, organisationsnummer 559356-7745,
+          Kungsholmsgatan 11 i Stockholm, som är personuppgiftsansvarig för behandlingen på
+          aipartner.se. Besöksadress: {CONTACT.street}, {CONTACT.city}.
+        </p>
+        <p>
+          Frågor om den här policyn eller om dina rättigheter besvaras på
+          <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> eller {CONTACT.phone}. Vi har
+          inget dataskyddsombud och behöver enligt artikel 37 inte ha något.
+        </p>
+
+        <h2 id="besok">Vad som behandlas när du besöker webbplatsen</h2>
+        <p>
+          För att en sida ska kunna skickas till din webbläsare måste vår driftleverantör ta emot
+          en förfrågan från dig. Förfrågan innehåller uppgifter som behandlas i serverloggar:
+        </p>
+        <ul>
+          <li>din IP-adress</li>
+          <li>vilken sida eller fil du begär</li>
+          <li>tidpunkt</li>
+          <li>vilken webbläsare och vilket operativsystem du använder</li>
+          <li>i vissa fall vilken sida du kom ifrån</li>
+        </ul>
+        <p>
+          Uppgifterna används för att skicka sidan, för att kunna felsöka när något går sönder och
+          för att skydda webbplatsen mot angrepp och överbelastning. De används inte för att följa
+          dig mellan sidor, för att bygga en profil eller för marknadsföring.
+        </p>
+        <p>
+          <strong>Rättslig grund:</strong> berättigat intresse, artikel 6.1 f i
+          dataskyddsförordningen. <strong>Lagringstid:</strong> loggarna sparas bara så länge de
+          behövs för drift, felsökning och säkerhet, och gallras därefter.
+        </p>
+
+        <h2 id="statistik">Om du samtycker till statistik</h2>
+        <p>
+          Säger du ja i cookierutan laddas <strong>Google Analytics 4</strong>. Det mäter hur
+          sidorna används: hur många som läser vad, varifrån de kommer och var de slutar läsa.
+        </p>
+        <p>
+          <strong>Rättslig grund:</strong> ditt samtycke, artikel 6.1 a. Du kan när som helst ta
+          tillbaka det via <strong>Cookieinställningar</strong> längst ned på varje sida. Att ta
+          tillbaka samtycket påverkar inte det som redan mätts.
+        </p>
+        <p>
+          <strong>Vad som delas:</strong> Google tar emot din IP-adress, uppgifter om webbläsare
+          och enhet, vilka sidor du besöker och hur du rör dig på dem. Uppgifterna används för
+          statistik om webbplatsen och inte för att identifiera dig som person. Vi använder inte
+          besöket för annonsering. <strong>Säger du nej, eller inget alls,</strong> laddas ingen
+          mätning och ingen mätcookie sätts. Vilka cookies det gäller när du säger ja står i vår
+          <a href="/cookiepolicy">cookiepolicy</a>.
+        </p>
+
+        <h2 id="kontakt">Om du kontaktar oss</h2>
+        <p>
+          Mejlar eller ringer du, eller skickar du formuläret på <a href="/kontakt">kontaktsidan</a>,
+          behandlar vi det du själv väljer att lämna, för att kunna svara dig och följa upp ärendet.
+          Formuläret frågar efter namn, e-post och, om du vill, en beskrivning av vad ni vill
+          automatisera. Det levereras som ett mejl till oss och lagras inte någon annanstans. Din
+          IP-adress sparas inte med förfrågan, och formuläret sätter inga cookies.
+        </p>
+        <p>
+          <strong>Rättslig grund:</strong> berättigat intresse, artikel 6.1 f, av att besvara den
+          som hör av sig. Gäller frågan ett möjligt uppdrag är grunden i stället åtgärder inför ett
+          avtal, artikel 6.1 b. <strong>Lagringstid:</strong> korrespondens sparas så länge ärendet
+          är aktuellt och som längst 24 månader. Leder kontakten till ett uppdrag sparas underlaget
+          så länge avtalet och bokförings- och skattelagstiftningen kräver det.
+        </p>
+
+        <h2 id="mottagare">Vilka som får tillgång till uppgifterna</h2>
+        <p>Vi säljer inte personuppgifter och lämnar inte ut dem för andras marknadsföring. Utöver oss själva behandlas uppgifterna av:</p>
+        <ul>
+          <li><strong>Vercel Inc.</strong>, som driftar webbplatsen, för serverloggarna ovan</li>
+          <li><strong>Resend</strong> (Plus Five Five, Inc.), som levererar formulärets förfrågningar till vår e-post</li>
+          <li><strong>Google</strong>, som hanterar vår e-post, och Google Ireland Ltd för statistiken om du samtyckt till den</li>
+        </ul>
+        <p>Samtliga behandlar uppgifterna för vår räkning som personuppgiftsbiträden och bara enligt våra instruktioner.</p>
+
+        <h2 id="utanfor-eu">Överföring utanför EU och EES</h2>
+        <p>
+          Vercel, Resend och Google är amerikanska bolag eller har verksamhet i USA, så uppgifter
+          kan komma att behandlas utanför EU och EES. Resend lagrar mejlen det levererar till oss
+          i USA i 30 dagar, och säkerhetskopior i ytterligare 7 dagar. Överföringar till USA sker
+          med stöd av EU-kommissionens beslut om EU–US Data Privacy Framework, som Vercel, Resend
+          och Google är certifierade under, och av EU:s standardavtalsklausuler.
+        </p>
+
+        <h2 id="rattigheter">Dina rättigheter</h2>
+        <ul>
+          <li>få veta vilka uppgifter vi behandlar om dig, och få en kopia av dem</li>
+          <li>få felaktiga uppgifter rättade</li>
+          <li>få uppgifter raderade, när vi inte längre har grund att behandla dem</li>
+          <li>begära att behandlingen begränsas</li>
+          <li>invända mot behandling som vi stödjer på berättigat intresse</li>
+          <li>få ut uppgifter du lämnat till oss i ett maskinläsbart format, när behandlingen grundas på avtal eller samtycke</li>
+        </ul>
+        <p>
+          Vänd dig till <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>, så svarar vi inom
+          en månad. Är du missnöjd med hur vi behandlar dina uppgifter kan du klaga hos
+          Integritetsskyddsmyndigheten, <a href="https://www.imy.se" rel="noopener noreferrer">imy.se</a>.
+        </p>
+
+        <h2 id="andringar">Ändringar</h2>
+        <p>
+          Ändrar vi hur webbplatsen behandlar personuppgifter uppdateras den här sidan, och datumet
+          överst ändras.
+        </p>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .legal {
+    padding: clamp(130px, 12vw, 170px) 0 clamp(200px, 20vw, 280px);
+  }
+  .container {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+  }
+  .legal__h {
+    margin: 0;
+    font-weight: 700;
+    font-size: var(--fs-h2);
+    line-height: var(--lh-display);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+  }
+  .legal__meta {
+    margin: var(--space-3) 0 0;
+    font-size: var(--fs-small);
+    color: var(--fg-3);
+  }
+  .legal__body {
+    max-width: 44em;
+    margin-top: clamp(40px, 5vw, 64px);
+    padding-top: clamp(40px, 5vw, 64px);
+    border-top: 1px solid var(--border);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+  }
+  .legal__body h2 {
+    margin: 2.4em 0 0.7em;
+    font-weight: 700;
+    font-size: var(--fs-h3);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-tight);
+    color: var(--fg-1);
+    scroll-margin-top: 110px;
+  }
+  .legal__body p,
+  .legal__body ul {
+    margin: 0 0 1.3em;
+  }
+  .legal__body ul {
+    padding-left: 1.3em;
+    font-stretch: 100%;
+  }
+  .legal__body li + li {
+    margin-top: 0.4em;
+  }
+  .legal__body strong {
+    color: var(--fg-1);
+    font-weight: 600;
+  }
+  .legal__body a {
+    color: var(--fg-1);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+  }
+</style>

@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import vercel from '@astrojs/vercel';
 
 // https://astro.build/config
 export default defineConfig({
@@ -8,6 +9,9 @@ export default defineConfig({
   // URL:er utan avslutande snedstreck (/kontakt, inte /kontakt/) – samma format som
   // gamla aipartner.se har i Googles index. vercel.json 308:ar /kontakt/ → /kontakt.
   trailingSlash: 'never',
+  // Vercel-adaptern (2026-10-19): alla sidor förblir statiska; bara src/pages/api/lead.ts
+  // (kontaktformuläret → Resend) körs on-demand via `export const prerender = false`.
+  adapter: vercel(),
   // Gamla URL:er som inte får ge 404 (docs/innehall-utan-cms.md punkt 5).
   // OBS: i ett statiskt bygge blir detta en HTML-omdirigering (meta refresh). Den
   // äkta 301:an ligger i vercel.json – lägg varje ny omdirigering på båda ställena.

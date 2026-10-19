@@ -8,7 +8,8 @@
 // KONTAKTUPPGIFTER = PLATSHÅLLARE från SEOS (Björn). De ligger i src/lib/site.ts
 // (2026-10-14) så att den strukturerade datan visar samma uppgifter – ändra där.
 //
-// Formuläret saknar backend ännu — submit visar ett demo-kvitto.
+// Formuläret postar till /api/lead (src/pages/api/lead.ts → Resend). Med JavaScript via
+// fetch och tack-/felvy här; utan JavaScript som vanlig post, routen svarar med en sida.
 import Arrow from './Arrow.astro';
 import { CONTACT as C } from '../lib/site';
 
@@ -48,30 +49,46 @@ const STEPS = [
       </div>
 
       <div class="contact__aside">
-        <form class="form-panel" id="contact-form" novalidate>
+        <form class="form-panel" id="contact-form" action="/api/lead" method="post" novalidate>
           <div class="form-row">
             <div class="fld">
               <label for="c-namn">Namn</label>
-              <input id="c-namn" name="namn" placeholder="Förnamn Efternamn" autocomplete="name" required />
+              <input id="c-namn" name="namn" placeholder="Förnamn Efternamn" autocomplete="name" maxlength="120" required />
             </div>
             <div class="fld">
               <label for="c-epost">E-post</label>
-              <input id="c-epost" name="epost" type="email" placeholder="namn@företag.se" autocomplete="email" required />
+              <input id="c-epost" name="epost" type="email" placeholder="namn@företag.se" autocomplete="email" maxlength="254" required />
             </div>
             <div class="fld">
               <label for="c-process">Vad vill ni automatisera?</label>
-              <textarea id="c-process" name="process" rows="4" placeholder="Beskriv processen kort. Vad tar tid i dag?"></textarea>
+              <textarea id="c-process" name="process" rows="4" placeholder="Beskriv processen kort. Vad tar tid i dag?" maxlength="4000"></textarea>
+            </div>
+            {/* Honungsfälla: osynligt fält som bara robotar fyller i (routen svarar då som om allt gick bra). */}
+            <div class="fld fld--hp" aria-hidden="true">
+              <label for="c-webbplats">Webbplats</label>
+              <input id="c-webbplats" name="webbplats" tabindex="-1" autocomplete="off" />
             </div>
             <button type="submit" class="btn btn-primary contact__submit">
               Skicka förfrågan <Arrow class="arrow" />
             </button>
+            <p class="form-privacy">
+              Uppgifterna används bara för att svara dig. Läs mer i vår
+              <a href="/integritetspolicy">integritetspolicy</a>.
+            </p>
           </div>
         </form>
 
-        <!-- Demo-kvitto (visas efter submit tills backend är kopplad) -->
+        <!-- Tack-vy (visas när /api/lead svarat ok) -->
         <div class="form-panel form-sent" id="contact-sent" hidden>
           <p class="form-sent__txt">Tack, vi återkommer inom kort.</p>
-          <p class="form-sent__note">Det här är en demo, inget skickades ännu.</p>
+          <p class="form-sent__note">Vi svarar normalt inom en arbetsdag.</p>
+        </div>
+        <!-- Felvy (routen nere, nätfel eller saknad konfiguration) -->
+        <div class="form-panel form-sent" id="contact-error" hidden>
+          <p class="form-sent__txt">Formuläret kunde inte skickas just nu.</p>
+          <p class="form-sent__note">
+            Mejla oss direkt på <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> så svarar vi därifrån.
+          </p>
         </div>
       </div>
     </div>
@@ -221,6 +238,28 @@ const STEPS = [
     color: var(--fg-3);
   }
 
+  /* Honungsfällan: utanför skärmen, aldrig display:none (då hoppar vissa robotar över den). */
+  .fld--hp {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .form-privacy {
+    margin: 0;
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: var(--fg-3);
+  }
+  .form-privacy a,
+  .form-sent__note a {
+    color: var(--fg-1);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
   /* ---- vad händer sedan: tre korta steg ---- */
   .contact__steps {
     list-style: none;
@@ -269,20 +308,37 @@ const STEPS = [
 </style>
 
 <script>
-  // Demo-submit: inget backend ännu — visa ett kvitto i stället för att posta.
+  // Postar till /api/lead med fetch (JSON) och visar tack- eller felvyn. Utan JavaScript
+  // postar formuläret vanligt (action/method) och routen svarar med en enkel sida.
   (function () {
     const form = document.getElementById('contact-form') as HTMLFormElement | null;
     const sent = document.getElementById('contact-sent');
-    if (!form || !sent) return;
+    const failed = document.getElementById('contact-error');
+    if (!form || !sent || !failed) return;
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
 
-    const onSubmit = (e: Event): void => {
+    const onSubmit = async (e: Event): Promise<void> => {
       e.preventDefault();
       if (!form.checkValidity()) {
         form.reportValidity();
         return;
       }
+      if (button) button.disabled = true;
+      const data = Object.fromEntries(new FormData(form).entries());
+      let ok = false;
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(data),
+        });
+        ok = res.ok;
+      } catch {
+        ok = false;
+      }
+      if (button) button.disabled = false;
       form.hidden = true;
-      sent.hidden = false;
+      (ok ? sent : failed).hidden = false;
     };
 
     form.addEventListener('submit', onSubmit);

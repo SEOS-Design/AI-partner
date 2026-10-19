@@ -202,6 +202,55 @@ Punkt 2, 5, 8 och större delen av 3 kan göras utan beslut. Resten väntar på 
 
 ---
 
+## 5b. Beslut (Douglas 2026-10-19)
+1. Logotyp: hämtad från gamla aipartner.se (Webflow, `Full Logo.png` 1470×794, transparent med vit
+   ordbild) och lagd på #0a0a0a → `site/public/logo.png`, så att den syns på vit yta i Google.
+   OG-bild: `/og-default.png` (fanns redan i master).
+2. Ingen egen LinkedIn/profil → `sameAs` utelämnat på organisationen.
+3. Douglas Ekman som `Person`-författare på alla artiklar, `sameAs` LinkedIn, titel från /om-oss.
+   Inga Person-noder för övriga teamet nu.
+4. FAQPage behålls, som nod i sidans graf.
+5. Telefon och Fridhemsgatan 45 är SEOS publika uppgifter och gäller AI Partner. E-post
+   kontakt@aipartner.se. Ingen Google Business Profile → `Organization`.
+6. AI Partner är ett varumärke inom SEOS Design AB – inget eget org.nr, inga `vatID`/`identifier`.
+   `parentOrganization` → SEOS `@id`.
+
+## 7. ✅ Genomfört 2026-10-19 – PR #10 (`seo/schema-review` → master)
+
+**Ändrat (bara strukturerad data, ingen copy):**
+- `lib/site.ts`: `organization` (logo, email, contactPoint, areaServed, knowsAbout, E.164-telefon,
+  parentOrganization via `https://www.seosdesign.se/#organization`), `website`, `douglas` (Person),
+  `pageGraph()`, `breadcrumbList()`, `faqPage()`.
+- `Layout.astro`: renderar grafen på **alla** sidor (tidigare bara Organization+WebSite på `/`);
+  nya props `pageType`, `breadcrumb`, `mainEntity`, `schema`.
+- Artikelmall: `Article` med `@id`, `image`, `isPartOf`, `author` → `#douglas-ekman`, `publisher`
+  via `@id`, `mainEntityOfPage` → WebPage; brödsmulor Hem › Kunskapsbank › artikel.
+- `/tjanster`: CollectionPage + ItemList av 5 Service (`#intern-admin`, `#ai-assistent`, `#marknad`,
+  `#kundtjanst`, `#salj-offert`, provider → `#org`) + FAQPage. `/om-oss`: AboutPage + FAQPage.
+  `/kontakt`: ContactPage. `/kunskapsbank`: CollectionPage. Brödsmulor på alla statiska sidor.
+- `FAQ.astro` renderar inget eget JSON-LD längre.
+- `public/logo.png` (se 5b.1).
+
+**Verifiering (byggt lokalt, `npm run build` OK, 19 sidor):**
+- Egen kontroll på `dist/`: 19/19 ett JSON-LD-block, giltig JSON, absoluta URL:er, alla `@id`-
+  referenser definierade på samma sida, datum ISO och `datePublished ≤ dateModified` (12/12),
+  brödsmulepositioner korrekta, `WebPage.url` = canonical, `Article.mainEntityOfPage` = canonical,
+  `image` på alla artiklar, 0 okända typer/egenskaper och 0 egenskaper utanför domän mot
+  `schemaorg-current-https.jsonld`.
+- **validator.schema.org:** fas 1-körningarna (6 sidtyper) gav 0 fel / 0 varningar; vid fas 2 svarade
+  Google med CAPTCHA (”sorry”-sida) efter dagens körningar – inte körd på det nya schemat.
+  Vercels förhandsdeploy ligger dessutom bakom SSO, så validatorn kan inte hämta den. Täcks av
+  vokabulärkollen ovan. **Kör om på www.aipartner.se efter merge/lansering.**
+- **Rich Results Test:** kräver inloggat Google-konto – körs av Douglas i Chrome efter lansering.
+  Förväntat: Artiklar ✅, Menysökvägar ✅, Organisation ✅ (inga icke-kritiska kvar: logo och image
+  finns nu), FAQ: inga rich results (väntat).
+
+**Kvar / att bevaka:**
+- RRT + validator på produktion efter lansering; Ahrefs Site Audit ~1 vecka efter.
+- `WebPage.name` = `<title>` (inkl. ”| AI Partner”-suffix) – harmlöst, men byt till H1 om Google
+  visar det underligt.
+- Om övriga teamet ska få Person-noder: lägg dem i `lib/site.ts` och referera från `/om-oss`.
+
 ## 6. Fas 2 – plan (efter godkännande)
 Gren `seo/schema-review` (från den här worktreens gren). Ändringar bara i strukturerad data:
 `lib/site.ts` (graf, konstanter, Person/Service-byggare), `Layout.astro` (en rad: `@graph` på

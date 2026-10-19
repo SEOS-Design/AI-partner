@@ -7,6 +7,31 @@
       "source": "/kunskapsbank/ai-agenter---nasta-steg-i-den-digitala-transformationen",
       "destination": "/kunskapsbank/vad-ar-en-ai-agent",
       "permanent": true
+    },
+    {
+      "source": "/kunskapsbank/ai-for-smaforetag",
+      "destination": "/kunskapsbank/vad-betyder-ai",
+      "permanent": true
+    },
+    {
+      "source": "/kunskapsbank/ai-policy-i-foretag-darfor-behover-ni-en-strategi-for-ansvarsfull-ai",
+      "destination": "/kunskapsbank/skugg-ai",
+      "permanent": true
+    },
+    {
+      "source": "/kunskapsbank/ai-seo-framtidssakra-din-synlighet-i-en-ai-driven-sokvarld",
+      "destination": "https://www.seosdesign.se/kunskapsbank/ai-seo",
+      "permanent": true
+    },
+    {
+      "source": "/kunskapsbank/ai-strategi-for-ditt-foretag",
+      "destination": "/kunskapsbank/processkartlaggning",
+      "permanent": true
+    },
+    {
+      "source": "/kunskapsbank/sa-anvander-foretag-ai-i-redovisning-hr-och-marknadsforing",
+      "destination": "/tjanster",
+      "permanent": true
     }
   ],
   "headers": [
@@ -14,6 +39,21 @@
       "source": "/(.*)",
       "has": [{ "type": "host", "value": "(?<sub>.*)\\.vercel\\.app" }],
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+      ]
+    },
+    {
+      "source": "/(.*)\\.(mp4|webm|webp|png|jpg|svg|ico)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=604800, stale-while-revalidate=86400" }
+      ]
     }
   ]
 }

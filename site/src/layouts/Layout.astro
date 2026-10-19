@@ -2,7 +2,7 @@
 import '../styles/global.css';
 import 'lenis/dist/lenis.css'; /* Lenis grund-CSS (mjuk scroll, scripts/smooth.ts) */
 import Nav from '../components/Nav.astro';
-import { canonicalUrl, siteSchema, SITE_URL } from '../lib/site';
+import { canonicalUrl, pageGraph, SITE_URL, type Crumb, type PageType } from '../lib/site';
 
 interface Props {
   title?: string;
@@ -12,6 +12,12 @@ interface Props {
   noindex?: boolean;
   /** Delningsbild (absolut sökväg under public/). Standard: /og-default.png, 1200×630. */
   image?: string;
+  /** Strukturerad data (lib/site.ts pageGraph): sidans typ, brödsmulor (utan Hem),
+      huvudentitetens @id och extra noder (Article, FAQPage, Service …). */
+  pageType?: PageType;
+  breadcrumb?: Crumb[];
+  mainEntity?: string;
+  schema?: object[];
 }
 
 const {
@@ -20,12 +26,17 @@ const {
   ogType = "website",
   noindex = false,
   image = '/og-default.png',
+  pageType = 'WebPage',
+  breadcrumb,
+  mainEntity,
+  schema = [],
 } = Astro.props;
 const imageUrl = new URL(image, SITE_URL).href;
 
 // Canonical + og:url: www-adressen utan avslutande snedstreck (lib/site.ts).
 const canonical = canonicalUrl(Astro.url.pathname);
-const isHome = canonical === canonicalUrl('/');
+// En entitetsgraf per sida: Organization + WebSite + Person + WebPage + sidans noder.
+const graph = pageGraph({ url: canonical, title, description, image: imageUrl, pageType, breadcrumb, mainEntity, nodes: schema });
 ---
 
 <!doctype html>
@@ -63,9 +74,9 @@ const isHome = canonical === canonicalUrl('/');
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={imageUrl} />
-    {/* Organization + WebSite på startsidan (lib/site.ts). */}
-    {isHome && <script type="application/ld+json" set:html={JSON.stringify(siteSchema)} is:inline />}
-    {/* Sidspecifikt i <head>, t.ex. strukturerad data (JSON-LD) på artiklar. */}
+    {/* Strukturerad data på alla sidor (lib/site.ts). */}
+    <script type="application/ld+json" set:html={JSON.stringify(graph)} is:inline />
+    {/* Sidspecifikt i <head>. */}
     <slot name="head" />
   </head>
   <body>

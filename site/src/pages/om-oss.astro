@@ -15,6 +15,7 @@ import AboutOffer from '../components/AboutOffer.astro';
 import AboutQuote from '../components/AboutQuote.astro';
 import FAQ from '../components/FAQ.astro';
 import Footer from '../components/Footer.astro';
+import { canonicalUrl, faqPage } from '../lib/site';
 
 // Frågor om bolaget (startsidans gamla FAQ handlade om tjänsterna). Blir FAQPage-schema.
 const FAQS = [
@@ -44,6 +45,9 @@ const FAQS = [
 <Layout
   title="Om AI Partner – en del av SEOS Design"
   description="AI Partner bygger AI-agenter och automation åt små och medelstora företag. Systervarumärke till webbyrån SEOS Design, med bas i Stockholm."
+  pageType="AboutPage"
+  breadcrumb={[{ name: 'Om oss' }]}
+  schema={[faqPage(canonicalUrl('/om-oss'), FAQS)]}
 >
   <AboutHero />
   <AboutStory />

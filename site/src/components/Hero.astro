@@ -18,35 +18,39 @@
         videon döljs. Den gamla /hero-bg.webp är kvar i public/ för återbruk. */}
     {/* Ingen autoplay: inview-video.ts spelar den när den syns och pausar den när
         man scrollat förbi. preload="auto" så den är buffrad direkt (hero syns först).
-        MOBIL (2026-10-19): under 760 px byter det inline-skriptet nedan till
-        /hero-glass-720.mp4 (720 px bred, ~en femtedel av storleken) och preload="metadata"
-        innan webbläsaren hunnit välja källa, så telefoner slipper 1,9 MB webm. */}
+        KÄLLORNA SÄTTS AV INLINE-SKRIPTET NEDAN, inte i markupen (2026-10-19): med
+        <source> i markupen hann webbläsaren börja hämta 1,9 MB webm på mobil innan
+        skriptet kördes. Nu står videon utan källa och preload="none" tills skriptet
+        väljer: desktop webm/mp4 + preload="auto" (som förut), under 760 px
+        /hero-glass-720.mp4 (349 kB) + preload="metadata". Utan JS spelas videon
+        ändå aldrig (inview-video.ts startar den), så postern står kvar precis som förut. */}
     <video
       class="hero-video"
       data-inview-video
-      preload="auto"
+      preload="none"
       muted
       loop
       playsinline
       poster="/hero-glass-poster.webp"
       aria-hidden="true"
     >
-      <source src="/hero-glass.webm" type="video/webm" />
-      <source src="/hero-glass.mp4" type="video/mp4" />
     </video>
-    {/* Måste ligga direkt efter videon och vara inline: körs innan källvalet, som är
-        asynkront, så den stora filen aldrig börjar hämtas på mobil. */}
+    {/* Inline och direkt efter videon: väljer källa efter skärmbredd (se kommentaren ovan). */}
     <script is:inline>
       (function () {
-        if (!window.matchMedia('(max-width: 760px)').matches) return;
         var v = document.querySelector('video.hero-video');
         if (!v) return;
-        v.preload = 'metadata';
-        while (v.firstElementChild) v.removeChild(v.firstElementChild);
-        var s = document.createElement('source');
-        s.src = '/hero-glass-720.mp4';
-        s.type = 'video/mp4';
-        v.appendChild(s);
+        var mobile = window.matchMedia('(max-width: 760px)').matches;
+        var sources = mobile
+          ? [['/hero-glass-720.mp4', 'video/mp4']]
+          : [['/hero-glass.webm', 'video/webm'], ['/hero-glass.mp4', 'video/mp4']];
+        for (var i = 0; i < sources.length; i++) {
+          var s = document.createElement('source');
+          s.src = sources[i][0];
+          s.type = sources[i][1];
+          v.appendChild(s);
+        }
+        v.preload = mobile ? 'metadata' : 'auto';
         v.load();
       })();
     </script>

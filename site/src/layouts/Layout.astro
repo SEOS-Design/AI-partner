@@ -48,14 +48,10 @@ const graph = pageGraph({ url: canonical, title, description, image: imageUrl, p
     <link rel="icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#0a0a0a" />
-    {/* Mona Sans laddas här i stället för @import i global.css: en @import i den
-        buntade CSS:en hittas först när den filen laddats, vilket skjuter upp texten. */}
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Mona+Sans:ital,wdth,wght@0,75..125,200..900;1,75..125,200..900&display=swap"
-    />
+    {/* Mona Sans självhostad (global.css @font-face, filerna i public/fonts/). Preload på
+        latin normal – den fil all synlig text använder – så den hämtas parallellt med CSS:en
+        i stället för efter den. crossorigin krävs för fonter även på samma origin. */}
+    <link rel="preload" href="/fonts/mona-sans-latin-normal.woff2" as="font" type="font/woff2" crossorigin />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     <title>{title}</title>

@@ -87,7 +87,9 @@ const isActive = (href: string) =>
 
 <!-- Mobil-drawer -->
 <div class="drawer-scrim" data-menu-close></div>
-<aside class="drawer" id="drawer" aria-label="Meny" aria-hidden="true">
+{/* inert när stängd (2026-10-20): utan det går länkarna i den dolda menyn att tabba till och
+    skärmläsare når dem (Lighthouse aria-hidden-focus). Skriptet nedan tar bort inert vid öppning. */}
+<aside class="drawer" id="drawer" aria-label="Meny" aria-hidden="true" inert>
   <div class="drawer__hd">
     <a class="wordmark" href="/" data-menu-close>AI PARTNER</a>
     <button class="drawer__close" aria-label="Stäng meny" data-menu-close>✕</button>
@@ -385,6 +387,7 @@ const isActive = (href: string) =>
     const setMenu = (open: boolean) => {
       body.classList.toggle('menu-open', open);
       drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+      drawer.toggleAttribute('inert', !open);
       document.querySelectorAll<HTMLElement>('.nav-toggle').forEach((t) => {
         t.setAttribute('aria-expanded', open ? 'true' : 'false');
         t.setAttribute('aria-label', open ? 'Stäng meny' : 'Öppna meny');

@@ -1,0 +1,14 @@
+---
+/**
+ * SEOS-vakten: ALLRA FÖRST i <head>, före alla andra skript.
+ *
+ * Håller tillbaka kända spårare (Meta, TikTok, Hotjar, LinkedIn) som skapas av
+ * JavaScript tills besökaren samtyckt i cookierutan. Rör inte Google Analytics:
+ * den sköts av grinden i scripts/consent.ts. Sajten har i dag inga sådana spårare;
+ * vakten ligger här så att en framtida inbäddning inte kan sätta något före samtycke.
+ *
+ * Kopierad från SeosCookieBanner/guard-snippet.html. Redigera inte här, kopiera om
+ * hela raden när vakten ändras.
+ */
+---
+<script is:inline id="seos-guard">(()=>{var i=[["connect.facebook.net","marketing"],["analytics.tiktok.com","marketing"],["static.hotjar.com","analytics"],["snap.licdn.com","marketing"]];var l=i;(function(){if(!window.SEOS_GUARD){var r={list:l.slice(),held:[]};r.categoryFor=function(a){var t;try{t=new URL(a,document.baseURI).hostname}catch{return null}for(var n=0;n<r.list.length;n++){var e=r.list[n][0];if(t===e||t.slice(-e.length-1)==="."+e)return r.list[n][1]}return null},window.SEOS_GUARD=r;var o=Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype,"src"),s=document.createElement;document.createElement=function(a){var t=s.apply(document,arguments);return String(a).toLowerCase()!=="script"||Object.defineProperty(t,"src",{configurable:!0,get:function(){return o&&o.get?o.get.call(t):t.getAttribute("src")||""},set:function(n){var e=String(n);if(t.getAttribute("data-seos-own")){t.setAttribute("src",e);return}var c=r.categoryFor(e);if(c===null){t.setAttribute("src",e);return}if(window.SEOS&&window.SEOS.hasConsent(c)){t.setAttribute("src",e);return}r.held.push({el:t,url:e,category:c})}}),t}}})();})();</script>

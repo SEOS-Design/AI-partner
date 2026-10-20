@@ -54,10 +54,10 @@ const pages: [string, string][] = [
     <nav class="foot__col" aria-label="Mer">
       <span class="foot__hd">Mer</span>
       <a href="https://seosdesign.se" target="_blank" rel="noopener noreferrer">SEOS Design <span aria-hidden="true">↗</span></a>
-      {/* PLATSHÅLLARE tills cookie-lösningen finns: knappen ska öppna
-          samtyckesbannerns inställningar, /cookiepolicy är en framtida sida (404). */}
-      <button type="button" class="foot__linkbtn" data-cookie-settings>Cookieinställningar</button>
-      <a href="/cookiepolicy">Cookiepolicy</a>
+      {/* SEOS cookierutan öppnar sina inställningar och sin cookiepolicy på de här id:na
+          (klicket fångas på document, så det spelar ingen roll när sidfoten ritas). */}
+      <button type="button" class="foot__linkbtn" id="open-cookie-settings">Cookieinställningar</button>
+      <a href="#" id="open-cookie-policy">Cookiepolicy</a>
       <a href="/integritetspolicy">Integritetspolicy</a>
     </nav>
   </div>

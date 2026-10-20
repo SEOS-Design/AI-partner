@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import 'lenis/dist/lenis.css'; /* Lenis grund-CSS (mjuk scroll, scripts/smooth.ts) */
 import Nav from '../components/Nav.astro';
+import SeosGuard from '../components/SeosGuard.astro';
 import { canonicalUrl, pageGraph, SITE_URL, type Crumb, type PageType } from '../lib/site';
 
 interface Props {
@@ -43,7 +44,12 @@ const graph = pageGraph({ url: canonical, title, description, image: imageUrl, p
 <html lang="sv">
   <head>
     <meta charset="UTF-8" />
+    <SeosGuard />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* SEOS cookierutan. data-site-key är publik och måste finnas: utan den avvisas varje
+        samtycke. Grinden i scripts/consent.ts väntar på rutans window.SEOS och laddar GA4
+        först när besökaren sagt ja till statistik. */}
+    <script is:inline src="https://seos-cookie-banner.vercel.app/v1/banner.js" data-site-key="pk_live_38ddf2e1cc84b94b27f915c4c35aacb4" async></script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

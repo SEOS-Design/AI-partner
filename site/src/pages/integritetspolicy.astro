@@ -3,12 +3,13 @@
 // TEXTEN ÄR ETT UTKAST byggt på seosdesign.se/integritetspolicy, anpassat till att
 // AI Partner är ett varumärke inom SEOS Design AB och att hemsidan bara använder Google
 // Analytics 4 bakom samtycke (ingen GTM, ingen Clarity, ingen annonsmätning). Douglas äger
-// copyn. Cookierutan läggs in av kollegan – avsnittet om den hålls därför allmänt.
+// copyn. Avsnittet "Cookierutan och ditt val" kom 2026-10-20 med SEOS cookierutan, efter
+// samma text på seosdesign.se.
 import Layout from '../layouts/Layout.astro';
 import Footer from '../components/Footer.astro';
 import { CONTACT } from '../lib/site';
 
-const UPDATED = '2026-10-19';
+const UPDATED = '2026-10-20';
 ---
 
 <Layout
@@ -20,7 +21,7 @@ const UPDATED = '2026-10-19';
     <div class="container">
       <header class="legal__head">
         <h1 class="legal__h">Integritetspolicy</h1>
-        <p class="legal__meta">Senast uppdaterad <time datetime={UPDATED}>19 oktober 2026</time></p>
+        <p class="legal__meta">Senast uppdaterad <time datetime={UPDATED}>20 oktober 2026</time></p>
       </header>
 
       <div class="legal__body">
@@ -82,7 +83,22 @@ const UPDATED = '2026-10-19';
           statistik om webbplatsen och inte för att identifiera dig som person. Vi använder inte
           besöket för annonsering. <strong>Säger du nej, eller inget alls,</strong> laddas ingen
           mätning och ingen mätcookie sätts. Vilka cookies det gäller när du säger ja står i vår
-          <a href="/cookiepolicy">cookiepolicy</a>.
+          <a href="#open-cookie-policy">cookiepolicy</a>.
+        </p>
+
+        <h2 id="cookierutan">Cookierutan och ditt val</h2>
+        <p>
+          Cookierutan är SEOS Designs egen. Den sparar ditt val i tre nödvändiga cookies,
+          <code>client_consent_id</code>, <code>consent_status</code> och
+          <code>consent_choices</code>, som inte kräver samtycke. Ditt svar sparas också hos oss:
+          vilka kategorier du valde, när, vilken version av cookiepolicyn du fick se och vilken
+          webbläsare du använde. Ingen IP-adress sparas med svaret.
+        </p>
+        <p>
+          <strong>Varför:</strong> vi måste kunna visa att ett samtycke har lämnats.
+          <strong>Rättslig grund:</strong> rättslig förpliktelse, artikel 6.1 c.
+          <strong>Lagringstid:</strong> 12 månader, därefter raderas svaret automatiskt. Svaren
+          lagras inom EU, i Frankfurt.
         </p>
 
         <h2 id="kontakt">Om du kontaktar oss</h2>
@@ -104,7 +120,8 @@ const UPDATED = '2026-10-19';
         <h2 id="mottagare">Vilka som får tillgång till uppgifterna</h2>
         <p>Vi säljer inte personuppgifter och lämnar inte ut dem för andras marknadsföring. Utöver oss själva behandlas uppgifterna av:</p>
         <ul>
-          <li><strong>Vercel Inc.</strong>, som driftar webbplatsen, för serverloggarna ovan</li>
+          <li><strong>Vercel Inc.</strong>, som driftar webbplatsen och cookierutan, för serverloggarna ovan</li>
+          <li><strong>Neon</strong> (Databricks, Inc.), där svaren i cookierutan lagras</li>
           <li><strong>Resend</strong> (Plus Five Five, Inc.), som levererar formulärets förfrågningar till vår e-post</li>
           <li><strong>Google</strong>, som hanterar vår e-post, och Google Ireland Ltd för statistiken om du samtyckt till den</li>
         </ul>
@@ -112,11 +129,12 @@ const UPDATED = '2026-10-19';
 
         <h2 id="utanfor-eu">Överföring utanför EU och EES</h2>
         <p>
-          Vercel, Resend och Google är amerikanska bolag eller har verksamhet i USA, så uppgifter
+          Vercel, Neon, Resend och Google är amerikanska bolag eller har verksamhet i USA, så uppgifter
           kan komma att behandlas utanför EU och EES. Resend lagrar mejlen det levererar till oss
           i USA i 30 dagar, och säkerhetskopior i ytterligare 7 dagar. Överföringar till USA sker
-          med stöd av EU-kommissionens beslut om EU–US Data Privacy Framework, som Vercel, Resend
-          och Google är certifierade under, och av EU:s standardavtalsklausuler.
+          med stöd av EU-kommissionens beslut om EU–US Data Privacy Framework, som Vercel,
+          Databricks (Neons ägare), Resend och Google är certifierade under, och av EU:s
+          standardavtalsklausuler.
         </p>
 
         <h2 id="rattigheter">Dina rättigheter</h2>

@@ -90,6 +90,8 @@ const graph = pageGraph({ url: canonical, title, description, image: imageUrl, p
        import '../scripts/smooth';
        /* GA4 bakom samtycke (scripts/consent.ts): laddar inget förrän cookierutan sagt ja. */
        import '../scripts/consent';
+       /* Händelser till GA4 (scripts/track.ts): lead, CTA-klick, mejl/telefon. Skickar bara efter samtycke. */
+       import '../scripts/track';
      </script>
   </body>
 </html>

@@ -326,6 +326,7 @@ const STEPS = [
       if (button) button.disabled = true;
       const data = Object.fromEntries(new FormData(form).entries());
       let ok = false;
+      let status = 0;
       try {
         const res = await fetch(form.action, {
           method: 'POST',
@@ -333,12 +334,17 @@ const STEPS = [
           body: JSON.stringify(data),
         });
         ok = res.ok;
+        status = res.status;
       } catch {
         ok = false;
       }
       if (button) button.disabled = false;
       form.hidden = true;
       (ok ? sent : failed).hidden = false;
+      // Händelsemätning (scripts/track.ts): generate_lead resp. lead_error. Inga fältvärden.
+      document.dispatchEvent(
+        ok ? new CustomEvent('aip:lead') : new CustomEvent('aip:lead-error', { detail: { status } }),
+      );
     };
 
     form.addEventListener('submit', onSubmit);

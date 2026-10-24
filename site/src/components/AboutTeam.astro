@@ -129,12 +129,14 @@ type Person = {
 // Källor (hämtade 2026-10-18): HubSpot = Wikimedia Commons "HubSpot Logo.svg" (viewBox tillagd),
 // n8n = svgl.app n8n-wordmark-dark, Claude = svgl.app claude-ai-wordmark-icon_dark (det finns
 // ingen fristående Claude Code-logotyp, så Claude-logotypen används; alt säger "Claude Code"),
-// Notion = svgl.app notion (ikonen är Notions huvudlogotyp, inget ordmärke publicerat).
+// Notion = svgl.app notion (ikonen är Notions huvudlogotyp, inget ordmärke publicerat),
+// Ahrefs = svgl.app ahrefs (a-ikonen, 2026-10-24; HubSpot-logotypen ligger kvar oanvänd).
 // center: logotypen centreras under etiketten (för en liten fyrkantig ikon, som annars
 // hamnar ensam längst till vänster under den bredare etiketten).
 type Logo = { src: string; w: number; h: number; height: number; mono: 'flat' | 'gray'; center?: boolean };
 const LOGOS: Record<string, Logo> = {
   HubSpot: { src: '/logos/hubspot.svg', w: 106, h: 31, height: 22, mono: 'flat' },
+  Ahrefs: { src: '/logos/ahrefs.svg', w: 128, h: 128, height: 32, mono: 'gray', center: true },
   n8n: { src: '/logos/n8n.svg', w: 87, h: 24, height: 20, mono: 'flat' },
   'Claude Code': { src: '/logos/claude-wordmark.svg', w: 512, h: 110, height: 20, mono: 'flat' },
   Notion: { src: '/logos/notion.svg', w: 256, h: 268, height: 36, mono: 'gray', center: true },
@@ -142,13 +144,13 @@ const LOGOS: Record<string, Logo> = {
 
 // Ordning = namnraden i AboutQuote.astro. Douglas först (fotot till vänster, se Formgrepp).
 // Favoriterna täcker fyra olika avdelningar (sälj & offert, marknad, intern admin,
-// kundtjänst) och fyra olika slags verktyg (CRM, flödesbyggare, kodagent, kunskapsbas).
+// kundtjänst) och fyra olika slags verktyg (SEO-verktyg, flödesbyggare, kodagent, kunskapsbas).
 const TEAM: Person[] = [
   {
     name: 'Douglas Ekman',
     title: 'VD och medgrundare', // godkänd av Douglas 2026-10-19
     bio: 'Douglas leder AI Partner och SEOS Design och ser till att varje projekt börjar med ett tydligt mål.',
-    tool: 'HubSpot',
+    tool: 'Ahrefs', // bytt från HubSpot (Douglas 2026-10-24)
     automation: 'Anteckningar från kundmötet blir ett offertutkast',
     photo: '/team/douglas.webp',
   },

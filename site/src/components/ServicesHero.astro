@@ -35,7 +35,7 @@
 
     <div class="shero__center">
       <h1 id="shero-title" class="shero__title">
-        <span class="shero__mask"><span class="shero__in">Tjänster</span></span>
+        <span class="shero__mask"><span class="shero__in">AI-agenter som tar rutinjobbet</span></span>
       </h1>
       <p class="shero__lead">
         Vi börjar med er vardag, inte med en produktlista. Vi bygger AI-agenter och
@@ -138,10 +138,14 @@
     margin: 0;
     font-family: var(--font-sans);
     font-weight: 700;
-    font-size: clamp(88px, 17vw, 240px);
-    line-height: 0.9;
+    /* Fem ord sedan 2026-10-24 (Douglas: »AI-agenter som tar rutinjobbet«, bär söktermen) –
+       mindre skala än ettordsrubriken (88–240 px) så den ryms på två rader. */
+    font-size: clamp(44px, 8.5vw, 128px);
+    line-height: 0.95;
     letter-spacing: -0.03em;
     text-transform: uppercase;
+    text-wrap: balance;
+    max-width: 10em;
     color: var(--fg-1);
   }
   /* Masken klipper ordet när det glider upp. Luft upptill så att Ä-prickarna inte

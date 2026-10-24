@@ -1,5 +1,5 @@
 ---
-title: "AI-förordningen: vad gäller nu och vad sköts upp?"
+title: "AI-förordningen (AI Act): vad gäller nu och vad sköts upp?"
 description: "Digital Omnibus sköt upp AI-förordningens högriskkrav till december 2027 – men tre delar gäller redan. Lugn, uppdaterad guide för svenska företag."
 h1: "AI-förordningen: vad svenska företag måste göra – och vad som skjutits upp"
 category: regelverk-sakerhet
@@ -8,7 +8,7 @@ publishedAt: 2026-08-03
 
 AI-förordningen (EU) 2024/1689 är EU:s gemensamma regelverk för artificiell intelligens. Den trädde i kraft den 1 augusti 2024 och tillämpas stegvis. Den 24 juli 2026 ändrades tidplanen: EU:s ändringsförordning, kallad Digital Omnibus, sköt upp de tunga högriskkraven till den 2 december 2027. Tre delar av förordningen gäller dock redan i dag – och de är enklare att få på plats än de flesta guider ger intryck av.
 
-Det betyder också att nästan alla svenska guider om AI-förordningen som skrevs före sommaren 2026 är inaktuella. Många av dem öppnar med böter på 35 miljoner euro och en deadline den 2 augusti 2026 som inte längre stämmer. Den här guiden utgår från det nya rättsläget: vad som faktiskt gäller nu, vad som sköts upp, och vad ett svenskt företag rimligen bör göra i höst.
+Det betyder också att nästan alla svenska guider om AI-förordningen som skrevs före sommaren 2026 är inaktuella. Många av dem öppnar med böter på 35 miljoner euro och en deadline den 2 augusti 2026 som inte längre stämmer. Den här guiden utgår från det nya rättsläget: vad som faktiskt gäller nu, vad som sköts upp, och vad ett svenskt företag rimligen bör göra nu.
 
 ## Vad är AI-förordningen?
 
@@ -95,7 +95,7 @@ Den långsiktiga strukturen är fortfarande ett förslag. Utredningen [SOU 2025:
 
 För ett företag spelar den exakta myndighetskartan mindre roll just nu. Kraven är desamma oavsett vem som utövar tillsynen.
 
-## Checklista: fem saker att göra i höst
+## Checklista: fem saker att göra nu
 
 1. **Inventera er AI-användning.** Lista alla AI-verktyg och AI-inslag i era system – även de inofficiella, som medarbetares egna ChatGPT-konton. Det man inte vet om kan man inte klassificera.
 2. **Klassificera mot riskklasserna.** Placera varje användning i tabellen ovan. De flesta hamnar i minimal eller begränsad risk. Flagga allt som rör rekrytering, kredit eller beslut om enskilda personer.

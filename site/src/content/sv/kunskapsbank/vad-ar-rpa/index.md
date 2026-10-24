@@ -71,7 +71,7 @@ Innan ni beslutar om RPA, ställ fyra frågor om processen:
 3. **Finns det ett API eller en färdig integration?** Kan systemen prata direkt med varandra är det nästan alltid en bättre lösning än en bot som härmar klick i ett gränssnitt – stabilare, snabbare, billigare i förvaltning. Ibland har ni inget automationsproblem – ni har ett integrationsproblem.
 4. **Har ni kontroll över systemen?** Botar som arbetar i externa system ni inte styr över (leverantörsportaler, myndighetsgränssnitt) går sönder när motparten uppdaterar sitt gränssnitt, utan förvarning.
 
-Blir svaren "nej, nej, nej, ja" – stabil, regelbaserad process utan API-alternativ, i system ni kontrollerar – är RPA sannolikt rätt. Innehåller processen bedömningar och undantag pekar det mot en AI-agent, eventuellt med RPA som utförande lager. Och finns ett API är det oftast dit ni ska. Hur vi resonerar kring valet i konkreta uppdrag beskriver vi på vår sida om [processautomation](/kontakt).
+Blir svaren "nej, nej, nej, ja" – stabil, regelbaserad process utan API-alternativ, i system ni kontrollerar – är RPA sannolikt rätt. Innehåller processen bedömningar och undantag pekar det mot en AI-agent, eventuellt med RPA som utförande lager. Och finns ett API är det oftast dit ni ska. Hur vi resonerar kring valet i konkreta uppdrag beskriver vi på vår sida om [processautomation](/tjanster).
 
 ## Räcker inte n8n, Make eller Zapier?
 

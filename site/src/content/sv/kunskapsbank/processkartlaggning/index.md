@@ -73,7 +73,7 @@ Sedan verktygsvalet – per process, inte för hela företaget på en gång:
 - **Regelstyrd process i system utan API?** Då är [RPA](/kunskapsbank/vad-ar-rpa) rätt verktyg – mjukvarurobotar som arbetar i gränssnittet som en människa.
 - **Kräver processen tolkning eller bedömning?** Då behövs en [AI-agent](/kunskapsbank/vad-ar-en-ai-agent), med ramar och mänsklig kontroll på rätt ställen.
 
-Hur RPA och AI-agenter skiljer sig åt – och varför de oftast är komplement snarare än konkurrenter – går vi igenom i vår guide om RPA. Poängen här är ordningen: först kartan, sedan prioriteringen, sist verktyget. Företag som börjar i andra änden köper en plattform och letar sedan efter problem den kan lösa.
+Hur RPA och AI-agenter skiljer sig åt – och varför de oftast är komplement snarare än konkurrenter – går vi igenom i [vår guide om RPA](/kunskapsbank/vad-ar-rpa). Poängen här är ordningen: först kartan, sedan prioriteringen, sist verktyget. Företag som börjar i andra änden köper en plattform och letar sedan efter problem den kan lösa.
 
 Resultatet av en bra kartläggning är alltså inte ett diagram. Det är en prioriterad lista: process, förväntad effekt, rekommenderat verktyg, ordningsföljd.
 

@@ -20,7 +20,7 @@ Det är också därför källhänvisning är möjlig. Systemet vet exakt vilka s
 
 ## Vad är RAG – enkelt förklarat?
 
-RAG står för retrieval-augmented generation och är teknikbegreppet för det som beskrivs ovan: hämta först, svara sedan. Retrieval betyder hämtning – systemet söker fram rätt underlag ur era dokument. Generation betyder att modellen formulerar ett svar utifrån det som hämtades.
+RAG står för [retrieval-augmented generation](https://www.seosdesign.se/kunskapsbank/rag) och är teknikbegreppet för det som beskrivs ovan: hämta först, svara sedan. Retrieval betyder hämtning – systemet söker fram rätt underlag ur era dokument. Generation betyder att modellen formulerar ett svar utifrån det som hämtades.
 
 Rent tekniskt delas dokumenten upp i mindre stycken som lagras i ett sökindex, ofta en så kallad vektordatabas. Poängen med den är att sökningen matchar betydelse, inte bara exakta ord – frågan "vad gäller vid uppsägning?" hittar rätt avsnitt även om avtalet skriver "avslut av anställning".
 
@@ -91,7 +91,7 @@ De vanligaste användningsområdena hos små och medelstora företag:
 - **Avtals- och dokumentfrågor.** "Vad gäller enligt vårt avtal med leverantör Y?" – med hänvisning till exakt klausul.
 - **Teknisk support ur manualer.** Servicetekniker och support slår upp felkoder och åtgärder ur hundratals sidor dokumentation på sekunder.
 
-En intern AI-assistent är i grunden en specialiserad [AI-agent](/kunskapsbank/vad-ar-en-ai-agent) med ett avgränsat uppdrag: svara rätt ur era källor. Vill ni se hur vi paketerar det som tjänst: [RAG-kunskapsassistent](/kontakt).
+En intern AI-assistent är i grunden en specialiserad [AI-agent](/kunskapsbank/vad-ar-en-ai-agent) med ett avgränsat uppdrag: svara rätt ur era källor. Vill ni se hur vi paketerar det som tjänst: [RAG-kunskapsassistent](/tjanster#ai-assistent).
 
 ## Vad kostar en AI-assistent på egen data?
 

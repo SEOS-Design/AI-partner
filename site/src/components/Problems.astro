@@ -80,7 +80,8 @@ const PROBLEMS = [
     <p class="statement" data-split>Det är där vi kommer in.</p>
     <div class="statement-more">
       <p class="statement-more__text">
-        Vi bygger AI-agenter och automation som tar det repetitiva, så att era medarbetare
+        Vi bygger <a href="/kunskapsbank/vad-ar-en-ai-agent">AI-agenter</a> och
+        <a href="/kunskapsbank/vad-ar-rpa">automation</a> som tar det repetitiva, så att era medarbetare
         kan lägga tiden där den gör skillnad. Utgångspunkten är era egna processer och data.
         Vi automatiserar enbart det som faktiskt lönar sig och sparar er tid – tack vare
         rätt kontext, data och guardrails.
@@ -260,6 +261,16 @@ const PROBLEMS = [
     max-width: 44em;
     margin: clamp(24px, 3vw, 40px) auto 0;
     text-align: center;
+  }
+  /* Länkar till kunskapsbanken i texten (2026-10-24): tunn underkant som Story-länken. */
+  .statement-more__text a {
+    color: var(--fg-1);
+    border-bottom: 1px solid var(--border-strong);
+    padding-bottom: 1px;
+    transition: border-color var(--dur-fast) var(--ease);
+  }
+  .statement-more__text a:hover {
+    border-color: var(--fg-1);
   }
   .statement-more__text {
     margin: 0;

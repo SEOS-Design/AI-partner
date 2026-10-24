@@ -41,13 +41,13 @@ Poängen är inte att det ena ersätter det andra – de kompletterar varandra. 
 
 En AI-agent gör mest nytta när den får ett smalt, väldefinierat uppdrag på en avdelning – inte när den ska "fixa AI" för hela bolaget. Här är de uppdrag vi ser fungera i praktiken.
 
-**Kundtjänst.** Agenten svarar dygnet runt på vanliga frågor ur ert eget material – dokumentation, policys, produktinfo – kvalificerar inkommande ärenden och slussar dem till rätt person, och sammanfattar långa ärendetrådar inför överlämning. [Gartner förutspår](https://www.gartner.com/en/newsroom/press-releases/2025-03-05-gartner-predicts-agentic-ai-will-autonomously-resolve-80-percent-of-common-customer-service-issues-without-human-intervention-by-20290) att agentisk AI (agentic AI) till 2029 autonomt löser 80 % av vanliga kundtjänstärenden.
+**[Kundtjänst](/tjanster#kundtjanst).** Agenten svarar dygnet runt på vanliga frågor ur ert eget material – dokumentation, policys, produktinfo – kvalificerar inkommande ärenden och slussar dem till rätt person, och sammanfattar långa ärendetrådar inför överlämning. [Gartner förutspår](https://www.gartner.com/en/newsroom/press-releases/2025-03-05-gartner-predicts-agentic-ai-will-autonomously-resolve-80-percent-of-common-customer-service-issues-without-human-intervention-by-20290) att agentisk AI (agentic AI) till 2029 autonomt löser 80 % av vanliga kundtjänstärenden.
 
 **Ekonomi.** Fakturamatchning mot inköpsorder, avvikelsehantering med mänsklig kö, och underlag inför bokslut – sammanställningar som annars äter dagar i slutet av varje period.
 
-**Sälj.** Leadscoring och prioritering av inkommande förfrågningar, automatiska uppföljningssekvenser som inte tappar bort ljumma leads, och offertutkast baserade på era tidigare offerter – säljaren granskar och skickar.
+**[Sälj](/tjanster#salj-offert).** Leadscoring och prioritering av inkommande förfrågningar, automatiska uppföljningssekvenser som inte tappar bort ljumma leads, och offertutkast baserade på era tidigare offerter – säljaren granskar och skickar.
 
-**Marknad.** Konkurrentbevakning, identifiering av content-gaps för SEO och utkast till kampanjer och rubriker. Människan sätter strategin och godkänner allt som publiceras – agenten ger avdelningen mer muskler utan ökade kostnader.
+**[Marknad](/tjanster#marknad).** Konkurrentbevakning, identifiering av content-gaps för SEO och utkast till kampanjer och rubriker. Människan sätter strategin och godkänner allt som publiceras – agenten ger avdelningen mer muskler utan ökade kostnader.
 
 **Projektledning.** Ett inkommande mejl blir en task i ert projektverktyg, med ansvarig satt och påminnelse när deadline närmar sig. Litet uppdrag, stor effekt på det som annars faller mellan stolarna.
 

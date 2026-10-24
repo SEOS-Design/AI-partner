@@ -65,7 +65,7 @@ const STEPS = [
                   {i === STEPS.length - 1 && (
                     <div class="pstep__cta">
                       <a class="btn btn-primary" href={BOOK}>Boka kartläggning <Arrow class="arrow" /></a>
-                      <p class="pstep__note">Vill ni förstå AI först? Vi kan också komma ut och föreläsa för ert team.</p>
+                      <p class="pstep__note">Vill ni förstå AI först? Vi kan också komma ut och <a href="/kunskapsbank/ai-utbildning-foretag">föreläsa för ert team</a>.</p>
                     </div>
                   )}
                 </div>
@@ -167,6 +167,15 @@ const STEPS = [
   .pstep__note {
     font-size: var(--fs-small);
     color: var(--fg-3);
+  }
+  .pstep__note a {
+    border-bottom: 1px solid var(--border-strong);
+    padding-bottom: 1px;
+    transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+  }
+  .pstep__note a:hover {
+    color: var(--fg-1);
+    border-color: var(--fg-1);
   }
 
   /* ---- scen: kub + sken ---- */

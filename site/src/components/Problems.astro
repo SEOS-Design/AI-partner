@@ -11,7 +11,7 @@
 // varje problem och vidare ned, och RITAS FRAM I TAKT MED SCROLLEN. En punkt tänds
 // vid varje problem när linjen når fram. Banan räknas ut i JS efter layouten
 // (bygger om vid breddändring). Samma glödlager som vågen: glow · halo · core.
-// Sedan, som förut: siffrorna i kompakt form och "Det är där vi kommer in." + svaret
+// Sedan, som förut: siffrorna i kompakt form och "Vi ger er tiden tillbaka." + svaret
 // + knapparna. Problem → belägg → svaret
 // (StatsBand.astro, Douglas 2026-10-14 v2): problem → belägg → svaret.
 //
@@ -19,13 +19,14 @@
 // ner använder 01–03 för de riktiga stegen.
 //
 // Copy = Douglas (v3 i AI-Partner-startsida-problemsektion-2026-10-14.md, SEOS-mappen;
-// texten under "Det är där vi kommer in." = Douglas 2026-10-14).
+// texten under meningen = Douglas 2026-10-14; meningen "Vi ger er tiden tillbaka." =
+// Douglas 2026-10-28, ersatte "Det är där vi kommer in.").
 //
 // Mobil: tråden blir en rak linje längs vänsterkanten med punkterna (ingen plats för
 // en slinga), problemen under varandra med kortare glidning.
 // Reduced motion / utan JS: problemen står på plats direkt.
 //
-// Rubriken och "Det är där vi kommer in." har sajtens rubrik-drape (data-split, se
+// Rubriken och "Vi ger er tiden tillbaka." har sajtens rubrik-drape (data-split, se
 // global.css): orden följer scrollen åt båda hållen. Texten och knapparna under
 // meningen tonas in en gång.
 import Arrow from './Arrow.astro';
@@ -77,7 +78,7 @@ const PROBLEMS = [
 
   {/* Rubrik-drapen (data-split, global.css): orden glider upp i takt med scrollen. */}
   <div class="statement-track">
-    <p class="statement" data-split>Det är där vi kommer in.</p>
+    <p class="statement" data-split>Vi ger er tiden tillbaka.</p>
     <div class="statement-more">
       <p class="statement-more__text">
         Vi bygger <a href="/kunskapsbank/vad-ar-en-ai-agent">AI-agenter</a> och
@@ -249,7 +250,7 @@ const PROBLEMS = [
     margin: 0;
     font-weight: 700;
     /* ALLTID EN RAD (Björn 2026-10-16: Safari bröt "Det / är där vi kommer in.").
-       Meningen är ~7,7 em bred → krymper med kolumnen när h2-storleken inte ryms. */
+       Meningen är ~7,2 em bred ("Vi ger er tiden tillbaka.", mätt 2026-10-28) → krymper med kolumnen när h2-storleken inte ryms. */
     font-size: min(var(--fs-h2), calc(100cqi / 7.9));
     white-space: nowrap;
     line-height: var(--lh-heading);

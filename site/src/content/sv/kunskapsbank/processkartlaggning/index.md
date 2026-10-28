@@ -4,6 +4,7 @@ description: "Processkartläggning inför AI och automatisering: så kartlägger
 h1: "Processkartläggning inför AI och automatisering – kartan är inte målet"
 category: automation
 publishedAt: 2026-08-04
+updatedAt: 2026-10-28
 ---
 
 Processkartläggning innebär att beskriva hur ett arbetsflöde faktiskt utförs – vem som gör vad, i vilka system, i vilken ordning och med vilka undantag. Det låter som dokumentation, och i många organisationer stannar det där: en snygg karta i en mapp ingen öppnar.
@@ -53,6 +54,32 @@ En lättviktsmetod i fem steg, anpassad för företag som kartlägger inför aut
 5. **Notera system och datakällor.** Vilka system rör processen, var uppstår informationen, och finns det API:er eller sker allt via gränssnitt och mejl? Det här underlaget avgör verktygsvalet senare.
 
 Efter de fem stegen har ni det som faktiskt behövs: en ärlig bild av flödet, en känsla för var tiden går, och tillräcklig teknisk kontext för att välja verktyg. Ingen notation krävdes.
+
+## Vilka verktyg behöver ni för processkartläggning?
+
+För en processkartläggning inför automatisering räcker nästan alltid ett kalkylark plus en whiteboard eller en enkel digital tavla. Verktyget ska fånga volymer, tider och undantag – inte rita snyggt.
+
+Vilket ritverktyg ni väljer beror mer på vad ni redan har än på kartläggningen i sig. Har ni Microsoft 365 finns Visio i webbläsaren redan. Har ni ingenting är draw.io gratis och kräver inget konto. Betala inte för ett diagramverktyg för att kartlägga fem processer. Tabellen sorterar alternativen efter ambitionsnivå.
+
+**Verktyg per ambitionsnivå**
+
+| Nivå | Verktyg | Passar när | Begränsning |
+|---|---|---|---|
+| Workshop | Whiteboard, papper och post-it-lappar | Första genomgången med de som utför arbetet. En avgränsad process ryms normalt i en workshop. | Måste föras över digitalt efteråt – annars blir kartan ett foto i en mapp. |
+| Digital tavla | Miro | Teamet sitter på olika platser, eller kartan ska gå att återvända till. | Gratisnivån ger 3 redigerbara tavlor och obegränsat antal medlemmar, men bara lågupplöst export ([Miro](https://miro.com/pricing/), per 2026-10-28). |
+| Diagram utan konto | draw.io (diagrams.net) | Ni vill ha ett rent flödesschema utan licens. Gratis, öppen källkod, sparar lokalt eller i Drive/OneDrive/SharePoint ([draw.io](https://www.drawio.com/)). | Ett ritverktyg och inget mer – volymer och tider hamnar ändå i ett kalkylark. |
+| Diagram med licens | Lucidchart | Organisationen använder det redan. | Gratisnivån ger 3 redigerbara dokument med högst 60 former per dokument ([Lucid](https://lucid.co/lucidchart/trial), per 2026-10-28). |
+| Microsoft 365 | Microsoft Visio | Ni har redan en kommersiell Microsoft 365-plan (Business Basic/Standard/Premium eller E-planerna) – webbappen med begränsade mallar ingår, men inte i abonnemang knutna till privata Microsoft-konton. | BPMN 2.0 och skrivbordsappen kräver Visio Plan 2: 143,40 kr per användare och månad, årsbetalt exkl. moms ([Microsoft](https://www.microsoft.com/sv-se/microsoft-365/visio/flowchart-software), per 2026-10-28). |
+| Formell notation | Camundas Desktop Modeler, Bizagi Modeler (processmodellering med stöd för BPMN) | Ni har krav på BPMN – revision, certifiering eller många processer som ska förvaltas över tid. | Kräver att någon kan notationen. Överkurs inför ett automationsbeslut i ett mindre företag. |
+| Process mining | Microsoft Power Automate Process Mining, Celonis | Större organisationer med system som loggar tillräckligt för att flödet ska kunna läsas ut. | Microsofts tillägg kostar 5 000 USD per organisation (tenant) och månad, betalas årsvis, utöver Premium-licensen ([Microsoft](https://www.microsoft.com/en-us/power-platform/products/power-automate/pricing), per 2026-10-28). Celonis publicerar ingen prislista. För de flesta små och medelstora företag är det fel storlek på verktyg. |
+
+Kalkylarket är viktigare än diagrammet när målet är ett automationsbeslut. Diagrammet visar vad som händer och i vilken ordning. Men prioriteringen i nästa avsnitt bygger på frågor en pil inte kan svara på: hur ofta steget utförs, hur lång tid det tar, hur ofta det blir fel och via vilket system det går. Sådant ska kunna sorteras och summeras. Det gör ett kalkylark. Rita gärna flödet på tavlan under workshopen – men för över varje steg till en rad i arket innan ni går hem.
+
+Ni behöver inte bygga arket själva. Vi har lagt upp det kalkylark vi själva använder i kartläggningar. Det har två flikar. Fliken Processkarta har en rad per steg. Kolumnerna: roll, system, API ja/nej, volym per vecka, tid per ärende, undantagsandel, regelstabilitet, format på underlaget och godkännande. Fliken Prioritering räknar fram timmar per vecka och en kandidatpoäng per process, och föreslår lösningstyp: integration, [RPA](/kunskapsbank/vad-ar-rpa) eller AI-agent. [Ladda ner mallen för processkartläggning (Excel)](/mallar/processkartlaggning-mall-ai-partner.xlsx). Ingen e-postadress, ingen registrering – filen laddas ned direkt. Den fungerar i både Excel och Google Kalkylark.
+
+Fyll i arket under eller direkt efter workshopen, med de som utför arbetet i rummet. Siffrorna behöver inte vara exakta – grova uppskattningar räcker, precis som i steg fyra ovan.
+
+Med arket ifyllt har ni underlaget för att avgöra vad som ska automatiseras först.
 
 ## Hur prioriterar man vad som ska automatiseras?
 
@@ -104,7 +131,7 @@ En avgränsad process kartläggs normalt i en workshop. Flera processer inom ett
 Framför allt de som utför arbetet i vardagen – de vet var undantagen och de manuella krokvägarna finns. Chefer bidrar med prioriteringar och affärskontext, men en kartläggning med enbart chefer beskriver processen som den borde fungera, inte som den gör.
 
 **Vilka verktyg behövs för processkartläggning?**
-En whiteboard eller en enkel digital tavla som Miro räcker för de flesta. Frågorna avgör kvaliteten, inte verktyget: vad görs, av vem, i vilka system, hur ofta – och hur ofta blir det inte så?
+Ett kalkylark plus en whiteboard eller en enkel digital tavla räcker för de flesta – tavlan fångar flödet under workshopen, arket gör volymer, tider och undantag sorterbara. [Mallen vi använder](/mallar/processkartlaggning-mall-ai-partner.xlsx) är gratis och kräver ingen registrering. Frågorna avgör ändå kvaliteten, inte verktyget: vad görs, av vem, i vilka system, hur ofta – och hur ofta blir det inte så?
 
 **Vad är skillnaden mellan processkartläggning och process mining?**
 Processkartläggning bygger på intervjuer och workshops – människor beskriver flödet. Process mining läser i stället ut det verkliga flödet ur systemens loggdata. Mining kräver system som loggar tillräckligt och passar större organisationer; för små och medelstora företag är kartläggning nästan alltid rätt startpunkt.

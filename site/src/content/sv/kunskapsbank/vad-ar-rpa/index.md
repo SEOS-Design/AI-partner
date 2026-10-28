@@ -4,6 +4,7 @@ description: "RPA automatiserar regelbaserade processer – men 2026 är det int
 h1: "Vad är RPA? Guide för företag som vill automatisera processer"
 category: automation
 publishedAt: 2026-08-04
+updatedAt: 2026-10-28
 ---
 
 RPA (Robotic Process Automation, på svenska robotstyrd processautomation) är mjukvarurobotar som utför regelbaserade, repetitiva arbetsuppgifter i era befintliga system – de klickar, kopierar och registrerar på samma sätt som en människa, men utan pauser och utan slarvfel. RPA passar processer som följer exakt samma regler varje gång, till exempel fakturaregistrering eller dataflytt mellan system.
@@ -85,6 +86,43 @@ Gränsen går på tre ställen:
 
 Logiken är densamma som i resten av den här guiden: välj verktyg per process, inte tvärtom. n8n, Make och Zapier är rätt verktyg för vissa processer – inte en automationsstrategi.
 
+## Vilka RPA-verktyg finns – och vilket passar er?
+
+Marknaden för RPA-verktyg domineras av fyra plattformar: Microsoft Power Automate, UiPath, SS&C Blue Prism och Automation Anywhere. För ett svenskt litet eller medelstort företag står valet i praktiken mellan de två första, och det som avgör är om ni behöver *attended* eller *unattended* RPA – bemannad eller obemannad bot, förklarat nedan. Har alla era system API behöver ni kanske inget RPA-verktyg alls (se avsnittet om n8n, Make och Zapier).
+
+**Attended eller unattended – skillnaden som ofta hoppas över**
+
+Attended RPA betyder att en människa startar boten på sin egen dator. Boten tar över ett moment – kopierar, fyller i, klickar – men någon måste vara inloggad och trycka på knappen. Den varianten är ofta gratis eller billig.
+
+Unattended RPA kör själv, på schema eller på en trigger, utan att någon är inloggad. Det är den varianten som faktiskt ersätter arbete, och det är den som kostar. Många jämförelser av RPA-verktyg hoppar över den skillnaden, och då ser gratisverktygen ut som fullvärdiga alternativ. Licensmodellerna nedan visar varför det är missvisande.
+
+**De fyra plattformarna**
+
+| Verktyg | Ägare | Licensmodell | Gratis att börja? | Passar bäst |
+|---|---|---|---|---|
+| Power Automate | Microsoft | Per användare (attended) eller per bot (unattended) | Ja – attended lokalt med Windows- eller Free-licens, med begränsningar | Företag som redan kör Microsoft 365 och vill börja smått |
+| UiPath | UiPath | Community kostnadsfri · Basic från 25 USD/mån · Standard och Enterprise offereras | Ja – Community-plan, med villkor | Företag som planerar flera processer och räknar med licens plus utvecklare |
+| Blue Prism | SS&C | Offert, ingen publik prislista | Nej | Stora, reglerade organisationer |
+| Automation Anywhere | Automation Anywhere | Offert, ingen publik prislista | Nej | Stora organisationer |
+
+**Power Automate.** [Premium-licensen](https://www.microsoft.com/en-us/power-platform/products/power-automate/pricing) kostar 15 USD per användare och månad vid årsbetalning och ger attended desktop flows. Ska boten köra unattended krävs en Process-licens på 150 USD per bot och månad (215 USD för Hosted Process), och maskinen måste registreras av en användare med Premium ([Microsofts licenstyper](https://learn.microsoft.com/en-us/power-platform/admin/power-automate-licensing/types)). Windows-licensen ger attended desktop flows med begränsningar – bara lokal körning, ingen orkestrering – och Free-licensen kan skapa och köra desktop flows lokalt men begränsas av miljö och funktioner. Microsoft 365-licensen i sig inkluderar inte RPA. Priserna är Microsofts riktpriser per 2026-10-28.
+
+**UiPath.** [Community-planen](https://docs.uipath.com/automation-cloud/automation-cloud/latest/admin-guide/community-plan) är kostnadsfri för dem som uppfyller villkoren och ger en unattended robot, en Pro- och en Plus-användare i EU-region, med support via forum och utan bland annat Insights och Process Mining. Läs Community Agreement innan ni använder den i verksamheten. [Basic](https://www.uipath.com/pricing) kostar från 25 USD per månad; Standard och Enterprise offereras (per 2026-10-28). Med [Agent Builder](https://www.uipath.com/product/agent-builder) bygger ni AI-agenter som styrs och orkestreras tillsammans med robotarna.
+
+**SS&C Blue Prism och Automation Anywhere** säljs via offert och är byggda för stora organisationer, Blue Prism särskilt för reglerade verksamheter – när bolaget [öppnade kontor i Stockholm 2019](https://www.prnewswire.com/sv/news-releases/blue-prism-oppnar-kontor-i-sverige-881530007.html) nämndes Ericsson, Nordea och Volvo bland de nordiska kunderna. Båda har, liksom UiPath, [meddelat att de är Leaders i Gartners Magic Quadrant för RPA 2025](https://www.nasdaq.com/press-release/uipath-recognized-leader-2025-gartnerr-magic-quadranttm-robotic-process-automation), den senaste RPA-kvadrant vi kunnat belägga; i september 2026 publicerade Gartner en separat kvadrant för »Business Orchestration and Automation Technologies«. Ingen av de två passar normalt ett mindre företag.
+
+Öppen källkod finns också – [RPA Framework](https://github.com/robocorp/rpaframework) under Apache 2.0 – men kräver egna utvecklare och är därför sällan rätt för företag utan IT-avdelning.
+
+**Så väljer ni**
+
+- **Microsoft 365 och enstaka processer där någon kan trycka på knappen:** börja med Power Automate i attended-läge. Rätten att köra lokalt har ni ofta redan via Windows- eller Free-licensen.
+- **Processer som ska köra själva, nattetid eller på trigger:** räkna på unattended-licens oavsett plattform. Det är också här konsulttimmarna tillkommer – boten ska byggas, övervakas och hållas vid liv.
+- **Tiotals processer, revisionskrav eller en befintlig konsultpartner:** UiPath.
+
+Power Automate och UiPath lägger nu agenter ovanpå robotarna – UiPath via Agent Builder, Microsoft via [computer use](https://learn.microsoft.com/en-us/microsoft-copilot-studio/computer-use) i Copilot Studio, där agenten styr program via skärmen. Microsoft beskriver funktionen som ett tidigt skede där resultaten varierar och avråder från känsliga användningsfall. Mönstret är detsamma som i avsnittet om RPA och AI-agenter.
+
+Licenserna ovan är leverantörernas priser. Vad en RPA-lösning kostar att kartlägga, bygga och förvalta tar nästa avsnitt.
+
 ## Vad kostar RPA?
 
 Det ärliga svaret: det beror på processen – och därför publicerar vi ingen prislista. Fyra faktorer styr kostnaden mer än något annat:
@@ -117,6 +155,9 @@ En enskild, väldefinierad process kan ofta automatiseras på några veckor. Det
 
 **Behöver vi RPA eller räcker en integration?**
 Finns ett API eller en färdig integration mellan systemen är det nästan alltid det bättre valet – stabilare och billigare i längden. RPA är rätt när system saknar API:er eller när integration inte är praktiskt möjlig.
+
+**Finns det gratis RPA-verktyg?**
+Ja, för attended RPA – där en människa startar boten på sin egen dator. Power Automate Desktop går att köra lokalt med Windows- eller Free-licens, med begränsningar, och UiPath har en kostnadsfri Community-plan med villkor för kommersiell användning (per 2026-10-28). Det som ersätter arbete – unattended RPA, där boten kör själv på schema – kostar licens hos alla de stora leverantörerna.
 
 **Vad är skillnaden mellan RPA och AI?**
 RPA följer fördefinierade regler och ger alltid samma utfall av samma indata. AI – i det här sammanhanget AI-agenter – arbetar mot mål, tolkar innehåll och hanterar undantag, men kräver ramar och mänsklig kontroll. I moderna lösningar kombineras de ofta: agenten bedömer, RPA utför.

@@ -17,20 +17,25 @@ import KbRow from '../../components/KbRow.astro';
 import Arrow from '../../components/Arrow.astro';
 import { getArticles, readingTime, formatDate, type Article } from '../../lib/kunskapsbank';
 import { canonicalUrl, orgRef, DOUGLAS_ID, WEBSITE_ID, OG_IMAGE } from '../../lib/site';
+import { getTerms, createLinker, linkedHtml, type Term } from '../../lib/ordlista';
 
 export async function getStaticPaths() {
   const articles = await getArticles(); // kör byggkontrollerna
-  return articles.map((article) => ({ params: { slug: article.id }, props: { article, articles } }));
+  const terms = await getTerms();
+  return articles.map((article) => ({ params: { slug: article.id }, props: { article, articles, terms } }));
 }
 
 interface Props {
   article: Article;
   articles: Article[];
+  terms: Term[];
 }
-const { article, articles } = Astro.props;
+const { article, articles, terms } = Astro.props;
 const { data } = article;
 const category = await getEntry(data.category);
 const { Content, headings } = await render(article);
+// Ordlistans begrepp länkas i den färdiga texten (lib/ordlista.ts), med definitionen som popup.
+const body = linkedHtml(article, createLinker(terms));
 const toc = headings.filter((h) => h.depth === 2);
 const minutes = readingTime(article.body);
 const updated = data.updatedAt && data.updatedAt > data.publishedAt ? data.updatedAt : undefined;
@@ -92,7 +97,7 @@ const articleSchema = {
 
       <div class="art__grid">
         <article class="art__body">
-          <Content />
+          {body ? <Fragment set:html={body} /> : <Content />}
         </article>
 
         <aside class="art__aside">
@@ -372,6 +377,8 @@ const articleSchema = {
 </style>
 
 <script>
+  import '../../scripts/tooltip.ts'; // ordlistans popup: Escape, pekskärm, skärmläsare
+
   // Markerar rubriken i innehållsförteckningen som man läser just nu.
   const links = new Map(
     Array.from(document.querySelectorAll<HTMLAnchorElement>('.art__toc a')).map((a) => [

@@ -4,7 +4,7 @@ description: "Generiska AI-kurser förändrar sällan arbetssätt. Så bygger ni
 h1: "AI-utbildning för företag – så lär ni teamet använda AI på riktigt"
 category: ai-grunder
 publishedAt: 2026-08-03
-updatedAt: 2026-11-12
+updatedAt: 2026-11-13
 ---
 
 AI-utbildning som förändrar arbetssätt utgår från företagets egna processer och verkliga arbetsuppgifter. En generisk kurs lär ut vad AI är – men jobbet kräver att medarbetarna vet hur AI används i just er offerthantering, er kundtjänst eller er ekonomifunktion. Det är skillnaden mellan en utbildning som fastnar och en som glöms bort inom två veckor.

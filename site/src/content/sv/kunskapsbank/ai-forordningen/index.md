@@ -4,7 +4,7 @@ description: "Digital Omnibus sköt upp AI-förordningens högriskkrav till dece
 h1: "AI-förordningen: vad svenska företag måste göra – och vad som skjutits upp"
 category: regelverk-sakerhet
 publishedAt: 2026-08-03
-updatedAt: 2026-11-12
+updatedAt: 2026-11-13
 ---
 
 AI-förordningen (EU) 2024/1689 är EU:s gemensamma regelverk för artificiell intelligens. Den trädde i kraft den 1 augusti 2024 och tillämpas stegvis. Den 24 juli 2026 ändrades tidplanen: EU:s ändringsförordning, kallad Digital Omnibus, sköt upp de tunga högriskkraven till den 2 december 2027. Tre delar av förordningen gäller dock redan i dag – och de är enklare att få på plats än de flesta guider ger intryck av.

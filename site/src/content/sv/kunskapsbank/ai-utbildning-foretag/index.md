@@ -4,11 +4,12 @@ description: "Generiska AI-kurser förändrar sällan arbetssätt. Så bygger ni
 h1: "AI-utbildning för företag – så lär ni teamet använda AI på riktigt"
 category: ai-grunder
 publishedAt: 2026-08-03
+updatedAt: 2026-11-12
 ---
 
 AI-utbildning som förändrar arbetssätt utgår från företagets egna processer och verkliga arbetsuppgifter. En generisk kurs lär ut vad AI är – men jobbet kräver att medarbetarna vet hur AI används i just er offerthantering, er kundtjänst eller er ekonomifunktion. Det är skillnaden mellan en utbildning som fastnar och en som glöms bort inom två veckor.
 
-Läget i Sverige gör frågan akut. Enligt [SCB:s statistik "It-användning i företag"](https://www.scb.se/hitta-statistik/statistik-efter-amne/forskning-och-det-digitala-samhallet/ovrigt/artificiell-intelligens-i-sverige/pong/statistiknyhet/artificiell-intelligens-i-sverige-2026/) (publicerad 21 maj 2026, företag med 10+ anställda) använde 35 % av svenska företag AI under 2025, upp från 25 % året innan. Samtidigt visar en [HP-undersökning återgiven av Techtidningen](https://techtidningen.se/rapport-sa-manga-saknar-utbildning-i-ai-anvandning-pa-jobbet-i-sverige/) att 59 % av svenska kontorsanställda använder AI på jobbet – men 77 % uppger att de inte fått någon utbildning eller riktlinjer för det.
+Läget i Sverige gör frågan akut. Enligt [SCB:s statistik "It-användning i företag"](https://www.scb.se/hitta-statistik/statistik-efter-amne/forskning-och-det-digitala-samhallet/det-digitala-samhallet/it-anvandning-i-foretag/pong/statistiknyhet/it-anvandning-i-foretag-2026/) (publicerad 5 november 2026, företag med minst 10 anställda) använde 49 % av företagen AI 2026, mot 35 % året innan. Undersökningen omfattar fler branscher från och med 2026, så ökningen är inte rakt jämförbar. Samtidigt visar en [HP-undersökning återgiven av Techtidningen](https://techtidningen.se/rapport-sa-manga-saknar-utbildning-i-ai-anvandning-pa-jobbet-i-sverige/) att 59 % av svenska kontorsanställda använder AI på jobbet – men 77 % uppger att de inte fått någon utbildning eller riktlinjer för det.
 
 Gapet är alltså inte tekniken. Medarbetarna använder redan AI. Gapet är utbildningen.
 
@@ -36,7 +37,7 @@ Botemedlet är inte förbud – 80 % tar redan med sig verktygen. Botemedlet är
 
 ## Måste vi utbilda personalen enligt lag?
 
-Ja, ett krav på AI-kunskap finns. [Artikel 4 i EU:s AI-förordning](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-4) gäller sedan den 2 februari 2025 och omfattar alla företag som använder AI-system – inte bara de som utvecklar dem. Kravet innebär att företag ska säkerställa att personal som arbetar med AI-system har tillräcklig AI-kunskap, anpassad efter deras roll och sammanhang.
+Ja, ett krav på AI-kunskap finns. [Artikel 4 i EU:s AI-förordning](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-4) gäller sedan den 2 februari 2025 och omfattar alla företag som använder AI-system – inte bara de som utvecklar dem. Kravet innebär att företag ska vidta åtgärder för att främja AI-kunskap hos personal som arbetar med AI-system, anpassat efter roll och sammanhang. Lydelsen är från den 27 juli 2026, då [Digital Omnibus](https://eur-lex.europa.eu/eli/reg/2026/1744/oj/swe) ändrade artikeln: tidigare skulle företaget säkerställa en tillräcklig nivå, nu behöver ingen viss kunskapsnivå hos enskilda personer garanteras.
 
 Två saker är värda att hålla isär. Artikel 4 har ingen direkt bötesgrund – det finns ingen specifik sanktion kopplad till just kunskapskravet. Men efterlevnad kan vägas in vid bedömning av andra överträdelser av förordningen. Det är alltså ett regulatoriskt ansvar, inte ett böteshot, och det bör behandlas som det förra snarare än marknadsföras som det senare.
 
@@ -89,7 +90,7 @@ Utbildningen är också det naturliga första steget i en längre kedja. När te
 
 ### Vilka roller behöver AI-utbildning?
 
-Alla roller som arbetar med AI-system behöver AI-kunskap enligt artikel 4 i EU:s AI-förordning – men djupet ska anpassas efter rollen. Kontorsroller med mycket text och repetitiva moment (ekonomi, sälj, kundtjänst, HR, marknad) har oftast störst omedelbar nytta. Ledningen behöver förstå möjligheter, risker och ansvar, även om den inte använder verktygen dagligen.
+Artikel 4 i EU:s AI-förordning gäller all personal som arbetar med AI-system – men djupet ska anpassas efter rollen. Kontorsroller med mycket text och repetitiva moment (ekonomi, sälj, kundtjänst, HR, marknad) har oftast störst omedelbar nytta. Ledningen behöver förstå möjligheter, risker och ansvar, även om den inte använder verktygen dagligen.
 
 ### Räcker en ChatGPT-utbildning?
 
@@ -101,7 +102,7 @@ Kortare insatser med uppföljning slår längre engångsinsatser. En föreläsni
 
 ### Vad är AI-kunskapskravet i EU:s AI-förordning?
 
-AI-kunskapskravet i artikel 4 innebär att alla företag som använder AI-system ska säkerställa att berörd personal har tillräcklig AI-kunskap för sin roll. Kravet gäller sedan den 2 februari 2025. Det har ingen direkt bötesgrund, men efterlevnad kan vägas in vid bedömning av andra överträdelser av förordningen. Läs mer i vår genomgång av [AI-förordningen](/kunskapsbank/ai-forordningen).
+AI-kunskapskravet i artikel 4 innebär att alla företag som använder AI-system ska vidta åtgärder för att främja AI-kunskap hos berörd personal, anpassat efter roll. Skyldigheten har funnits sedan den 2 februari 2025, och sedan den 27 juli 2026 behöver företaget inte garantera någon viss kunskapsnivå hos enskilda personer. Kravet har ingen direkt bötesgrund, men efterlevnad kan vägas in vid bedömning av andra överträdelser av förordningen. Läs mer i vår genomgång av [AI-förordningen](/kunskapsbank/ai-forordningen).
 
 ## Kom igång: boka en kostnadsfri föreläsning
 

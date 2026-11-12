@@ -9,11 +9,6 @@
       "permanent": true
     },
     {
-      "source": "/kunskapsbank/ai-for-smaforetag",
-      "destination": "/kunskapsbank/vad-betyder-ai",
-      "permanent": true
-    },
-    {
       "source": "/kunskapsbank/ai-policy-i-foretag-darfor-behover-ni-en-strategi-for-ansvarsfull-ai",
       "destination": "/kunskapsbank/skugg-ai",
       "permanent": true

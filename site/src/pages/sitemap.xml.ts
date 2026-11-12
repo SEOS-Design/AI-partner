@@ -3,6 +3,7 @@
 // alltså i sitemapen utan att någon behöver komma ihåg det. Länkas från robots.txt.
 import type { APIRoute } from 'astro';
 import { getArticles } from '../lib/kunskapsbank';
+import { getTerms } from '../lib/ordlista';
 import { canonicalUrl } from '../lib/site';
 
 // './om-oss.astro' → '/om-oss', './tjanster/index.astro' → '/tjanster'
@@ -12,11 +13,16 @@ const pages = Object.keys(import.meta.glob('./**/*.astro'))
 
 export const GET: APIRoute = async () => {
   const articles = (await getArticles()).filter((a) => !a.data.noindex);
+  const terms = (await getTerms()).filter((t) => !t.data.noindex);
   const entries = [
     ...pages.map((path) => ({ loc: canonicalUrl(path) })),
     ...articles.map((a) => ({
       loc: canonicalUrl(`/kunskapsbank/${a.id}`),
       lastmod: (a.data.updatedAt ?? a.data.publishedAt).toISOString().slice(0, 10),
+    })),
+    ...terms.map((t) => ({
+      loc: canonicalUrl(`/ordlista/${t.id}`),
+      lastmod: (t.data.updatedAt ?? t.data.publishedAt).toISOString().slice(0, 10),
     })),
   ];
   const xml =

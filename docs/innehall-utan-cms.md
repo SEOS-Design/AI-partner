@@ -77,3 +77,26 @@ När det inte finns något CMS tar innehållsschemat och byggkontrollerna över 
 - `eyebrow` → `category`
 - Oförändrat: 301-kartan, de 28 platshållarna, ny faktakoll av `ai-forordningen.md`.
 - `primaryKeyword` värt att ha från start — båda sajterna (AI Partner + SEOS) skriver om AI-termer; med fältet kan kannibalisering upptäckas med ett script.
+
+---
+
+## C. Ordlistan (2026-11-12)
+
+Korta begreppssidor på `/ordlista/<slug>`, med autolänkar och popup i all löptext. Samma upplägg som kunskapsbanken på seosdesign.se.
+
+**Lägga till en term**
+1. Skapa `site/src/content/sv/ordlista/<slug>/index.md`. Fälten står i `content.config.ts` (kollektionen `ordlista`); använd en befintlig term som förlaga.
+2. `term` är uppslagsordet. `former` är övriga ordformer som ska länkas i löptext (böjningar, engelsk form). En ordform får bara finnas på en term — bygget stoppar annars.
+3. `definition` är en eller två hela meningar. Den visas som ingress, i listan och som popup på varje länk, så den måste gå att läsa fristående.
+4. Brödtexten börjar med första H2 och upprepar inte definitionen.
+5. Bygg. Termen länkas då automatiskt i alla guider och termer där ordet förekommer.
+
+**Regler**
+- Länka aldrig för hand till `/ordlista/…` — skriv begreppet i löptext, autolänkaren (`src/lib/ordlista.ts`) länkar. Bygget stoppar på handlagda ordlistelänkar i termernas text.
+- Autolänkaren länkar högst en gång per term och avsnitt (h2) och högst två gånger per term och sida. Den rör aldrig rubriker, befintliga länkar, tabeller eller kod, och aldrig termens egen sida.
+- Lägg inte en term som redan har en guide i kunskapsbanken (guiden äger ämnet), och inte en term som seosdesign.se:s kunskapsbank redan förklarar (LLM, RAG, MCP, vektordatabas, AI-agent, prompt, generativ AI, ChatGPT m.fl.). Länka dit i stället.
+- Källkraven är desamma som för guiderna: varje faktapåstående länkas till primärkälla.
+
+**Var det syns**
+- `/ordlista` (alla termer A–Ö), sidfoten och en rad på `/kunskapsbank`.
+- Sitemapen tar med termerna automatiskt. IndexNow skickas vid produktionsbygge som vanligt.

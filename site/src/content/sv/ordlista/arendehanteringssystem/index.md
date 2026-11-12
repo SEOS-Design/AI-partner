@@ -8,7 +8,7 @@ definition: "Ett ärendehanteringssystem är ett program som samlar inkommande f
 group: automation
 guide: ai-assistent
 related: [kunskapsbas, rostassistent]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Vad gör ett ärendehanteringssystem?

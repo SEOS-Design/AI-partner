@@ -8,7 +8,7 @@ definition: "Datorseende är den del av AI som låter datorer tolka bilder och v
 group: ai-teknik
 guide: maskininlarning
 related: [ocr, neurala-natverk]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Hur fungerar datorseende?

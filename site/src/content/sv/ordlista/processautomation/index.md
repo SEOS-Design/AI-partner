@@ -8,7 +8,7 @@ definition: "Processautomation är att automatisera en hel arbetsprocess från b
 group: automation
 guide: processkartlaggning
 related: [automatisering, arbetsflode, ipaas]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Vad är skillnaden mellan att automatisera en uppgift och en process?

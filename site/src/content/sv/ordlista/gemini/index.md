@@ -8,7 +8,7 @@ definition: "Gemini är Googles namn på både en familj av AI-modeller och den 
 group: verktyg
 guide: ai-assistent
 related: [copilot, token]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Vad används namnet Gemini till?

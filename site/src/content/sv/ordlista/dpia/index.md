@@ -8,7 +8,7 @@ definition: "En DPIA, på svenska konsekvensbedömning, är den riskanalys som G
 group: regler-sakerhet
 guide: skugg-ai
 related: [personuppgiftsbitrade, ai-policy]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## När krävs en DPIA?

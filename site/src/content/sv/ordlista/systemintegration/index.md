@@ -8,7 +8,7 @@ definition: "Systemintegration är att koppla ihop separata it-system så att de
 group: automation
 guide: ai-pa-egen-data
 related: [api, ipaas]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Hur fungerar systemintegration?

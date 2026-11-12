@@ -8,7 +8,7 @@ definition: "Ett personuppgiftsbiträde är ett företag eller en annan organisa
 group: regler-sakerhet
 guide: skugg-ai
 related: [dpia, ai-policy]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Vad är skillnaden mellan personuppgiftsbiträde och personuppgiftsansvarig?

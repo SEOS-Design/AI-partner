@@ -8,7 +8,7 @@ definition: "n8n är ett verktyg för att bygga automatiserade arbetsflöden och
 group: verktyg
 guide: vad-ar-rpa
 related: [power-automate, ipaas, arbetsflode]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Hur fungerar n8n?

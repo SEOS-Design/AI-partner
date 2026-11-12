@@ -8,7 +8,7 @@ definition: "Automatisering är att låta teknik utföra arbetsuppgifter som mä
 group: automation
 guide: vad-ar-rpa
 related: [processautomation, arbetsflode, digitalisering]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Vilka typer av automatisering finns det?

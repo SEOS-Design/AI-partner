@@ -7,7 +7,7 @@ h1: "Vad är marketing automation?"
 definition: "Marketing automation är programvara och arbetssätt som automatiskt skickar anpassad kommunikation till kontakter utifrån vad de gör, till exempel mejl efter ett nedladdat dokument."
 group: automation
 related: [automatisering, arbetsflode]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Hur fungerar marketing automation?

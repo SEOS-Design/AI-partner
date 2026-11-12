@@ -8,7 +8,7 @@ definition: "Prompt injection är ett angrepp där någon smyger in egna instruk
 group: regler-sakerhet
 guide: vad-ar-en-prompt
 related: [ai-policy, human-in-the-loop]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Hur går en prompt injection till?

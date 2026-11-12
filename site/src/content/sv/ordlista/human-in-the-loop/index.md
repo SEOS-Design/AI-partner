@@ -8,7 +8,7 @@ definition: "Human in the loop betyder att en människa granskar, godkänner ell
 group: arbetssatt
 guide: vad-ar-en-ai-agent
 related: [arbetsflode, ai-policy]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Hur fungerar human in the loop i praktiken?

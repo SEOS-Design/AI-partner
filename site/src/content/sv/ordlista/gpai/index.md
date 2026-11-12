@@ -8,7 +8,7 @@ definition: "GPAI är AI-förordningens term för AI-modeller för allmänna än
 group: regler-sakerhet
 guide: ai-forordningen
 related: [ai-kunnighet, token]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Vad räknas som en AI-modell för allmänna ändamål?

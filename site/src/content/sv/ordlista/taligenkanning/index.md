@@ -8,7 +8,7 @@ definition: "Taligenkänning är teknik som omvandlar talat språk till skriven 
 group: ai-teknik
 guide: maskininlarning
 related: [rostassistent, neurala-natverk]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Hur fungerar taligenkänning?

@@ -8,7 +8,7 @@ definition: "iPaaS är en integrationsplattform som köps som molntjänst. Där 
 group: automation
 guide: vad-ar-rpa
 related: [api, systemintegration, n8n]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Hur fungerar en iPaaS?

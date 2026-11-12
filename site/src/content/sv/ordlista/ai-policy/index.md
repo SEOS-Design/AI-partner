@@ -8,7 +8,7 @@ definition: "En AI-policy är ett internt styrdokument som anger vilka AI-verkty
 group: regler-sakerhet
 guide: skugg-ai
 related: [ai-kunnighet, dpia, personuppgiftsbitrade]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Vad innehåller en AI-policy?

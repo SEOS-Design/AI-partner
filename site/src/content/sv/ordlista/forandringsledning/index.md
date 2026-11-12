@@ -8,7 +8,7 @@ definition: "Förändringsledning är det strukturerade arbetet med att få män
 group: arbetssatt
 guide: ai-utbildning-foretag
 related: [digitalisering, proof-of-concept, ai-kunnighet]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Vad innebär förändringsledning i praktiken?

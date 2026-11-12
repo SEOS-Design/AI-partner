@@ -8,7 +8,7 @@ definition: "Ett API är ett gränssnitt som låter ett program hämta data frå
 group: automation
 guide: vad-ar-en-ai-agent
 related: [systemintegration, ipaas, arbetsflode]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Hur fungerar ett API?

@@ -8,7 +8,7 @@ definition: "AI-kunnighet är den kompetens, kunskap och förståelse som behöv
 group: regler-sakerhet
 guide: ai-utbildning-foretag
 related: [ai-policy, gpai, forandringsledning]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Vad säger AI-förordningen om AI-kunnighet?

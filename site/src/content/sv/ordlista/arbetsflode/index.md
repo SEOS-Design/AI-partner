@@ -8,7 +8,7 @@ definition: "Ett arbetsflöde är en kedja av steg som i en bestämd ordning tar
 group: automation
 guide: processkartlaggning
 related: [processautomation, automatisering, human-in-the-loop]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Vad består ett arbetsflöde av?

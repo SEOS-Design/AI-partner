@@ -8,7 +8,7 @@ definition: "AGI, artificiell generell intelligens, är en tänkt form av AI som
 group: ai-teknik
 guide: vad-betyder-ai
 related: [neurala-natverk, token]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Vad menas med AGI?

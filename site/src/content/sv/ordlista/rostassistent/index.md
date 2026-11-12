@@ -8,7 +8,7 @@ definition: "En röstassistent är ett AI-system som tolkar talat språk och sva
 group: ai-teknik
 guide: ai-assistent
 related: [taligenkanning, arendehanteringssystem]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Hur fungerar en röstassistent?

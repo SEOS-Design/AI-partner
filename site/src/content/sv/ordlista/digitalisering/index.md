@@ -8,7 +8,7 @@ definition: "Digitalisering är att använda digital teknik för att förändra 
 group: arbetssatt
 guide: processkartlaggning
 related: [automatisering, forandringsledning]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Vad är skillnaden mellan digitisering, digitalisering och digital transformation?

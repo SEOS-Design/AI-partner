@@ -8,7 +8,7 @@ definition: "OCR är teknik som omvandlar text i bilder och inskannade dokument 
 group: automation
 guide: vad-ar-rpa
 related: [datorseende, automatisering]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Hur fungerar OCR?

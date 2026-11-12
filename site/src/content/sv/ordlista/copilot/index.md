@@ -8,7 +8,7 @@ definition: "Copilot är Microsofts samlingsnamn för flera AI-assistenter. Namn
 group: verktyg
 guide: ai-assistent
 related: [gemini, power-automate]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Vilka Copilot-produkter finns det?

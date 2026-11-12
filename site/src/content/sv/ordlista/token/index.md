@@ -8,7 +8,7 @@ definition: "En token är den minsta textenhet en språkmodell arbetar med, ofta
 group: ai-teknik
 guide: generativ-ai
 related: [neurala-natverk, prompt-injection]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Vad är en token i en språkmodell?

@@ -8,7 +8,7 @@ definition: "Proof of concept, förkortat PoC, är ett avgränsat test som visar
 group: arbetssatt
 guide: processkartlaggning
 related: [forandringsledning, digitalisering]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Vad är skillnaden mellan PoC, pilot och MVP?

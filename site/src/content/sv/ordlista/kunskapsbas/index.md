@@ -8,7 +8,7 @@ definition: "En kunskapsbas är en samlad och sökbar plats för en organisation
 group: automation
 guide: ai-pa-egen-data
 related: [arendehanteringssystem, systemintegration]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Vad är skillnaden mellan en intern och en extern kunskapsbas?

@@ -8,7 +8,7 @@ definition: "Power Automate är Microsofts verktyg för att bygga automatiserade
 group: verktyg
 guide: vad-ar-rpa
 related: [n8n, copilot, arbetsflode]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Hur fungerar Power Automate?

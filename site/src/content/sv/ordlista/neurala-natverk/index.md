@@ -8,7 +8,7 @@ definition: "Neurala nätverk är datormodeller som lär sig mönster ur exempel
 group: ai-teknik
 guide: maskininlarning
 related: [datorseende, taligenkanning, token]
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 ## Hur fungerar ett neuralt nätverk?

@@ -3,7 +3,7 @@ title: "AI för småföretag: så används AI 2026 – och var ni börjar"
 description: "45 procent av företagen med 10–49 anställda använde AI 2026, mot 85 procent av de största. SCB:s siffror per storleksklass och var ett litet företag börjar."
 h1: "AI för små företag: så använder svenska företag AI 2026 – och var ni börjar"
 category: ai-grunder
-publishedAt: 2026-11-12
+publishedAt: 2026-11-13
 ---
 
 45 procent av de svenska företagen med 10–49 anställda använde AI 2026. Bland företag med minst 250 anställda var andelen 85 procent, och bland företag med 0–9 anställda var den 20 procent. Siffrorna kommer från [SCB:s undersökning It-användning i företag](https://www.scb.se/hitta-statistik/statistik-efter-amne/forskning-och-det-digitala-samhallet/det-digitala-samhallet/it-anvandning-i-foretag/pong/statistiknyhet/it-anvandning-i-foretag-2026/), publicerad den 5 november 2026.

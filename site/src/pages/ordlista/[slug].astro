@@ -1,0 +1,359 @@
+---
+// /ordlista/<slug> – termsidan (2026-11-12). EN mall för alla termer.
+// Brödsmulor → H1 → definitionen som ingress (samma mening som popupen på autolänkarna)
+// → brödtext med autolänkar till andra termer → sidokolumn med guiden som fördjupar
+// begreppet + bokningsruta → relaterade begrepp → guider som nämner begreppet.
+// Strukturerad data: DefinedTerm i sidans graf, kopplad till ordlistans DefinedTermSet.
+import { render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Footer from '../../components/Footer.astro';
+import Arrow from '../../components/Arrow.astro';
+import { getArticles, formatDate, type Article } from '../../lib/kunskapsbank';
+import { getTerms, createLinker, linkedHtml, GROUPS, type Term } from '../../lib/ordlista';
+import { canonicalUrl, SITE_URL } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const terms = await getTerms(); // kör byggkontrollerna
+  const articles = await getArticles();
+  return terms.map((term) => ({ params: { slug: term.id }, props: { term, terms, articles } }));
+}
+
+interface Props {
+  term: Term;
+  terms: Term[];
+  articles: Article[];
+}
+const { term, terms, articles } = Astro.props;
+const { data } = term;
+const linker = createLinker(terms);
+const { Content } = await render(term);
+const html = linkedHtml(term, linker, term.id);
+const updated = data.updatedAt && data.updatedAt > data.publishedAt ? data.updatedAt : undefined;
+
+const guide = data.guide ? articles.find((a) => a.id === data.guide!.id) : undefined;
+const related = data.related
+  .map((r) => terms.find((t) => t.id === r.id))
+  .filter((t): t is Term => Boolean(t));
+// Guider där begreppet förekommer (utöver fördjupningsguiden), nyast först, högst fyra.
+const mentionedIn = articles
+  .filter((a) => a.id !== guide?.id && linker.mentions(a.body ?? '').has(term.id))
+  .slice(0, 4);
+
+const url = canonicalUrl(Astro.url.pathname);
+const termSchema = {
+  '@type': 'DefinedTerm',
+  '@id': `${url}#term`,
+  name: data.term,
+  description: data.definition,
+  url,
+  inLanguage: 'sv-SE',
+  inDefinedTermSet: { '@id': `${SITE_URL}/ordlista#termset` },
+};
+---
+
+<Layout
+  title={data.title}
+  description={data.description}
+  noindex={data.noindex}
+  breadcrumb={[{ name: 'Ordlista', href: '/ordlista' }, { name: data.term }]}
+  mainEntity={termSchema['@id']}
+  schema={[termSchema]}
+>
+  <main class="term">
+    <div class="container">
+      <nav class="term__crumbs" aria-label="Brödsmulor">
+        <a href="/ordlista">Ordlista</a>
+        <span aria-hidden="true">/</span>
+        <span>{GROUPS[data.group]}</span>
+      </nav>
+
+      <header class="term__head">
+        <h1 class="term__h">{data.h1}</h1>
+        <p class="term__def">{data.definition}</p>
+      </header>
+
+      <div class="term__grid">
+        <article class="term__body">
+          {html ? <Fragment set:html={html} /> : <Content />}
+          <p class="term__date">
+            {updated ? 'Uppdaterad' : 'Publicerad'}{' '}
+            <time datetime={(updated ?? data.publishedAt).toISOString().slice(0, 10)}>{formatDate(updated ?? data.publishedAt)}</time>
+          </p>
+        </article>
+
+        <aside class="term__aside">
+          {guide && (
+            <div class="term__box">
+              <p class="term__aside-h">Fördjupning</p>
+              <a class="term__guide" href={`/kunskapsbank/${guide.id}`}>{guide.data.h1}</a>
+            </div>
+          )}
+          <div class="term__box term__box--cta">
+            <p class="term__aside-h">Vill ni veta var AI lönar sig hos er?</p>
+            <p>Vi kartlägger era processer kostnadsfritt och visar var automation gör skillnad.</p>
+            <a class="btn btn-glass" href="/kontakt">Boka kartläggning <Arrow class="arrow" /></a>
+          </div>
+        </aside>
+      </div>
+
+      {related.length > 0 && (
+        <section class="term__more" aria-labelledby="related-title">
+          <h2 id="related-title" class="term__more-h">Relaterade begrepp</h2>
+          <ul class="term__list">
+            {related.map((t) => (
+              <li>
+                <a href={`/ordlista/${t.id}`}>
+                  <span class="term__list-t">{t.data.term}</span>
+                  <span class="term__list-d">{t.data.definition}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {mentionedIn.length > 0 && (
+        <section class="term__more" aria-labelledby="guides-title">
+          <h2 id="guides-title" class="term__more-h">Guider där begreppet förekommer</h2>
+          <ul class="term__list">
+            {mentionedIn.map((a) => (
+              <li>
+                <a href={`/kunskapsbank/${a.id}`}>
+                  <span class="term__list-t">{a.data.h1}</span>
+                  <span class="term__list-d">{a.data.description}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .term {
+    padding: clamp(130px, 12vw, 170px) 0 clamp(200px, 20vw, 280px);
+  }
+  .container {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+  }
+
+  /* ---- brödsmulor (som artikelmallen) ---- */
+  .term__crumbs {
+    display: flex;
+    gap: var(--space-2);
+    font-stretch: 75%;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+  .term__crumbs a {
+    color: var(--fg-2);
+    text-decoration: none;
+  }
+  .term__crumbs a:hover { color: var(--fg-1); }
+
+  /* ---- rubrik + definition ---- */
+  .term__head {
+    margin-top: clamp(28px, 3vw, 44px);
+    max-width: 22em;
+    font-size: clamp(38px, 5.4vw, 72px);
+  }
+  .term__h {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 1em;
+    line-height: var(--lh-display);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+    text-wrap: balance;
+  }
+  .term__def {
+    margin: clamp(20px, 2.4vw, 32px) 0 0;
+    max-width: 34em;
+    font-size: clamp(20px, 2vw, 26px);
+    line-height: 1.45;
+    color: var(--fg-1);
+  }
+
+  /* ---- text + sidokolumn ---- */
+  .term__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+    gap: clamp(48px, 7vw, 120px);
+    margin-top: clamp(40px, 5vw, 72px);
+    padding-top: clamp(40px, 5vw, 72px);
+    border-top: 1px solid var(--border);
+    align-items: start;
+  }
+  .term__aside {
+    position: sticky;
+    top: 104px; /* under nav-pillen */
+    display: grid;
+    gap: var(--space-5);
+  }
+  .term__aside-h {
+    margin: 0 0 var(--space-4);
+    font-stretch: 75%;
+    font-size: var(--fs-body);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-1);
+  }
+  .term__box {
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: var(--bg-raised);
+  }
+  .term__box--cta p:not(.term__aside-h) {
+    margin: 0 0 var(--space-5);
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--fg-3);
+  }
+  .term__guide {
+    display: block;
+    font-size: var(--fs-body);
+    line-height: 1.45;
+    color: var(--fg-1);
+    text-decoration: underline;
+    text-decoration-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 70% / 0.7);
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+  }
+  .term__guide:hover { text-decoration-color: currentColor; }
+
+  /* ---- brödtexten (markdown) — samma typografi som artikelmallen ---- */
+  .term__body {
+    min-width: 0;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+  }
+  .term__body :global(p),
+  .term__body :global(ul),
+  .term__body :global(ol) {
+    margin: 0 0 1.5em;
+  }
+  .term__body :global(h2) {
+    margin: 2.2em 0 0.7em;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(24px, 2.4vw, 32px);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+    scroll-margin-top: 110px;
+  }
+  .term__body :global(h2:first-child) { margin-top: 0; }
+  .term__body :global(strong) { color: var(--fg-1); font-weight: 600; }
+  .term__body :global(a) {
+    color: var(--fg-1);
+    text-decoration: underline;
+    text-decoration-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 70% / 0.7);
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+    transition: text-decoration-color var(--dur-fast) var(--ease);
+  }
+  .term__body :global(a:hover) { text-decoration-color: currentColor; }
+  .term__body :global(ul),
+  .term__body :global(ol) {
+    padding-left: 1.3em;
+    font-stretch: 100%;
+  }
+  .term__body :global(li + li) { margin-top: 0.6em; }
+  .term__body :global(li::marker) { color: var(--fg-3); }
+  .term__body :global(table) {
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+    margin: 1.4em 0;
+    border-collapse: collapse;
+    font-size: var(--fs-small);
+    line-height: 1.5;
+  }
+  .term__body :global(th),
+  .term__body :global(td) {
+    padding: 12px 14px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--border);
+    min-width: 9em;
+  }
+  .term__body :global(th) {
+    color: var(--fg-1);
+    font-weight: 600;
+    border-bottom-color: var(--border-strong);
+  }
+  .term__date {
+    margin-top: 2.4em !important;
+    font-size: var(--fs-small);
+    color: var(--fg-3);
+  }
+
+  /* ---- relaterade begrepp / guider ---- */
+  .term__more {
+    margin-top: clamp(56px, 7vw, 96px);
+    padding-top: clamp(36px, 4.5vw, 56px);
+    border-top: 1px solid var(--border);
+  }
+  .term__more-h {
+    margin: 0 0 clamp(20px, 2.6vw, 32px);
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--fs-h3);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+  }
+  .term__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: var(--space-3);
+  }
+  .term__list a {
+    display: grid;
+    gap: var(--space-2);
+    height: 100%;
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: var(--bg-raised);
+    text-decoration: none;
+    transition: border-color var(--dur-fast) var(--ease);
+  }
+  .term__list a:hover,
+  .term__list a:focus-visible { border-color: var(--border-strong); }
+  .term__list-t {
+    font-size: var(--fs-lead);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--fg-1);
+  }
+  .term__list-d {
+    font-size: var(--fs-body);
+    line-height: 1.55;
+    color: var(--fg-3);
+  }
+
+  @media (max-width: 960px) {
+    .term__grid { grid-template-columns: minmax(0, 1fr); }
+    .term__aside { position: static; }
+  }
+</style>
+
+<script>
+  import '../../scripts/tooltip.ts';
+</script>

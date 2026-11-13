@@ -20,9 +20,9 @@ export default defineConfig({
       status: 301,
       destination: '/kunskapsbank/vad-ar-en-ai-agent',
     },
-    // De fem artiklar som inte flyttades över (2026-10-19). ai-seo-… går till seosdesign.se
-    // och ligger bara i vercel.json.
-    '/kunskapsbank/ai-for-smaforetag': { status: 301, destination: '/kunskapsbank/vad-betyder-ai' },
+    // De artiklar som inte flyttades över (2026-10-19). ai-seo-… går till seosdesign.se
+    // och ligger bara i vercel.json. ai-for-smaforetag är sedan 2026-11-12 en egen guide
+    // på samma adress och omdirigeras inte längre.
     '/kunskapsbank/ai-policy-i-foretag-darfor-behover-ni-en-strategi-for-ansvarsfull-ai': {
       status: 301,
       destination: '/kunskapsbank/skugg-ai',

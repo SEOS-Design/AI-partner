@@ -1,0 +1,203 @@
+---
+// /ordlista – översikten (2026-11-12). Alla termer i bokstavsordning med definitionen på
+// raden, så att sidan går att läsa som en ordlista utan att klicka. Bokstavsraden överst
+// hoppar till respektive bokstav. Strukturerad data: DefinedTermSet med alla termer.
+import Layout from '../../layouts/Layout.astro';
+import Footer from '../../components/Footer.astro';
+import { getTerms, GROUPS, type Term } from '../../lib/ordlista';
+import { canonicalUrl, SITE_URL, ORG_ID } from '../../lib/site';
+
+const terms = await getTerms();
+const letterOf = (t: Term) => {
+  const c = t.data.term.trim().charAt(0).toLocaleUpperCase('sv');
+  return /\p{L}/u.test(c) ? c : '#';
+};
+const letters = new Map<string, Term[]>();
+for (const t of terms) letters.set(letterOf(t), [...(letters.get(letterOf(t)) ?? []), t]);
+const sections = [...letters.entries()].sort(([a], [b]) => a.localeCompare(b, 'sv'));
+
+const TITLE = 'Ordlista: AI och automation förklarat | AI Partner';
+const DESCRIPTION =
+  'Begreppen ni möter när företaget börjar med AI och automation, förklarade kort och utan hype: från API och arbetsflöde till GPAI och AI-policy.';
+const termSet = {
+  '@type': 'DefinedTermSet',
+  '@id': `${SITE_URL}/ordlista#termset`,
+  name: 'AI Partners ordlista',
+  description: DESCRIPTION,
+  url: canonicalUrl('/ordlista'),
+  inLanguage: 'sv-SE',
+  publisher: { '@id': ORG_ID },
+  hasDefinedTerm: terms.map((t) => ({ '@id': `${canonicalUrl(`/ordlista/${t.id}`)}#term` })),
+};
+---
+
+<Layout
+  title={TITLE}
+  description={DESCRIPTION}
+  pageType="CollectionPage"
+  breadcrumb={[{ name: 'Ordlista' }]}
+  mainEntity={termSet['@id']}
+  schema={[termSet]}
+>
+  <main class="ol">
+    <div class="container">
+      <header class="ol__head">
+        <h1 class="ol__h">Ordlista</h1>
+        <p class="ol__lead">
+          Begreppen ni möter när företaget börjar med AI och automation, förklarade kort och
+          utan hype. De större ämnena har egna guider i <a href="/kunskapsbank">kunskapsbanken</a>.
+        </p>
+      </header>
+
+      <nav class="ol__letters" aria-label="Hoppa till bokstav">
+        {sections.map(([letter]) => <a href={`#bokstav-${letter.toLowerCase()}`}>{letter}</a>)}
+      </nav>
+
+      {sections.map(([letter, list]) => (
+        <section class="ol__sec" aria-labelledby={`bokstav-${letter.toLowerCase()}`}>
+          <h2 class="ol__letter" id={`bokstav-${letter.toLowerCase()}`}>{letter}</h2>
+          <ul class="ol__list">
+            {list.map((t) => (
+              <li>
+                <a class="ol__row" href={`/ordlista/${t.id}`}>
+                  <span class="ol__term">{t.data.term}</span>
+                  <span class="ol__def">{t.data.definition}</span>
+                  <span class="ol__group">{GROUPS[t.data.group]}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .ol {
+    padding: clamp(140px, 13vw, 190px) 0 clamp(200px, 20vw, 280px);
+  }
+  .container {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+  }
+  .ol__h {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--fs-display);
+    line-height: var(--lh-display);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+  }
+  .ol__lead {
+    margin: clamp(20px, 2.4vw, 32px) 0 0;
+    max-width: 36em;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+  }
+  .ol__lead a {
+    color: var(--fg-1);
+    text-decoration: underline;
+    text-decoration-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 70% / 0.7);
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+  }
+  .ol__lead a:hover { text-decoration-color: currentColor; }
+
+  /* ---- bokstavsraden ---- */
+  .ol__letters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: clamp(32px, 4vw, 56px);
+    padding-bottom: clamp(24px, 3vw, 40px);
+    border-bottom: 1px solid var(--border);
+  }
+  .ol__letters a {
+    display: grid;
+    place-items: center;
+    min-width: 44px;
+    min-height: 44px; /* tryckyta */
+    padding-inline: var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    background: var(--bg-raised);
+    font-weight: 700;
+    color: var(--fg-2);
+    text-decoration: none;
+    transition: border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+  }
+  .ol__letters a:hover,
+  .ol__letters a:focus-visible {
+    border-color: var(--border-strong);
+    color: var(--fg-1);
+  }
+
+  /* ---- en bokstav ---- */
+  .ol__sec {
+    display: grid;
+    grid-template-columns: minmax(64px, 140px) minmax(0, 1fr);
+    gap: var(--space-5);
+    padding-block: clamp(28px, 3.5vw, 48px);
+    border-bottom: 1px solid var(--border);
+  }
+  .ol__letter {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--fs-h3);
+    line-height: 1;
+    color: var(--fg-3);
+    scroll-margin-top: 110px;
+  }
+  .ol__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-3);
+  }
+  .ol__row {
+    display: grid;
+    grid-template-columns: minmax(0, 14em) minmax(0, 1fr) auto;
+    gap: var(--space-3) var(--space-5);
+    align-items: baseline;
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: var(--bg-raised);
+    text-decoration: none;
+    transition: border-color var(--dur-fast) var(--ease);
+  }
+  .ol__row:hover,
+  .ol__row:focus-visible { border-color: var(--border-strong); }
+  .ol__term {
+    font-size: var(--fs-lead);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--fg-1);
+  }
+  .ol__def {
+    font-size: var(--fs-body);
+    line-height: 1.55;
+    color: var(--fg-2);
+  }
+  .ol__group {
+    font-stretch: 75%;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 860px) {
+    .ol__sec { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+    .ol__row { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

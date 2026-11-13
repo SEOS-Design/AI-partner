@@ -4,6 +4,7 @@ description: "Digital Omnibus sköt upp AI-förordningens högriskkrav till dece
 h1: "AI-förordningen: vad svenska företag måste göra – och vad som skjutits upp"
 category: regelverk-sakerhet
 publishedAt: 2026-08-03
+updatedAt: 2026-11-13
 ---
 
 AI-förordningen (EU) 2024/1689 är EU:s gemensamma regelverk för artificiell intelligens. Den trädde i kraft den 1 augusti 2024 och tillämpas stegvis. Den 24 juli 2026 ändrades tidplanen: EU:s ändringsförordning, kallad Digital Omnibus, sköt upp de tunga högriskkraven till den 2 december 2027. Tre delar av förordningen gäller dock redan i dag – och de är enklare att få på plats än de flesta guider ger intryck av.
@@ -54,7 +55,9 @@ Vissa AI-användningar är helt förbjudna: social scoring, AI som manipulerar m
 
 ### 2. AI-kunskapskravet, artikel 4 (sedan den 2 februari 2025)
 
-[Artikel 4](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-4) säger att alla som använder AI-system ska säkerställa att personalen har tillräcklig AI-kunskap för sin roll. Det gäller alltså även företaget som "bara" använder ChatGPT internt – inte enbart de som bygger AI.
+[Artikel 4](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-4) säger att alla som använder AI-system ska vidta åtgärder för att främja personalens AI-kunskap, anpassat efter roll. Det gäller alltså även företaget som "bara" använder ChatGPT internt – inte enbart de som bygger AI.
+
+Lydelsen ändrades genom Digital Omnibus den 27 juli 2026. Tidigare skulle företaget säkerställa en tillräcklig kunskapsnivå. Nu står det uttryckligen att företaget inte behöver garantera någon viss nivå hos enskilda personer. I förordningens svenska text heter begreppet AI-kunnighet.
 
 Kravet är medvetet flexibelt: en säljare som använder en skrivassistent behöver inte samma kunskap som den som konfigurerar ett gallringssystem. Det finns ingen direkt bötesgrund kopplad till artikel 4 i sanktionskapitlet, men efterlevnaden kan vägas in när andra överträdelser bedöms. Det praktiska sättet att uppfylla kravet är en grundläggande utbildningsinsats plus en AI-policy som beskriver vad som gäller hos er. Vi går igenom hur en sådan utbildning kan läggas upp i vår guide om [AI-utbildning för företag](/kunskapsbank/ai-utbildning-foretag).
 
@@ -119,7 +122,7 @@ Nej. En kundtjänst-chatbot räknas som begränsad risk. Kravet är transparens:
 
 ### Räknas intern ChatGPT-användning som AI-användning enligt förordningen?
 
-Ja. Även om verktyget i sig är minimal risk är ni ett företag som använder AI-system, och då gäller AI-kunskapskravet i artikel 4 er – personalen ska ha tillräcklig AI-kunskap för sin användning. Det har gällt sedan den 2 februari 2025.
+Ja. Även om verktyget i sig är minimal risk är ni ett företag som använder AI-system, och då gäller AI-kunskapskravet i artikel 4 er – ni ska vidta åtgärder för att främja personalens AI-kunskap. Skyldigheten har funnits sedan den 2 februari 2025.
 
 ### Behöver vi en AI-policy?
 

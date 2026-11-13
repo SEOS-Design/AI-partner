@@ -65,7 +65,7 @@ Den som i stället förstår principerna – kontext, roll, format, exempel – 
 
 ## Är promptkunskap ett lagkrav?
 
-Promptkunskap är en del av det AI-kunskapskrav som gäller enligt artikel 4 i [EU:s AI-förordning](/kunskapsbank/ai-forordningen). Sedan den 2 februari 2025 ska alla företag som använder AI-system se till att personalen har tillräcklig AI-kunskap för sin roll – och för den som använder generativa verktyg i arbetet ingår rimligen förmågan att instruera dem korrekt och förstå deras begränsningar.
+Promptkunskap är en del av det AI-kunskapskrav som gäller enligt artikel 4 i [EU:s AI-förordning](/kunskapsbank/ai-forordningen). Alla företag som använder AI-system ska vidta åtgärder för att främja personalens AI-kunskap, anpassat efter roll. Skyldigheten har funnits sedan den 2 februari 2025 – och för den som använder generativa verktyg i arbetet ingår rimligen förmågan att instruera dem korrekt och förstå deras begränsningar.
 
 Kravet är ett ansvar, inte ett böteshot: artikel 4 har ingen egen sanktionsavgift, men efterlevnaden kan vägas in om företaget granskas för andra överträdelser av förordningen. Det praktiska rådet är därför inte att frukta viten, utan att göra det som ändå lönar sig – utbilda personalen i hur verktygen används väl och säkert, och dokumentera att det gjorts.
 

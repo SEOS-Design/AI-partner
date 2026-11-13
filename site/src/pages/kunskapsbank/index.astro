@@ -50,6 +50,7 @@ const filters = (await getCollection('kategorier'))
           Guider om AI, automation och regelverk för små och medelstora företag. Rakt på
           sak, med källor, och utan hype.
         </p>
+        <p class="kb__sub">Enskilda begrepp förklaras i <a href="/ordlista">ordlistan</a>.</p>
       </header>
 
       {featured && (
@@ -141,6 +142,20 @@ const filters = (await getCollection('kategorier'))
     line-height: var(--lh-body);
     color: var(--fg-2);
   }
+  /* Vägen till ordlistan (2026-11-12). */
+  .kb__sub {
+    margin: var(--space-3) 0 0;
+    font-size: var(--fs-body);
+    color: var(--fg-3);
+  }
+  .kb__sub a {
+    color: var(--fg-1);
+    text-decoration: underline;
+    text-decoration-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 70% / 0.7);
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+  }
+  .kb__sub a:hover { text-decoration-color: currentColor; }
 
   /* Kategorietikett i accentfärg (samma stil som i KbRow). */
   .kb-cat {

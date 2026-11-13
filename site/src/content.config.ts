@@ -51,4 +51,36 @@ const tjanster = defineCollection({
   }),
 });
 
-export const collections = { kategorier, kunskapsbank, tjanster };
+// Ordlistan (2026-11-12). Korta begreppsförklaringar på /ordlista/<id>. Autolänkaren
+// (lib/ordlista.ts) länkar begreppen i kunskapsbankens artiklar och i andra termer, med
+// definitionen som popup. Guiderna i kunskapsbanken äger de stora ämnena (AI-agent, RPA,
+// prompt …) – lägg aldrig en term här som redan har en egen guide, eller som
+// seosdesign.se:s kunskapsbank redan förklarar (LLM, RAG, MCP m.fl.).
+const ordlista = defineCollection({
+  loader: glob({
+    pattern: '*/index.md',
+    base: './src/content/sv/ordlista',
+    generateId: ({ entry }) => entry.replace(/\/index\.md$/, ''),
+  }),
+  schema: z.object({
+    term: z.string(), // uppslagsordet som det skrivs i listan: "API", "Arbetsflöde"
+    // Fler ordformer som ska länkas i löptext (böjningar, engelsk form). Uppslagsordet
+    // självt behöver inte stå här. Skiftläge spelar ingen roll.
+    former: z.array(z.string()).default([]),
+    title: z.string().max(70), // <title>
+    description: z.string().min(50).max(170), // meta description
+    h1: z.string(),
+    // EN mening som förklarar begreppet. Visas som ingress på termsidan, i listan och
+    // som popup på varje autolänk – håll den kort nog att läsas i en bubbla.
+    definition: z.string().min(40).max(220),
+    group: z.enum(['ai-teknik', 'automation', 'regler-sakerhet', 'verktyg', 'arbetssatt']),
+    guide: reference('kunskapsbank').optional(), // guiden som fördjupar begreppet
+    related: z.array(reference('ordlista')).default([]),
+    publishedAt: z.coerce.date(),
+    updatedAt: z.coerce.date().optional(),
+    draft: z.boolean().default(false),
+    noindex: z.boolean().default(false),
+  }),
+});
+
+export const collections = { kategorier, kunskapsbank, tjanster, ordlista };

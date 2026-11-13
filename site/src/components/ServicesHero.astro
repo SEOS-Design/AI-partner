@@ -13,6 +13,17 @@
 // och Displacement public/tjanster-hero.* (lokalt, ej committad).
 // Postern = första rutan, visas innan videon laddat och vid reduced motion.
 // Copy = utkast (Douglas granskar).
+//
+// Props (2026-10-28): title + lead, så /ai-konsult kan återanvända heron med egen
+// rubrik och ingress. Utan props visas /tjanster-texterna.
+interface Props {
+  title?: string;
+  lead?: string;
+}
+const {
+  title = 'AI-agenter som tar rutinjobbet',
+  lead = 'Vi börjar med er vardag, inte med en produktlista. Vi bygger AI-agenter och automationer som tar bort det som tar tid hos just er, och sköter dem efter lansering.',
+} = Astro.props;
 ---
 
 <section class="shero" aria-labelledby="shero-title">
@@ -35,13 +46,9 @@
 
     <div class="shero__center">
       <h1 id="shero-title" class="shero__title">
-        <span class="shero__mask"><span class="shero__in">AI-agenter som tar rutinjobbet</span></span>
+        <span class="shero__mask"><span class="shero__in">{title}</span></span>
       </h1>
-      <p class="shero__lead">
-        Vi börjar med er vardag, inte med en produktlista. Vi bygger AI-agenter och
-        automationer som tar bort det som tar tid hos just er, och sköter dem efter
-        lansering.
-      </p>
+      <p class="shero__lead">{lead}</p>
     </div>
   </div>
 </section>

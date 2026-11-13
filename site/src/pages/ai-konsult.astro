@@ -1,0 +1,251 @@
+---
+// /ai-konsult – landningssidan för »AI-konsult« (2026-10-28, beslut K1 i SEO-analysen
+// 2026-10-14: AIP och seosdesign.se kör båda på klustret; dag 90 efter launch utvärderas).
+// Flöde: hero (ServicesHero med egen rubrik/ingress) → brödtext ur
+// src/content/sv/sidor/ai-konsult.md med innehållsförteckning + bokningsruta i sidokolumn
+// (samma mönster och stilar som artikelmallen, kopierade hit; bryt ut till en delad
+// komponent om en tredje sida behöver dem) → FAQ (accordion + FAQPage-schema) →
+// ContactCta → Footer.
+// Titeln bär »AI-konsult«, startsidan bär »AI-byrå« – en term per sida.
+// Copy = Douglas granskar (två sakpåståenden flaggade i PR:en).
+import Layout from '../layouts/Layout.astro';
+import ServicesHero from '../components/ServicesHero.astro';
+import FAQ from '../components/FAQ.astro';
+import ContactCta from '../components/ContactCta.astro';
+import Footer from '../components/Footer.astro';
+import Arrow from '../components/Arrow.astro';
+import * as Copy from '../content/sv/sidor/ai-konsult.md';
+import { canonicalUrl, faqPage, ORG_ID } from '../lib/site';
+
+const TITLE = 'AI-konsult för företag – AI-agenter och automation';
+const DESCRIPTION =
+  'AI-konsult som bygger, inte bara rådger. Kostnadsfri AI-kartläggning, AI-agenter, automation och RAG för små och medelstora företag i hela Sverige.';
+
+// Frågorna är byggda för att citeras i AI-svar: självständiga, kompletta svar.
+const FAQS = [
+  {
+    q: 'Vad gör en AI-konsult?',
+    a: 'En AI-konsult kartlägger ett företags processer, identifierar var AI och automation lönar sig, och bygger och driftar lösningen. En bra AI-konsult stannar inte vid rådgivning utan levererar fungerande agenter, automationer eller AI-assistenter integrerade i företagets system.',
+  },
+  {
+    q: 'Vad kostar det att anlita en AI-konsult?',
+    a: 'Kostnaden beror på problemets omfattning: antal system som ska integreras, hur mycket data som behöver struktureras och om lösningen ska förvaltas löpande. En enkel automation kostar en bråkdel av en fullt integrerad agent. Hos AI Partner är första steget – AI-kartläggningen – kostnadsfritt, så ni vet vad ni köper innan ni köper.',
+  },
+  {
+    q: 'AI-konsult eller AI-byrå – vad är skillnaden?',
+    a: 'I praktiken mest ordval. "Konsult" antyder en person, "byrå" ett team, men leveransen överlappar nästan helt. Den viktiga skillnaden går inte mellan orden utan mellan leverantörer som implementerar och driftar lösningar och sådana som stannar vid rådgivning och presentationer.',
+  },
+  {
+    q: 'Behöver vi en AI-konsult eller klarar vi det själva med ChatGPT?',
+    a: 'Mycket klarar ni själva. Textutkast, sammanfattningar och enklare analys kräver ingen konsult – bara lite träning. En AI-konsult behövs när AI ska in i era system och processer: koppla mot affärssystem och ärendehantering, svara utifrån er egen data, eller köra automatiskt utan att någon sitter och klistrar in text. Det är integrationen som kräver expertis, inte chattandet.',
+  },
+  {
+    q: 'Hur börjar vi?',
+    a: 'Boka en kostnadsfri AI-kartläggning. Vi går igenom era processer, hittar var AI och automation ger störst effekt och lämnar en prioriterad åtgärdslista. Därefter bestämmer ni om ni vill gå vidare – med oss eller på egen hand.',
+  },
+];
+
+const pageUrl = canonicalUrl('/ai-konsult');
+const service = {
+  '@type': 'Service',
+  '@id': `${pageUrl}#service`,
+  name: 'AI-konsult',
+  serviceType: 'AI-konsult',
+  description: DESCRIPTION,
+  url: pageUrl,
+  provider: { '@id': ORG_ID },
+  areaServed: [
+    { '@type': 'Country', name: 'Sverige' },
+    { '@type': 'City', name: 'Stockholm' },
+    { '@type': 'City', name: 'Göteborg' },
+    { '@type': 'City', name: 'Malmö' },
+  ],
+};
+
+const toc = Copy.getHeadings().filter((h) => h.depth === 2);
+---
+
+<Layout
+  title={TITLE}
+  description={DESCRIPTION}
+  breadcrumb={[{ name: 'AI-konsult' }]}
+  mainEntity={service['@id']}
+  schema={[service, faqPage(pageUrl, FAQS)]}
+>
+  <ServicesHero
+    title="AI-konsult för små och medelstora företag"
+    lead="En AI-konsult kartlägger era processer, identifierar var AI och automation faktiskt lönar sig – och bygger lösningen. Hos AI Partner får ni hela kedjan: kostnadsfri AI-kartläggning, prioriterad åtgärdslista, byggda AI-agenter och automationer, utbildning av teamet och löpande förvaltning. AI gör grovjobbet. Människan äger strategin och kvaliteten."
+  />
+
+  <main class="lp">
+    <div class="container">
+      <div class="lp__grid">
+        <article class="lp__body">
+          <Copy.Content />
+        </article>
+
+        <aside class="lp__aside">
+          {toc.length > 1 && (
+            <nav class="lp__toc" aria-labelledby="toc-title">
+              <p id="toc-title" class="lp__aside-h">På den här sidan</p>
+              <ol>
+                {toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
+              </ol>
+            </nav>
+          )}
+          <div class="lp__cta">
+            <p class="lp__aside-h">Börja med en kostnadsfri kartläggning</p>
+            <p>Vi går igenom era processer och visar var AI faktiskt lönar sig – utan kostnad och utan köpkrav.</p>
+            <a class="btn btn-glass" href="/kontakt">Boka kartläggning <Arrow class="arrow" /></a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <FAQ heading="Vanliga frågor om AI-konsult" items={FAQS} beforeFooter={false} />
+  <ContactCta />
+  <Footer />
+</Layout>
+
+<style>
+  /* Samma mått och stilar som artikelmallen (pages/kunskapsbank/[slug].astro), med
+     prefixet lp__ (landing page). Ändras det ena – ändra det andra. */
+  .lp {
+    padding: clamp(64px, 8vw, 110px) 0 clamp(64px, 8vw, 110px);
+  }
+  .container {
+    max-width: var(--maxw-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+  }
+  .lp__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+    gap: clamp(48px, 7vw, 120px);
+    align-items: start;
+  }
+  .lp__aside {
+    position: sticky;
+    top: 104px;
+    display: grid;
+    gap: var(--space-8);
+  }
+  .lp__aside-h {
+    margin: 0 0 var(--space-4);
+    font-stretch: 75%;
+    font-size: var(--fs-body);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-1);
+  }
+  .lp__toc ol {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 var(--space-4);
+    border-left: 1px solid var(--border);
+    display: grid;
+    gap: var(--space-4);
+  }
+  .lp__toc a {
+    display: block;
+    font-size: var(--fs-body);
+    line-height: 1.4;
+    color: var(--fg-3);
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .lp__toc a:hover,
+  .lp__toc a.is-current { color: var(--fg-1); }
+  .lp__cta {
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: var(--bg-raised);
+  }
+  .lp__cta p:not(.lp__aside-h) {
+    margin: 0 0 var(--space-5);
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--fg-3);
+  }
+  .lp__body {
+    min-width: 0;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--fg-2);
+  }
+  .lp__body :global(p),
+  .lp__body :global(ul),
+  .lp__body :global(ol) { margin: 0 0 1.5em; }
+  .lp__body :global(h2) {
+    margin: 2.6em 0 0.75em;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(26px, 2.8vw, 38px);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-display);
+    color: var(--fg-1);
+    scroll-margin-top: 110px;
+  }
+  .lp__body :global(h2:first-child) { margin-top: 0; }
+  .lp__body :global(h3) {
+    margin: 2em 0 0.6em;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(20px, 1.8vw, 24px);
+    line-height: 1.25;
+    color: var(--fg-1);
+    scroll-margin-top: 110px;
+  }
+  .lp__body :global(strong) { color: var(--fg-1); font-weight: 600; }
+  .lp__body :global(a) {
+    color: var(--fg-1);
+    text-decoration: underline;
+    text-decoration-color: hsl(var(--arc-hue) calc(var(--arc-sat) * 90%) 70% / 0.7);
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+    transition: text-decoration-color var(--dur-fast) var(--ease);
+  }
+  .lp__body :global(a:hover) { text-decoration-color: currentColor; }
+  .lp__body :global(ul),
+  .lp__body :global(ol) {
+    padding-left: 1.3em;
+    font-stretch: 100%;
+  }
+  .lp__body :global(li + li) { margin-top: 0.6em; }
+  .lp__body :global(li::marker) { color: var(--fg-3); }
+  @media (max-width: 960px) {
+    .lp__grid { grid-template-columns: minmax(0, 1fr); }
+    .lp__aside { position: static; }
+    .lp__toc { display: none; }
+  }
+</style>
+
+<script>
+  // Markerar rubriken i innehållsförteckningen som man läser just nu (som artikelmallen).
+  const links = new Map(
+    Array.from(document.querySelectorAll<HTMLAnchorElement>('.lp__toc a')).map((a) => [
+      decodeURIComponent(a.hash.slice(1)),
+      a,
+    ]),
+  );
+  const heads = Array.from(document.querySelectorAll<HTMLElement>('.lp__body h2[id]'));
+  if (links.size && heads.length && 'IntersectionObserver' in window) {
+    let current: HTMLAnchorElement | undefined;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          current?.classList.remove('is-current');
+          current = links.get(e.target.id);
+          current?.classList.add('is-current');
+        }
+      },
+      { rootMargin: '-110px 0px -65% 0px' },
+    );
+    heads.forEach((h) => io.observe(h));
+    document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
+  }
+</script>
